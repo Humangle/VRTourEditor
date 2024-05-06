@@ -11,6 +11,7 @@
 		<script type="module">
 			import * as THREE from 'three';
 			import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+			import {VRButton} from 'three/addons/webxr/VRButton.js';
 			
 			let ready = false; //state of the software
 			
@@ -19,20 +20,25 @@
 				const canvas = document.getElementById("c");
 				const renderer = new THREE.WebGLRenderer({antialias: true, canvas});
 				renderer.setPixelRatio(window.devicePixelRatio);
+				renderer.xr.enabled = true;
+				document.body.appendChild(VRButton.createButton(renderer));
 				
 				//set the camera up
-				const fov = 90;
+				const fov = 60;
 				const aspect = 2;
 				const near = 0.1;
-				const far = 5;
+				const far = 50;
 				const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-				camera.position.set(0, 0, 0);
+				camera.position.set(0, 1.6, 0);
 				
 				//orbital camera controls
 				const controls = new OrbitControls(camera, renderer.domElement);
 				controls.enableDamping = true;
 				controls.minDistance = 0.001;
 				controls.maxDistance = 0.001;
+				controls.maxPolarAngle = 2;
+				controls.minPolarAngle = 1;
+				controls.update();
 				
 				//here we go!
 				const scene = new THREE.Scene();
@@ -43,7 +49,19 @@
 				const loadManager = new THREE.LoadingManager();
 				const loader = new THREE.TextureLoader(loadManager);
 				
-				const radius = 1;
+				const button2Geometry = new THREE.SphereGeometry(0.1, 16, 16);
+				let button2Mesh = new THREE.Mesh(button2Geometry);
+				button2Mesh.name = "PIC_2";
+				button2Mesh.position.set(0,-1.6,1.5);
+				scene.add(button2Mesh);
+				
+				const button3Geometry = new THREE.SphereGeometry(0.1, 16, 16);
+				let button3Mesh = new THREE.Mesh(button3Geometry);
+				button3Mesh.name = "PIC_3";
+				button3Mesh.position.set(0,-1.6,3);
+				scene.add(button3Mesh);
+				
+				const radius = 10;
 				const widthSegments = 32;
 				const heightSegments = 24;
 				const sphereGeometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments);
@@ -57,6 +75,7 @@
 				loadManager.onLoad = () => {
 					loadingElem.style.display = 'none';
 					sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+					sphereMesh.name = "sphere";
 					sphereMesh.scale.x = -1;//flipping the material back because THREE.Backside means were looking from behind which means it's flipped
 					scene.add(sphereMesh);
 					ready = true;
@@ -67,18 +86,83 @@
 					progressBarElem.style.transform = `scaleX(${progress})`;
 				};
 				
+				const raycaster = new THREE.Raycaster();
+				const pointer = new THREE.Vector2();
+				let clicking = false;
+				function onPointerMove( event ) {
+					// calculate pointer position in normalized device coordinates
+					// (-1 to +1) for both components
+					pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+					pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+				}
+				
+				function onPointerDown (event) {
+					clicking = true;
+				}
+				
+				function onPointerUp (event) {
+					clicking = false;
+				}
+			
 				let render = (time) => {
 					time *= 0.001; // convert time to seconds
 					
 					if (ready){
 						//sphereMesh.rotation.y = time/2;
+						
+						// update the picking ray with the camera and pointer position
+						raycaster.setFromCamera( pointer, camera );
+
+						// calculate objects intersecting the picking ray
+						const intersects = raycaster.intersectObjects( scene.children );
+
+						for ( let i = 0; i < intersects.length; i ++ ) {
+						
+							switch (intersects[ i ].object.name ){
+								case 'PIC_1':
+										intersects[ i ].object.scale.x = 2;
+										button2Mesh.scale.x = 1;
+										button3Mesh.scale.x = 1;
+									if (clicking){
+										//if pic1 link was clicked on
+										sphereMaterial.map = sphereTexture1;
+										//button1Mesh.position.set(0, -1.6, -1.5);
+										button2Mesh.position.set(0,-1.6,1.5);
+										button3Mesh.position.set(0,-1.6,3);
+									}
+									break;
+								case 'PIC_2':
+										intersects[ i ].object.scale.x = 2;
+										button3Mesh.scale.x = 1;
+									if (clicking){
+										//if pic2 link was clicked on
+										sphereMaterial.map = sphereTexture2;
+										//button1Mesh.position.set(0, -1.6, -1.5);
+										button2Mesh.position.set(0,-1.6,1.5);
+										button3Mesh.position.set(0,-1.6,3);
+									}
+									break;
+								case 'PIC_3':
+										intersects[ i ].object.scale.x = 2;
+										button2Mesh.scale.x = 1;
+									if (clicking){
+										//if pic3 link was clicked on
+									}
+									break;
+								default:
+									//button2Mesh.scale.x = 1;
+									//button3Mesh.scale.x = 1;
+							}
+						}
 					}
 					
 					renderer.render(scene, camera);
 					
-					requestAnimationFrame(render);
 				}
-				requestAnimationFrame(render);
+				renderer.setAnimationLoop(render);
+				window.addEventListener( 'pointermove', onPointerMove );
+				window.addEventListener( 'pointerdown', onPointerDown );
+				window.addEventListener( 'pointerup', onPointerUp );
 			}
 			main();
 		</script>

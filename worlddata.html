@@ -11,6 +11,7 @@
 		<script type="module">
 			import * as THREE from 'three';
 			import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+			import {VRButton} from 'three/addons/webxr/VRButton.js';
 			
 			let ready = false; //state of the software
 			
@@ -19,6 +20,8 @@
 				const canvas = document.getElementById("c");
 				const renderer = new THREE.WebGLRenderer({antialias: true, canvas});
 				renderer.setPixelRatio(window.devicePixelRatio);
+				renderer.xr.enabled = true;
+				document.body.appendChild(VRButton.createButton(renderer));
 				
 				//set the camera up
 				const fov = 90;
@@ -26,13 +29,15 @@
 				const near = 0.1;
 				const far = 5;
 				const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-				camera.position.z = 2;
+				camera.position.y = 1.6;
 				
 				//orbital camera controls
 				const controls = new OrbitControls(camera, renderer.domElement);
 				controls.enableDamping = true;
 				controls.minDistance = 1.1;
 				controls.maxDistance = 2;
+				controls.target.set(0, 1.6, -2);
+				controls.update();
 				
 				//here we go!
 				const scene = new THREE.Scene();
@@ -50,12 +55,20 @@
 				
 				const EarthDayTexture = loader.load('https://raw.githubusercontent.com/LearningMike/360images/main/2k_earth_daymap.jpg');
 				const EarthNightTexture = loader.load('https://raw.githubusercontent.com/LearningMike/360images/main/2k_earth_nightmap.jpg');
-				const sphereMaterialEarth = new THREE.MeshPhongMaterial({map: EarthDayTexture});
+				const sphereMaterialEarth = new THREE.MeshPhongMaterial({
+					map: EarthDayTexture,
+					emissive: 0xFFFFFF,
+					emissiveMap: EarthNightTexture, 
+					emissiveIntensity: 20,
+					toneMapped: false
+				});
+					
 				let sphereMesh;
 				 
 				loadManager.onLoad = () => {
 					loadingElem.style.display = 'none';
 					sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterialEarth);
+					sphereMesh.position.set(0, 1.6, -2);
 					scene.add(sphereMesh);
 					ready = true;
 				};
@@ -68,8 +81,12 @@
 				const color = 0xFFFFFF;
 				const intensity = 1;
 				const light = new THREE.DirectionalLight(color, intensity);
-				light.position.set(0, 0, 4);
+				light.position.set(0, 1.6, 4);
 				scene.add(light);
+				
+				const aintensity = 0.2;
+				const alight = new THREE.AmbientLight(color, aintensity);
+				scene.add(alight);
 				
 				let render = (time) => {
 					time *= 0.001; // convert time to seconds
@@ -78,15 +95,14 @@
 						sphereMesh.rotation.y = time/2;
 					}
 					
-					if (time > 5){
+					if (time > 3){
 						sphereMaterialEarth.map = EarthNightTexture;
 					}
 					
 					renderer.render(scene, camera);
 					
-					requestAnimationFrame(render);
 				}
-				requestAnimationFrame(render);
+				renderer.setAnimationLoop(render);
 			}
 			main();
 		</script>
