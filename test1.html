@@ -49,6 +49,12 @@
 				const loadManager = new THREE.LoadingManager();
 				const loader = new THREE.TextureLoader(loadManager);
 				
+				const button1Geometry = new THREE.SphereGeometry(0.1, 16, 16);
+				let button1Mesh = new THREE.Mesh(button1Geometry);
+				button1Mesh.name = "PIC_1";
+				button1Mesh.position.set(0,-1.6,0);
+				scene.add(button1Mesh);
+				
 				const button2Geometry = new THREE.SphereGeometry(0.1, 16, 16);
 				let button2Mesh = new THREE.Mesh(button2Geometry);
 				button2Mesh.name = "PIC_2";
@@ -66,10 +72,13 @@
 				const heightSegments = 24;
 				const sphereGeometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments);
 				
-				const sphereTexture1 = loader.load('https://raw.githubusercontent.com/LearningMike/360images/main/PIC_1.jpg');
-				const sphereTexture2 = loader.load('https://raw.githubusercontent.com/LearningMike/360images/main/PIC_2.jpg');
-				const sphereTexture3 = loader.load('https://raw.githubusercontent.com/LearningMike/360images/main/PIC_3.jpg');
-				const sphereMaterial = new THREE.MeshBasicMaterial({side: THREE.BackSide, map: sphereTexture1});
+				const sphereTexture1 = loader.load('https://raw.githubusercontent.com/LearningMike/360images/main/PIC_1-min.jpg');
+				sphereTexture1.colorSpace = THREE.SRGBColorSpace;
+				const sphereTexture2 = loader.load('https://raw.githubusercontent.com/LearningMike/360images/main/PIC_2-min.jpg');
+				sphereTexture2.colorSpace = THREE.SRGBColorSpace;
+				const sphereTexture3 = loader.load('https://raw.githubusercontent.com/LearningMike/360images/main/PIC_3-min.jpg');
+				sphereTexture3.colorSpace = THREE.SRGBColorSpace;
+				const sphereMaterial = new THREE.MeshBasicMaterial({side: THREE.BackSide, color: 0xFFFFFF, map: sphereTexture1});
 				let sphereMesh;
 				 
 				loadManager.onLoad = () => {
@@ -126,32 +135,54 @@
 									if (clicking){
 										//if pic1 link was clicked on
 										sphereMaterial.map = sphereTexture1;
-										//button1Mesh.position.set(0, -1.6, -1.5);
+										
+										button1Mesh.position.set(0, -1.6, 0);
+										button1Mesh.scale.set(0,0,0);
 										button2Mesh.position.set(0,-1.6,1.5);
-										button3Mesh.position.set(0,-1.6,3);
+										button2Mesh.scale.set(1,1,1);
+										button3Mesh.position.set(-0.1,-1.6,3);
+										button3Mesh.scale.set(1,1,1);
 									}
 									break;
 								case 'PIC_2':
 										intersects[ i ].object.scale.x = 2;
+										button1Mesh.scale.x = 1;
 										button3Mesh.scale.x = 1;
 									if (clicking){
 										//if pic2 link was clicked on
 										sphereMaterial.map = sphereTexture2;
-										//button1Mesh.position.set(0, -1.6, -1.5);
-										button2Mesh.position.set(0,-1.6,1.5);
-										button3Mesh.position.set(0,-1.6,3);
+										
+										button1Mesh.position.set(0, -1.6, -1.5);
+										button1Mesh.scale.set(1,1,1);
+										button2Mesh.position.set(0,-1.6,0);
+										button2Mesh.scale.set(0,0,0);
+										button3Mesh.position.set(-1,-1.6,1.5);
+										button3Mesh.scale.set(1,1,1);
 									}
 									break;
 								case 'PIC_3':
 										intersects[ i ].object.scale.x = 2;
+										button1Mesh.scale.x = 1;
 										button2Mesh.scale.x = 1;
 									if (clicking){
 										//if pic3 link was clicked on
+										sphereMaterial.map = sphereTexture3;
+										
+										button1Mesh.position.set(-1.5, -1.6, -2.5);
+										button1Mesh.scale.set(1,1,1);
+										button2Mesh.position.set(-0.2,-1.6,-1.5);
+										button2Mesh.scale.set(1,1,1);
+										button3Mesh.position.set(-1,-1.6,0);
+										button3Mesh.scale.set(0,0,0);
 									}
 									break;
+								case 'sphere':
+									clicking = false;
+									break;
 								default:
-									//button2Mesh.scale.x = 1;
-									//button3Mesh.scale.x = 1;
+									button1Mesh.scale.x = 1;
+									button2Mesh.scale.x = 1;
+									button3Mesh.scale.x = 1;
 							}
 						}
 					}
