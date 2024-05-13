@@ -46,6 +46,8 @@
 				//here we go!
 				const scene = new THREE.Scene();
 				
+				const pickableObjs = new THREE.Object3D();
+				
 				//loading textures
 				const loadingElem = document.querySelector('#loading');
 				const progressBarElem = loadingElem.querySelector('.progressbar');
@@ -57,21 +59,23 @@
 				let button1Mesh = new THREE.Mesh(button1Geometry);
 				button1Mesh.name = "PIC_1";
 				button1Mesh.position.set(0,-1.6,0);
-				scene.add(button1Mesh);
+				pickableObjs.add(button1Mesh);
 				
 				//button linking to PIC_2
 				const button2Geometry = new THREE.SphereGeometry(0.1, 16, 16);
 				let button2Mesh = new THREE.Mesh(button2Geometry);
 				button2Mesh.name = "PIC_2";
 				button2Mesh.position.set(0,-1.6,1.5);
-				scene.add(button2Mesh);
+				pickableObjs.add(button2Mesh);
 				
 				//button linking to PIC_3
 				const button3Geometry = new THREE.SphereGeometry(0.1, 16, 16);
 				let button3Mesh = new THREE.Mesh(button3Geometry);
 				button3Mesh.name = "PIC_3";
 				button3Mesh.position.set(0,-1.6,3);
-				scene.add(button3Mesh);
+				pickableObjs.add(button3Mesh);
+				
+				scene.add(pickableObjs);
 				
 				//THE SPHERE
 				const radius = 10;
@@ -103,23 +107,163 @@
 					progressBarElem.style.transform = `scaleX(${progress})`;
 				};
 				
+				//desktop raycaster
 				const raycaster = new THREE.Raycaster();
 				const pointer = new THREE.Vector2();
 				let clicking = false;
-				//vr controllers
-				for (let i = 0; i < 2; ++i) {
-					const controller = renderer.xr.getController(i);
-					controller.addEventListener('selectstart', (event) => {
-						const controller = event.target;
-						clicking = true;
-					});
-					controller.addEventListener('selectend', (event) => {
-						const controller = event.target;
-						clicking = true;
-					});
-					scene.add(controller);
+				
+				//vr raycaster
+				class ControllerPickHelper extends THREE.EventDispatcher {
+					constructor(scene) {
+						super();
+						this.raycaster = new THREE.Raycaster();
+						this.objectToColorMap = new Map();
+						this.controllerToObjectMap = new Map();
+						this.tempMatrix = new THREE.Matrix4();
+				 
+						const pointerGeometry = new THREE.BufferGeometry().setFromPoints([
+							new THREE.Vector3(0, 0, 0),
+							new THREE.Vector3(0, 0, -1),
+						]);
+				 
+						this.controllers = [];
+						
+						const selectListener = ( event ) => {
+							const controller = event.target;
+							const selectedObject = this.controllerToObjectMap.get( event.target );
+							if ( selectedObject ) {
+
+								this.dispatchEvent( { type: event.type, controller, selectedObject } );
+
+							}
+						};
+						
+						for ( let i = 0; i < 2; ++ i ) {
+
+							const controller = renderer.xr.getController( i );
+							controller.addEventListener( 'select', selectListener );
+							//controller.addEventListener( 'selectstart', selectListener );
+							//controller.addEventListener( 'selectend', endListener );
+							scene.add( controller );
+
+							const line = new THREE.Line( pointerGeometry );
+							line.scale.z = 100;
+							controller.add( line );
+							this.controllers.push( { controller, line } );
+
+						}
+					}
+					reset() {
+						// restore the colors
+						//this.objectToColorMap.forEach((color, object) => {
+							//object.material.emissive.setHex(color);
+						//});
+						//this.objectToColorMap.clear();
+						this.controllerToObjectMap.clear();
+					 }
+					update(pickablesParent, time) {
+						this.reset();
+						for (const {controller, line} of this.controllers) {
+							// cast a ray through the from the controller
+							this.tempMatrix.identity().extractRotation(controller.matrixWorld);
+							this.raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);
+							this.raycaster.ray.direction.set(0, 0, -1).applyMatrix4(this.tempMatrix);
+							// get the list of objects the ray intersected
+							const vrintersections = this.raycaster.intersectObjects(pickablesParent.children);
+							let pickedObject;
+							
+							for ( let i = 0; i < vrintersections.length; i++) {
+								switch (vrintersections[ i ].object.name ){
+									case 'PIC_1':
+										// save which object this controller picked
+										pickedObject = vrintersections[i].object;
+										this.controllerToObjectMap.set( controller, pickedObject );
+										vrintersections[i].object.scale.set(2,2,2);
+										button2Mesh.scale.set(1,1,1);
+										button3Mesh.scale.set(1,1,1);
+										
+										break;
+									case 'PIC_2':
+										// save which object this controller picked
+										pickedObject = vrintersections[i].object;
+										this.controllerToObjectMap.set( controller, pickedObject );
+										vrintersections[ i ].object.scale.set(2,2,2);
+										button1Mesh.scale.set(1,1,1);
+										button3Mesh.scale.set(1,1,1);
+										
+										break;
+									case 'PIC_3':
+										// save which object this controller picked
+										pickedObject = vrintersections[i].object;
+										this.controllerToObjectMap.set( controller, pickedObject );
+										vrintersections[ i ].object.scale.set(2,2,2);
+										button1Mesh.scale.set(1,1,1);
+										button2Mesh.scale.set(1,1,1);
+										
+										break;
+									case 'sphere':
+										//clicking = false;
+										break;
+									default:
+										button1Mesh.scale.x = 1;
+										button2Mesh.scale.x = 1;
+										button3Mesh.scale.x = 1;
+								}
+							}
+						}
+					}
 				}
-				function onPointerMove( event ) {
+				
+				const controllerToSelection = new Map();
+				const pickHelper = new ControllerPickHelper( scene );
+				pickHelper.addEventListener( 'select', ( event ) => {
+				
+					switch (event.selectedObject.name ){
+						case 'PIC_1':
+							//if pic1 link was clicked on
+							sphereMaterial.map = sphereTexture1;
+								
+							button1Mesh.position.set(0, -1.6, 0);
+							button1Mesh.scale.set(0,0,0);
+							button2Mesh.position.set(0,-1.6,1.5);
+							button2Mesh.scale.set(1,1,1);
+							button3Mesh.position.set(-0.1,-1.6,3);
+							button3Mesh.scale.set(1,1,1);
+							break;
+						case 'PIC_2':
+							//if pic2 link was clicked on
+							sphereMaterial.map = sphereTexture2;
+								
+							button1Mesh.position.set(0, -1.6, -1.5);
+							button1Mesh.scale.set(1,1,1);
+							button2Mesh.position.set(0,-1.6,0);
+							button2Mesh.scale.set(0,0,0);
+							button3Mesh.position.set(-1,-1.6,1.5);
+							button3Mesh.scale.set(1,1,1);
+							break;
+						case 'PIC_3':
+							//if pic3 link was clicked on
+							sphereMaterial.map = sphereTexture3;
+								
+							button1Mesh.position.set(-1.5, -1.6, -2.5);
+							button1Mesh.scale.set(1,1,1);
+							button2Mesh.position.set(-0.2,-1.6,-1.5);
+							button2Mesh.scale.set(1,1,1);
+							button3Mesh.position.set(-1,-1.6,0);
+							button3Mesh.scale.set(0,0,0);
+							break;
+						case 'sphere':
+							clicking = false;
+							break;
+						default:
+							button1Mesh.scale.x = 1;
+							button2Mesh.scale.x = 1;
+							button3Mesh.scale.x = 1;
+					}
+
+				} );
+				
+				function onPointerMove(event) {
 					// calculate pointer position in normalized device coordinates
 					// (-1 to +1) for both components
 					pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
@@ -144,6 +288,8 @@
 			
 				let render = (time) => {
 					time *= 0.001; // convert time to seconds
+					
+					pickHelper.update(pickableObjs, time);
 					
 					if (ready){
 						//sphereMesh.rotation.y = time/2;
@@ -232,7 +378,7 @@
 		<div id="loading">
 			<div class="progress"><div class="progressbar"></div></div>
 		</div>
-		<canvas id="c" height="600" width="1200">
+		<canvas id="c">
 		</canvas>
 		<a href="worlddata.html">Other Link</a>
 	</body>
