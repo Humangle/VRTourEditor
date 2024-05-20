@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 	<head>
 		<script  type="importmap">
@@ -20,14 +21,17 @@
 				const canvas = document.getElementById("c");
 				const renderer = new THREE.WebGLRenderer({antialias: true, canvas});
 				renderer.setPixelRatio(window.devicePixelRatio);
+				renderer.setSize(window.innerWidth, window.innerHeight);
 				renderer.xr.enabled = true;
+				renderer.xr.setReferenceSpaceType('local');
+				renderer.xr.setFoveation(1.0);
 				document.body.appendChild(VRButton.createButton(renderer));
 				
 				//set the camera up
-				const fov = 90;
-				const aspect = 2;
+				const fov = 45;
+				const aspect = window.innerWidth/window.innerHeight;
 				const near = 0.1;
-				const far = 5;
+				const far = 100;
 				const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 				camera.position.y = 1.6;
 				
@@ -55,11 +59,14 @@
 				
 				const EarthDayTexture = loader.load('https://raw.githubusercontent.com/LearningMike/360images/main/2k_earth_daymap.jpg');
 				const EarthNightTexture = loader.load('https://raw.githubusercontent.com/LearningMike/360images/main/2k_earth_nightmap.jpg');
+				const EarthNormalTexture = loader.load('https://raw.githubusercontent.com/LearningMike/360images/main/2k_earth_normal_map.tif');
+				const EarthSpecularTexture = loader.load('https://raw.githubusercontent.com/LearningMike/360images/main/2k_earth_specular_map.tif');
 				const sphereMaterialEarth = new THREE.MeshPhongMaterial({
+					color: 0xFFFFFF,
 					map: EarthDayTexture,
 					emissive: 0xFFFFFF,
-					emissiveMap: EarthNightTexture, 
-					emissiveIntensity: 20,
+					emissiveMap: EarthNightTexture,
+					specularMap: EarthSpecularTexture,
 					toneMapped: false
 				});
 					
@@ -79,14 +86,10 @@
 				};
 				
 				const color = 0xFFFFFF;
-				const intensity = 1;
+				const intensity = 3;
 				const light = new THREE.DirectionalLight(color, intensity);
 				light.position.set(0, 1.6, 4);
 				scene.add(light);
-				
-				const aintensity = 0.2;
-				const alight = new THREE.AmbientLight(color, aintensity);
-				scene.add(alight);
 				
 				let render = (time) => {
 					time *= 0.001; // convert time to seconds
@@ -95,8 +98,8 @@
 						sphereMesh.rotation.y = time/2;
 					}
 					
-					if (time > 3){
-						sphereMaterialEarth.map = EarthNightTexture;
+					if (time > 5){
+						//sphereMaterialEarth.emissiveIntensity = 1;
 					}
 					
 					renderer.render(scene, camera);
@@ -112,7 +115,7 @@
 		<div id="loading">
 			<div class="progress"><div class="progressbar"></div></div>
 		</div>
-		<canvas id="c" height="600" width="1200">
+		<canvas id="c">
 		</canvas>
 	</body>
 </html>
