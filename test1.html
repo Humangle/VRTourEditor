@@ -331,23 +331,23 @@
 			//picking the texture to render for performance/quality
 			const links = {
 				"lite":{
-					"PIC_1": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_1-min1024.jpg",
-					"PIC_2": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_2-min1024.jpg",
-					"PIC_3": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_3-min1024.jpg"
-				},
-				"full":{
 					"PIC_1": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_1-min.jpg",
 					"PIC_2": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_2-min.jpg",
 					"PIC_3": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_3-min.jpg"
+				},
+				"full":{
+					"PIC_1": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_1.jpg",
+					"PIC_2": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_2.jpg",
+					"PIC_3": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_3.jpg"
 				}
 			};
 			
-			let version = links.lite;
-			navigator.xr.isSessionSupported('immersive-vr').then(() => {
-				version = links.full;
-			}).catch((err) => {
-				version = links.lite;
-				console.log("This was meant for VR");
+			let version = links.full;
+			navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
+				if (!supported){
+					version = links.lite;
+				}
+				console.log(supported);
 			}).finally(() => {
 				main(version);
 			});
