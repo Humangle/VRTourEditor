@@ -17,33 +17,19 @@
 			
 			let ready = false; //state of the software
 			
-			const CoordToPosition = (lat, lon, crad, cx, cy, cz) => {
-				let latitude_rad = lat * Math.PI / 180;
-				let longitude_rad = lon * Math.PI / 180;
-
-				let xPos= crad * Math.cos(latitude_rad) * Math.cos(longitude_rad);
-				let zPos = crad * Math.cos(latitude_rad) * Math.sin(longitude_rad);
-				let yPos = crad * Math.sin(latitude_rad);
-			   
-				let localcoord = {"x": xPos, "y": yPos, "z": zPos};
-				
-				let worldcoord = {"x": localcoord.x+cx, "y": localcoord.y, "z": localcoord.z+cz};
-				return worldcoord;
-			}
-			
 			let main = () => {
 				//set up the canvas for THREE.js
 				const canvas = document.getElementById("c");
 				const renderer = new THREE.WebGLRenderer({canvas, alpha: true, premultipliedAlpha: false});
 				renderer.setPixelRatio(window.devicePixelRatio);
-				renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+				renderer.setSize(window.innerWidth, window.innerHeight);
 				renderer.xr.enabled = true;
 				renderer.xr.setReferenceSpaceType('local');
 				renderer.xr.setFoveation(1.0);
 				
 				//set the camera up
 				const fov = 45;
-				const aspect = canvas.clientWidth/canvas.clientHeight;
+				const aspect = window.innerWidth/window.innerHeight;
 				const near = 0.1;
 				const far = 100;
 				const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
@@ -56,7 +42,7 @@
 				controls.maxDistance = 0.6;
 				controls.maxPolarAngle = 2;
 				controls.minPolarAngle = 1;
-				controls.target.set(0, -0.4, -0.5);
+				controls.target.set(0, -0.4, -1);
 				controls.update();
 				
 				//here we go!
@@ -90,7 +76,7 @@
 				loadManager.onLoad = () => {
 					loadingElem.style.display = 'none';
 					sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterialEarth);
-					sphereMesh.position.set(0, -0.4, -0.5);
+					sphereMesh.position.set(0, -0.4, -1);
 					scene.add(sphereMesh);
 					ready = true;
 				};
@@ -133,13 +119,6 @@
 					optionalFeatures: ['light-estimation']
 				}));
 				
-				const onWindowResize = () => {
-					camera.aspect = canvas.clientWidth/canvas.clientHeight;
-					camera.updateProjectionMatrix();
-
-					renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-				}
-				
 				let render = (time) => {
 					time *= 0.001; // convert time to seconds
 					
@@ -155,7 +134,6 @@
 					
 				}
 				renderer.setAnimationLoop(render);
-				window.addEventListener('resize', onWindowResize);
 			}
 			main();
 		</script>

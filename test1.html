@@ -16,13 +16,13 @@
 			
 			let ready = false; //state of the software; do we have all textures/resources ready to render?
 			
-			let main = (imglink) => {
+			let main = (view) => {
 			
 				//set up the canvas for THREE.js
 				const canvas = document.getElementById("c");
 				const renderer = new THREE.WebGLRenderer({antialias: true, canvas});
 				renderer.setPixelRatio(window.devicePixelRatio);
-				renderer.setSize(window.innerWidth, window.innerHeight);
+				renderer.setSize(canvas.clientWidth, canvas.clientHeight);
 				renderer.xr.enabled = true;
 				renderer.xr.setReferenceSpaceType('local');
 				renderer.xr.setFoveation(1.0);
@@ -30,7 +30,7 @@
 				
 				//set the camera up
 				const fov = 45;
-				const aspect = window.innerWidth/window.innerHeight;
+				const aspect = canvas.clientWidth/canvas.clientHeight;
 				const near = 0.1;
 				const far = 100;
 				const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
@@ -69,6 +69,14 @@
 				button3Mesh.name = "PIC_3";
 				pickableObjs.add(button3Mesh);
 				
+				//youtube logo/link
+				const buttontestGeometry = new THREE.SphereGeometry(0.05, 64, 16);
+				let buttontestMesh = new THREE.Mesh(buttontestGeometry);
+				const ctp = CoordToPosition(0,0,1,0,1.6,0);
+				buttontestMesh.position.set(ctp.x, ctp.y, ctp.z);
+				console.log(buttontestMesh.position);
+				scene.add(buttontestMesh);
+				
 				scene.add(pickableObjs);
 				
 				//THE SPHERE
@@ -83,11 +91,11 @@
 				const loadManager = new THREE.LoadingManager();
 				const loader = new THREE.TextureLoader(loadManager);
 				
-				const sphereTexture1 = loader.load(imglink.PIC_1);
+				const sphereTexture1 = loader.load(view.PIC_1.img);
 				sphereTexture1.colorSpace = THREE.SRGBColorSpace;
-				const sphereTexture2 = loader.load(imglink.PIC_2);
+				const sphereTexture2 = loader.load(view.PIC_2.img);
 				sphereTexture2.colorSpace = THREE.SRGBColorSpace;
-				const sphereTexture3 = loader.load(imglink.PIC_3);
+				const sphereTexture3 = loader.load(view.PIC_3.img);
 				sphereTexture3.colorSpace = THREE.SRGBColorSpace;
 				const sphereMaterial = new THREE.MeshBasicMaterial({side: THREE.BackSide, color: 0xFFFFFF, map: sphereTexture1});
 				let sphereMesh;
@@ -113,31 +121,31 @@
 						case 'PIC_1':
 							//if pic1 link was clicked on
 							sphereMaterial.map = sphereTexture1;
-							button1Mesh.position.set(0, -1.6, 0);
+							button1Mesh.position.set(view.PIC_1.PIC_1.x, view.PIC_1.PIC_1.y, view.PIC_1.PIC_1.z);
 							button1Mesh.visible = false;
-							button2Mesh.position.set(0,-1.6,1.5);
+							button2Mesh.position.set(view.PIC_1.PIC_2.x, view.PIC_1.PIC_2.y, view.PIC_1.PIC_2.z);
 							button2Mesh.visible = true;
-							button3Mesh.position.set(-0.1,-1.6,3);
+							button3Mesh.position.set(view.PIC_1.PIC_3.x, view.PIC_1.PIC_3.y, view.PIC_1.PIC_3.z);
 							button3Mesh.visible = true;
 							break;
 						case 'PIC_2':
 							//if pic2 link was clicked on
 							sphereMaterial.map = sphereTexture2;
-							button1Mesh.position.set(0, -1.6, -1.5);
+							button1Mesh.position.set(view.PIC_2.PIC_1.x, view.PIC_2.PIC_1.y, view.PIC_2.PIC_1.z);
 							button1Mesh.visible = true;
-							button2Mesh.position.set(0,-1.6,0);
+							button2Mesh.position.set(view.PIC_2.PIC_2.x, view.PIC_2.PIC_2.y, view.PIC_2.PIC_2.z);
 							button2Mesh.visible = false;
-							button3Mesh.position.set(-1,-1.6,1.5);
+							button3Mesh.position.set(view.PIC_2.PIC_3.x, view.PIC_2.PIC_3.y, view.PIC_2.PIC_3.z);
 							button3Mesh.visible = true;
 							break;
 						case 'PIC_3':
 							//if pic3 link was clicked on
 							sphereMaterial.map = sphereTexture3;
-							button1Mesh.position.set(-1.5, -1.6, -2.5);
+							button1Mesh.position.set(view.PIC_3.PIC_1.x, view.PIC_3.PIC_1.y, view.PIC_3.PIC_1.z);
 							button1Mesh.visible = true;
-							button2Mesh.position.set(-0.2,-1.6,-1.5);
+							button2Mesh.position.set(view.PIC_3.PIC_2.x, view.PIC_3.PIC_2.y, view.PIC_3.PIC_2.z);
 							button2Mesh.visible = true;
-							button3Mesh.position.set(-1,-1.6,0);
+							button3Mesh.position.set(view.PIC_3.PIC_3.x, view.PIC_3.PIC_3.y, view.PIC_3.PIC_3.z);
 							button3Mesh.visible = false;
 							break;
 						case 'sphere':
@@ -230,7 +238,7 @@
 							scene.add(controller);
 
 							const line = new THREE.Line(pointerGeometry);
-							line.scale.z = 0.1;
+							line.scale.z = 4;
 							controller.add(line);
 							this.controllers.push({ controller, line });
 
@@ -265,7 +273,7 @@
 										vrintersections[i].object.scale.set(2,1,2);
 										break;
 									case 'sphere':
-										line.scale.z = 0.1;
+										line.scale.z = 4;
 										break;
 									default:
 										line.scale.z = vrintersections[i].distance;
@@ -292,15 +300,15 @@
 				const onPointerMove = (event) => {
 					//calculate pointer position in normalized device coordinates
 					//(-1 to +1) for both components
-					DesktopPicker.pointer.x = (event.clientX/window.innerWidth) * 2 - 1;
-					DesktopPicker.pointer.y = - (event.clientY/window.innerHeight) * 2 + 1;
+					DesktopPicker.pointer.x = (event.clientX/canvas.clientWidth) * 2 - 1;
+					DesktopPicker.pointer.y = - (event.clientY/canvas.clientHeight) * 2 + 1;
 				}
 				
 				const onWindowResize = () => {
-					camera.aspect = window.innerWidth/window.innerHeight;
+					camera.aspect = canvas.clientWidth/canvas.clientHeight;
 					camera.updateProjectionMatrix();
 
-					renderer.setSize(window.innerWidth, window.innerHeight);
+					renderer.setSize(canvas.clientWidth, canvas.clientHeight);
 				}
 			
 				let render = (time) => {
@@ -330,15 +338,45 @@
 			
 			//picking the texture to render for performance/quality
 			const links = {
-				"lite":{
-					"PIC_1": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_1-min.jpg",
-					"PIC_2": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_2-min.jpg",
-					"PIC_3": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_3-min.jpg"
+				"lite": {
+					"PIC_1": {
+						"img": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_1-min.jpg",
+						"PIC_1": {"x": 0, "y": -1.6, "z": 0},
+						"PIC_2": {"x": 0.41042417199080256, "y": -1.6, "z": 1.12763114494309},
+						"PIC_3": {"x": -0.261467228242974, "y": -1.6, "z": 2.988584094275237}
+					},
+					"PIC_2": {
+						"img": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_2-min.jpg",
+						"PIC_1": {"x": -0.13073361412148737, "y": -1.6, "z": -1.4942920471376184},
+						"PIC_2": {"x": 0, "y": -1.6, "z": 0},
+						"PIC_3": {"x": -1.0324375854318826, "y": -1.6, "z": 1.4744736797201856}
+					},
+					"PIC_3": {
+						"img": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_3-min.jpg",
+						"PIC_1": {"x": -1.2678547852220998, "y": -1.6, "z": -2.7189233611099493},
+						"PIC_2": {"x": -0.15688033694578485, "y": -1.6, "z": -1.793150456565142},
+						"PIC_3": {"x": -1, "y": -1.6, "z": 0}
+					}
 				},
-				"full":{
-					"PIC_1": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_1.jpg",
-					"PIC_2": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_2.jpg",
-					"PIC_3": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_3.jpg"
+				"full": {
+					"PIC_1": {
+						"img": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_1.jpg",
+						"PIC_1": {"x": 0, "y": -1.6, "z": 0},
+						"PIC_2": {"x": 0.41042417199080256, "y": -1.6, "z": 1.12763114494309},
+						"PIC_3": {"x": -0.2614672282429747, "y": -1.6, "z": 2.988584094275237}
+					},
+					"PIC_2": {
+						"img": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_2.jpg",
+						"PIC_1": {"x": -0.13073361412148737, "y": -1.6, "z": -1.4942920471376184},
+						"PIC_2": {"x": 0, "y": -1.6, "z": 0},
+						"PIC_3": {"x": -1.0324375854318826, "y": -1.6, "z": 1.4744736797201856}
+					},
+					"PIC_3": {
+						"img": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_3.jpg",
+						"PIC_1": {"x": -1.2678547852220998, "y": -1.6, "z": -2.7189233611099493},
+						"PIC_2": {"x": -0.15688033694578485, "y": -1.6, "z": -1.793150456565142},
+						"PIC_3": {"x": -1, "y": -1.6, "z": 0}
+					}
 				}
 			};
 			
@@ -347,10 +385,24 @@
 				if (!supported){
 					version = links.lite;
 				}
-				console.log(supported);
 			}).finally(() => {
 				main(version);
 			});
+			
+			//i'm only using longitude for this project
+			const CoordToPosition = (lat, lon, dep, cx, cy, cz) => {
+				let latRad = 0 * Math.PI / 180; //0 replaced lat here only for this project
+				let lonRad = lon * Math.PI / 180;
+
+				let xPos= dep * Math.cos(latRad) * Math.cos(lonRad);
+				let zPos = dep * Math.cos(latRad) * Math.sin(lonRad);
+				let yPos = dep * Math.sin(latRad);
+			   
+				let localcoord = {"x": xPos, "y": yPos, "z": zPos};
+				
+				let worldcoord = {"x": localcoord.x+cx, "y": -1.6, "z": localcoord.z+cz};
+				return worldcoord;
+			}
 			
 		</script>
 		<link rel="stylesheet" href="main.css" />
