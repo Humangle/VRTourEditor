@@ -127,11 +127,11 @@
 				renderer.initTexture(EarthWaterTexture);
 				renderer.initTexture(EarthSpecularTexture);
 				
-				const sphereMaterialEarth = new THREE.MeshStandardMaterial({
+				const sphereMaterialEarth = new THREE.MeshPhongMaterial({
 					color: 0xFFFFFF,
 					map: EarthDayTexture,
 					emissive: 0xFFFFFF,
-					emissiveMap: EarthNightTexture,
+					emissiveMap: EarthPopulationTexture,
 					emissiveIntensity: 0,
 					specularMap: EarthSpecularTexture,
 					toneMapped: false
@@ -196,30 +196,63 @@
 				const electricity = (show) => {
 					if (show){
 						sphereMaterialEarth.emissiveMap = EarthNightTexture;
-						sphereMaterialEarth.emissiveIntensity += 0.01;
+						if ((sphereMaterialEarth.emissiveIntensity + 0.01) < 1) {
+							sphereMaterialEarth.emissiveIntensity += 0.01;
+						}
 						if ((desktoplight.intensity - 0.015) > 0) {
 							desktoplight.intensity -= 0.015;
 						}
+						console.log("increasing electricity");
 					} else {
-						sphereMaterialEarth.emissiveIntensity -= 0.02;
-						if ((desktoplight.intensity + 0.03) > 0) {
-							desktoplight.intensity += 0.03;
+						if ((sphereMaterialEarth.emissiveIntensity - 0.01) > 0) {
+							sphereMaterialEarth.emissiveIntensity -= 0.01;
 						}
+						if ((desktoplight.intensity + 0.015) < 2) {
+							desktoplight.intensity += 0.015;
+						}
+						console.log("decreasing electricity");
 					}
 				}
 				
 				const population = (show) => {
 					if (show){
 						sphereMaterialEarth.emissiveMap = EarthPopulationTexture;
-						sphereMaterialEarth.emissiveIntensity += 0.01;
+						if ((sphereMaterialEarth.emissiveIntensity + 0.01) < 1) {
+							sphereMaterialEarth.emissiveIntensity += 0.01;
+						}
 						if ((desktoplight.intensity - 0.015) > 0) {
 							desktoplight.intensity -= 0.015;
 						}
+						console.log("increasing population");
 					} else {
-						sphereMaterialEarth.emissiveIntensity -= 0.02;
-						if ((desktoplight.intensity + 0.03) > 0) {
-							desktoplight.intensity += 0.03;
+						if ((sphereMaterialEarth.emissiveIntensity - 0.01) > 0) {
+							sphereMaterialEarth.emissiveIntensity -= 0.01;
 						}
+						if ((desktoplight.intensity + 0.015) < 2) {
+							desktoplight.intensity += 0.015;
+						}
+						console.log("decreasing population");
+					}
+				}
+				
+				const water = (show) => {
+					if (show){
+						sphereMaterialEarth.emissiveMap = EarthWaterTexture;
+						if ((sphereMaterialEarth.emissiveIntensity + 0.01) < 1) {
+							sphereMaterialEarth.emissiveIntensity += 0.01;
+						}
+						if ((desktoplight.intensity - 0.015) > 0) {
+							desktoplight.intensity -= 0.015;
+						}
+						console.log("increasing water");
+					} else {
+						if ((sphereMaterialEarth.emissiveIntensity - 0.01) > 0) {
+							sphereMaterialEarth.emissiveIntensity -= 0.01;
+						}
+						if ((desktoplight.intensity + 0.015) < 2) {
+							desktoplight.intensity += 0.015;
+						}
+						console.log("decreasing water");
 					}
 				}
 				
@@ -232,12 +265,20 @@
 					
 					if (time > 5 && time < 8){
 						electricity(true);
-					} else if (time > 8 && time < 11){
+					} else if (time > 15 && time < 18){
 						electricity(false);
 					}
 					
-					if (time > 11 && time < 14){
+					if (time > 25 && time < 28){
 						population(true);
+					} else if (time > 35 && time < 38){
+						population(false);
+					}
+					
+					if (time > 45 && time < 48){
+						water(true);
+					} else if (time > 55 && time < 58){
+						//water(false);
 					}
 					
 					renderer.render(scene, camera);
