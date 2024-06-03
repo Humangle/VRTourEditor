@@ -116,10 +116,18 @@
 				const heightSegments = 24;
 				const sphereGeometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments);
 				
-				const EarthDayTexture = loader.load('https://raw.githubusercontent.com/LearningMike/360images/main/2k_earth_daymap.jpg');
-				const EarthNightTexture = loader.load('https://raw.githubusercontent.com/LearningMike/360images/main/2k_earth_nightmap.jpg');
+				const EarthDayTexture = loader.load('https://raw.githubusercontent.com/LearningMike/360images/main/8k_earth_daymap.jpg');
+				const EarthNightTexture = loader.load('https://raw.githubusercontent.com/LearningMike/360images/main/8k_earth_nightmap.jpg');
+				const EarthPopulationTexture = loader.load('https://raw.githubusercontent.com/LearningMike/360images/main/8k_popdensity.jpg');
+				const EarthWaterTexture = loader.load('https://raw.githubusercontent.com/LearningMike/360images/main/8k_waterarea.jpg');
 				const EarthSpecularTexture = loader.load('https://raw.githubusercontent.com/LearningMike/360images/main/2k_earth_specular_map.tif');
-				const sphereMaterialEarth = new THREE.MeshPhongMaterial({
+				renderer.initTexture(EarthDayTexture);
+				renderer.initTexture(EarthNightTexture);
+				renderer.initTexture(EarthPopulationTexture);
+				renderer.initTexture(EarthWaterTexture);
+				renderer.initTexture(EarthSpecularTexture);
+				
+				const sphereMaterialEarth = new THREE.MeshStandardMaterial({
 					color: 0xFFFFFF,
 					map: EarthDayTexture,
 					emissive: 0xFFFFFF,
@@ -146,14 +154,15 @@
 				
 				const desktoplight = new THREE.DirectionalLight(0xFFFFFF, 2);
 				desktoplight.position.set(0, 1.2, 4);
-				scene.add(desktoplight);
+				camera.add(desktoplight);
+				scene.add(camera);
 				// Don't add the XREstimatedLight to the scene initially.
 				// It doesn't have any estimated lighting values until an AR session starts.
 				const xrLight = new XREstimatedLight(renderer);
 				
 				xrLight.addEventListener( 'estimationstart' , () => {
 
-					scene.remove(desktoplight);
+					camera.remove(desktoplight);
 					scene.add(xrLight);
 
 					if (xrLight.environment) {
@@ -169,7 +178,7 @@
 					scene.remove(xrLight);
 					scene.environment = null;
 					
-					scene.add(desktoplight);
+					camera.add(desktoplight);
 
 				} );
 
@@ -184,6 +193,36 @@
 					renderer.setSize(canvas.clientWidth, canvas.clientHeight);
 				}
 				
+				const electricity = (show) => {
+					if (show){
+						sphereMaterialEarth.emissiveMap = EarthNightTexture;
+						sphereMaterialEarth.emissiveIntensity += 0.01;
+						if ((desktoplight.intensity - 0.015) > 0) {
+							desktoplight.intensity -= 0.015;
+						}
+					} else {
+						sphereMaterialEarth.emissiveIntensity -= 0.02;
+						if ((desktoplight.intensity + 0.03) > 0) {
+							desktoplight.intensity += 0.03;
+						}
+					}
+				}
+				
+				const population = (show) => {
+					if (show){
+						sphereMaterialEarth.emissiveMap = EarthPopulationTexture;
+						sphereMaterialEarth.emissiveIntensity += 0.01;
+						if ((desktoplight.intensity - 0.015) > 0) {
+							desktoplight.intensity -= 0.015;
+						}
+					} else {
+						sphereMaterialEarth.emissiveIntensity -= 0.02;
+						if ((desktoplight.intensity + 0.03) > 0) {
+							desktoplight.intensity += 0.03;
+						}
+					}
+				}
+				
 				let render = (time) => {
 					time *= 0.001; // convert time to seconds
 					
@@ -191,9 +230,14 @@
 						//sphereMesh.rotation.y = time/2;
 					}
 					
-					if (time > 4 && time < 7){
-						sphereMaterialEarth.emissiveIntensity += 0.01;
-						desktoplight.intensity -= 0.015;
+					if (time > 5 && time < 8){
+						electricity(true);
+					} else if (time > 8 && time < 11){
+						electricity(false);
+					}
+					
+					if (time > 11 && time < 14){
+						population(true);
 					}
 					
 					renderer.render(scene, camera);
