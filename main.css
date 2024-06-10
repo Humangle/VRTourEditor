@@ -31,3 +31,19 @@ body {
     transform-origin: top left;
     transform: scaleX(0);
 }
+div#datatabs {
+	display: flex;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: inherit;
+	margin: 5px;
+}
+div.maptab {
+	margin: 5px;
+	padding: 25px;
+	background-color: #0000FF;
+}
+div.maptab:hover {
+	background-color: #0000AA;
+}

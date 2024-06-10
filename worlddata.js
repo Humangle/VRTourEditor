@@ -3,7 +3,18 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {ARButton} from 'three/addons/webxr/ARButton.js';
 import {XREstimatedLight} from 'three/addons/webxr/XREstimatedLight.js';
 
-let ready = false; //state of the software
+let ready = false; //state of the software textures
+
+let sptexture = 0; //texture on display
+let spreset = true;
+const setstate = (i) => {
+	if (sptexture != i) {
+		spreset = true;
+	} else {
+		spreset = false;
+	}
+	sptexture = i;
+}
 
 const CoordToPosition = (lat, lon, crad, cx, cy, cz) => {
 	let latRad = lat * Math.PI / 180;
@@ -177,11 +188,16 @@ let main = () => {
 	
 	const electricity = (show) => {
 		if (show){
-			sphereMaterialEarth.emissiveMap = EarthNightTexture;
+			if (spreset){
+				sphereMaterialEarth.emissiveMap = EarthNightTexture;
+				sphereMaterialEarth.emissiveIntensity = 0;
+				desktoplight.intensity = 2;
+				spreset = false;
+			}
 			if ((sphereMaterialEarth.emissiveIntensity + 0.01) < 1) {
 				sphereMaterialEarth.emissiveIntensity += 0.01;
 			}
-			if ((desktoplight.intensity - 0.02) > 0) {
+			if ((desktoplight.intensity - 0.02) > 0.4) {
 				desktoplight.intensity -= 0.02;
 			}
 			console.log("increasing electricity");
@@ -191,6 +207,8 @@ let main = () => {
 			}
 			if ((desktoplight.intensity + 0.02) < 2) {
 				desktoplight.intensity += 0.02;
+			} else {
+				spreset = true;
 			}
 			console.log("decreasing electricity");
 		}
@@ -198,20 +216,27 @@ let main = () => {
 	
 	const population = (show) => {
 		if (show){
-			sphereMaterialEarth.emissiveMap = EarthPopulationTexture;
+			if (spreset){
+				sphereMaterialEarth.emissiveMap = EarthPopulationTexture;
+				sphereMaterialEarth.emissiveIntensity = 0;
+				desktoplight.intensity = 2;
+				spreset = false;
+			}
 			if ((sphereMaterialEarth.emissiveIntensity + 0.01) < 1) {
 				sphereMaterialEarth.emissiveIntensity += 0.01;
 			}
-			if ((desktoplight.intensity - 0.005) > 0) {
-				desktoplight.intensity -= 0.005;
+			if ((desktoplight.intensity - 0.02) > 0.4) {
+				desktoplight.intensity -= 0.02;
 			}
 			console.log("increasing population");
 		} else {
 			if ((sphereMaterialEarth.emissiveIntensity - 0.01) > 0) {
 				sphereMaterialEarth.emissiveIntensity -= 0.01;
 			}
-			if ((desktoplight.intensity + 0.005) < 2) {
-				desktoplight.intensity += 0.005;
+			if ((desktoplight.intensity + 0.02) < 2) {
+				desktoplight.intensity += 0.02;
+			} else {
+				spreset = true;
 			}
 			console.log("decreasing population");
 		}
@@ -219,47 +244,77 @@ let main = () => {
 	
 	const water = (show) => {
 		if (show){
-			sphereMaterialEarth.emissiveMap = EarthWaterTexture;
-			if ((sphereMaterialEarth.emissiveIntensity + 0.01) < 1) {
+			if (spreset){
+				sphereMaterialEarth.emissiveMap = EarthWaterTexture;
+				sphereMaterialEarth.emissiveIntensity = 0;
+				desktoplight.intensity = 2;
+				spreset = false;
+			}
+			if ((sphereMaterialEarth.emissiveIntensity + 0.01) < 0.6) {
 				sphereMaterialEarth.emissiveIntensity += 0.01;
 			}
-			if ((desktoplight.intensity - 0.005) > 0) {
-				desktoplight.intensity -= 0.005;
+			if ((desktoplight.intensity - 0.02) > 1.4) {
+				desktoplight.intensity -= 0.02;
 			}
 			console.log("increasing water");
 		} else {
 			if ((sphereMaterialEarth.emissiveIntensity - 0.01) > 0) {
 				sphereMaterialEarth.emissiveIntensity -= 0.01;
 			}
-			if ((desktoplight.intensity + 0.005) < 2) {
-				desktoplight.intensity += 0.005;
+			if ((desktoplight.intensity + 0.02) < 2) {
+				desktoplight.intensity += 0.02;
+			} else {
+				spreset = true;
 			}
 			console.log("decreasing water");
 		}
 	}
 	
+	let startime = 0;
+	
 	let render = (time) => {
-		
 		time *= 0.001; // convert time to seconds
 		
-		if (ready){
+		if (ready && renderer.xr.isPresenting){
 			//sphereMesh.rotation.y = time/2;
-			if (time > 5 && time < 8){
+			
+			if (startime == 0) {
+				startime = time;
+			}
+			
+			let tim = time - startime;
+			
+			if (tim > 3 && tim < 6){
 				electricity(true);
-			} else if (time > 15 && time < 18){
+			} else if (tim > 13 && tim < 16){
 				electricity(false);
 			}
 			
-			if (time > 25 && time < 28){
+			if (tim > 23 && tim < 26){
 				population(true);
-			} else if (time > 35 && time < 38){
+			} else if (tim > 33 && tim < 36){
 				population(false);
 			}
 			
-			if (time > 45 && time < 48){
+			if (tim > 43 && tim < 46){
 				water(true);
-				} else if (time > 55 && time < 58){
-				//water(false);
+			} else if (tim > 53 && tim < 56){
+				water(false);
+			}
+		} else if (ready){
+			switch (sptexture) {
+				case 0:
+					//
+					break;
+				case 1:
+					electricity(true);
+					break;
+				case 2:
+					population(true);
+					break;
+				case 3:
+					water(true);
+					break;
 			}
 		}
 		
@@ -268,5 +323,8 @@ let main = () => {
 	
 	renderer.setAnimationLoop(render);
 	window.addEventListener('resize', onWindowResize);
+	document.getElementById("electricity").addEventListener("click", () => setstate(1));
+	document.getElementById("population").addEventListener("click", () => setstate(2));
+	document.getElementById("water").addEventListener("click", () => setstate(3));
 }
 main();
