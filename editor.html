@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script	type="importmap">
+			{
+				"imports": {
+					"three": "https://threejs.org/build/three.module.js",
+					"three/addons/" : "https://threejs.org/examples/jsm/"
+				}
+			}
+		</script>
+		<script type="module" src="editor.js"></script>
+		<link rel="stylesheet" href="editor.css" />
+		<title>Humangle VR Tour Editor</title>
+	</head>
+	<body>
+		<div id="loading">
+			<div class="progress"><div class="progressbar"></div></div>
+		</div>
+		<canvas id="c">
+		</canvas>
+		<div id="create">➕</div>
+		<div id="newlink">
+			<div id="close"><span class="close">❌</span></div>
+			<input id="linkname" type="text" placeholder="Name" /><br/>
+			<input id="linklink" type="text" placeholder="Link" /><br/>
+			<button id="newlinkbtn"> Add </button>
+		</div>
+	</body>
+	<script>
+		
+	</script>
+</html>

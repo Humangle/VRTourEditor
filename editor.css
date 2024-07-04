@@ -1,0 +1,64 @@
+body {
+	margin: 0px;
+}
+#c {
+	display: block;
+	height: 50%;
+	width: 50%;
+	margin: 0px;
+	padding: 0px;
+	background: none;
+}
+#loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#loading .progress {
+    margin: 1.5em;
+    border: 1px solid white;
+    width: 50vw;
+}
+#loading .progressbar {
+    margin: 2px;
+    background: white;
+    height: 1em;
+    transform-origin: top left;
+    transform: scaleX(0);
+}
+#newlink {
+	position: fixed;
+	top: 0;
+	left: 0;
+	margin: 10%;
+	padding: 10%;
+	display: none;
+}
+.close {
+	float: right;
+	cursor: pointer;
+}
+#create {
+	cursor: pointer;
+	font-size: 24px;
+	position: fixed;
+	margin: 1%;
+	padding: 1%;
+	bottom: 0;
+	right: 0;
+}
+button {
+	cursor: pointer;
+	margin-top: 10px;
+	padding: 10px;
+}
+input {
+	margin-top: 10px;
+	padding: 10px;
+	width: 50vw;
+}
