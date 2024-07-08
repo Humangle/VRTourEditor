@@ -84,9 +84,14 @@ let main = async (view) => {
 		progressBarElem.style.transform = `scaleX(${progress})`;
 	};
 	
+	loadManager.onLoad = () => {
+		document.body.style.cursor = "auto";
+	}
+	
 	//switch to the view of the button selected
 	const teleport = async (imglink) => {
 		//if pic1 link was clicked on
+		document.body.style.cursor = "wait";
 		const sT0 = await loader.loadAsync(imglink);
 		const sphereTexture0 = new THREE.CanvasTexture(sT0);
 		sphereTexture0.colorSpace = THREE.SRGBColorSpace;
@@ -249,6 +254,31 @@ let main = async (view) => {
 	window.addEventListener('pointermove', onPointerMove);
 	window.addEventListener('resize', onWindowResize);
 	
+	const switchTabs = (name) => {
+		//teleport to view
+		teleport(links.full[name].img);
+		
+		//set tabheader to white
+		const tabname = "tab_" + name;
+		for (const x in links.full){
+			//every other tab back to blue
+			const tabid = "tab_" + x;
+			document.getElementById(tabid).style.background = "blue";
+		}
+		document.getElementById(tabname).style.background = "white";
+		
+		//fill tab contents
+		document.getElementById("linkdataname").value = name;
+		document.getElementById("linkdatalink").value = links.full[name].img;
+		document.getElementById("positions").innerHTML = "";
+		for (const plink in links.full[name][name]){
+			//finish designing the sxyz html first and then add the html design dynamically here
+			let positionlink = document.createElement("div");
+			positionlink.setAttribute("class", "plink");
+			document.getElementById(positions).append(positionlink);
+		}
+	}
+	
 	document.getElementById("create").addEventListener('click', (event) => {
 		document.getElementById("newlink").style.display = "block";
 		document.getElementById("create").style.display = "none";
@@ -271,7 +301,22 @@ let main = async (view) => {
 			document.getElementById("create").style.display = "block";
 			console.log(JSON.stringify(links.full));
 			teleport(links.full[linkname].img);
-			//append link to the UI
+			//clear tab data
+			document.getElementById("linkdata").style.display = "block";
+			document.getElementById("positions").innerHTML = "";
+			document.getElementById("createposition").style.display = "block";
+			//add new tab
+			let tabhead = document.createElement("div");
+			tabhead.setAttribute("class", "tabhead");
+			tabhead.innerText = linkname;
+			tabhead.setAttribute("title", linkname);
+			const tabid = "tab_" + linkname;
+			tabhead.setAttribute("id", tabid);
+			document.getElementById("tabheader").append(tabhead);
+			document.getElementById(tabid).addEventListener("click", function(e) {
+				switchTabs(e.target.innerText);
+			});
+			switchTabs(linkname);
 		} else {
 			console.log("empty!");
 		}
@@ -287,6 +332,11 @@ let links = {
 		
 	}
 };
+
+//set tab headers
+for (const x in links.full){
+	//this will be useful if we can load saved projects
+}
 
 main();
 
