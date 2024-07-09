@@ -42,6 +42,16 @@ body {
 	margin: 10%;
 	padding: 10%;
 	display: none;
+	background: white;
+}
+#newplink {
+	position: fixed;
+	top: 0;
+	left: 0;
+	margin: 10%;
+	padding: 10%;
+	display: none;
+	background: white;
 }
 .close {
 	float: right;
@@ -57,6 +67,7 @@ body {
 	right: 0;
 }
 #createposition {
+	display: block;
 	cursor: pointer;
 	font-size: 24px;
 	margin: 1%;
@@ -76,16 +87,19 @@ input {
 	width: 50vw;
 }
 #tabs {
+	margin: 0px;
 	height: 100vh;
-	max-width: 30vw;
+	width: 30vw;
 }
 #tabheader {
+	margin: 0px;
 	display: flex;
-	max-width: 30vw;
+	width: 30vw;
 	overflow-x: auto;
 	scrollbar-width: none;
 	-ms-overflowstyle: none;
 	font-size: 0.8em;
+	background: blue;
 }
 .tabhead {
 	cursor: pointer;
@@ -111,7 +125,16 @@ input {
 	width: 20vw;
 }
 #positions {
-	display: none;
+	display: block;
 	overflow-y: auto;
 	padding: 1vw;
+}
+.plink input {
+	margin-top: 1px;
+	padding: 5px;
+	width: 50px;
+	font-size: 0.5em;
+}
+.plink {
+	display: flex;
 }
