@@ -271,16 +271,24 @@ let main = async (view) => {
 		document.getElementById("linkdataname").value = name;
 		document.getElementById("linkdatalink").value = links.full[name].img;
 		document.getElementById("positions").innerHTML = "";
-		for (const plink in links.full[name][name]){
-			//adding positions from links
-			let positionlink = document.createElement("div");
-			positionlink.setAttribute("class", "plink");
-			let sedit = '<div> S: <input id="pls_'+name+'" type="number" placeholder="'+plink.s+'"/></div>';
-			let xedit = '<div> X: <input id="plx_'+name+'" type="number" placeholder="'+plink.x+'"/></div>';
-			let yedit = '<div> Y: <input id="ply_'+name+'" type="number" placeholder="'+plink.y+'"/></div>';
-			let zedit = '<div> Z: <input id="plz_'+name+'" type="number" placeholder="'+plink.z+'"/></div>';
-			positionlink.innerHTML = sedit + xedit + yedit + zedit + '<div> 🗑️ </div>';
-			document.getElementById(positions).append(positionlink);
+		for (const plink in links.full[name]){
+			if ((plink != name) && (plink != "img") && (plink != "stereo")){
+				//adding positions from links
+				let plob = links.full[name][plink];
+				let positionlink = document.createElement("div");
+				positionlink.setAttribute("class", "plink");
+				let sedit = '<div><b>'+plink+': </b> Scale: <input id="pls_'+plink+'" type="number" placeholder="'+plob.s+'"/></div>';
+				positionlink.innerHTML = sedit + '<div class="dpl" id="dpl_'+plink+'"> 🗑️ </div>';
+				document.getElementById("positions").append(positionlink);
+				let scaleid = "pls_"+plink;
+				let dplid = "dpl_"+plink;
+				document.getElementById(dplid).addEventListener("click", function(e) {
+					console.log(e.id);
+				});
+				document.getElementById(scaleid).addEventListener("input", function(e) {
+					console.log(e.id);
+				});
+			}
 		}
 	}
 	
@@ -295,13 +303,16 @@ let main = async (view) => {
 	document.getElementById("createposition").addEventListener('click', (event) => {
 		document.getElementById("newplink").style.display = "block";
 		document.getElementById("createposition").style.display = "none";
+		let tabname = document.getElementById("linkdataname").value;
 		let viewlist = document.getElementById("picklink");
 		viewlist.innerHTML = "";
 		for (const x in links.full){
-			let linkoptions = document.createElement("option");
-			linkoptions.value = x;
-			linkoptions.innerHTML = x;
-			viewlist.append(linkoptions);
+			if (x != tabname){
+				let linkoptions = document.createElement("option");
+				linkoptions.value = x;
+				linkoptions.innerHTML = x;
+				viewlist.append(linkoptions);
+			}
 		}
 	});
 	document.getElementById("closepl").addEventListener('click', (event) => {
@@ -343,18 +354,20 @@ let main = async (view) => {
 	});
 	
 	document.getElementById("newplinkbtn").addEventListener('click', (event) => {
-		//don't forget to add to the links object first
-		for (const plink in links.full[name][name]){
-			//adding new default position
-			let positionlink = document.createElement("div");
-			positionlink.setAttribute("class", "plink");
-			let sedit = '<div> S: <input id="pls_'+name+'" type="number" placeholder="'+plink.s+'"/></div>';
-			let xedit = '<div> X: <input id="plx_'+name+'" type="number" placeholder="'+plink.x+'"/></div>';
-			let yedit = '<div> Y: <input id="ply_'+name+'" type="number" placeholder="'+plink.y+'"/></div>';
-			let zedit = '<div> Z: <input id="plz_'+name+'" type="number" placeholder="'+plink.z+'"/></div>';
-			positionlink.innerHTML = sedit + xedit + yedit + zedit + '<div> 🗑️ </div>';
-			document.getElementById(positions).append(positionlink);
+		//add plink to links object
+		const linkname = document.getElementById("linkdataname").value;
+		const plinkname = document.getElementById("picklink").value;
+		links.full[linkname][plinkname] = {
+			"s" : 1.0,
+			"x" : 0.0,
+			"y" : -1.6,
+			"z" : 0.0
 		}
+		console.log(JSON.stringify(links.full));
+		const plink = links.full[linkname][plinkname];
+		switchTabs(linkname);
+		document.getElementById("newplink").style.display = "none";
+		document.getElementById("createposition").style.display = "block";
 	});
 }
 
