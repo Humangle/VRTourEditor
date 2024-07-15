@@ -138,3 +138,6 @@ input {
 .plink {
 	display: flex;
 }
+.dpl {
+	cursor: pointer;
+}

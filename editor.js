@@ -277,16 +277,33 @@ let main = async (view) => {
 				let plob = links.full[name][plink];
 				let positionlink = document.createElement("div");
 				positionlink.setAttribute("class", "plink");
+				positionlink.setAttribute("id", "pl_"+plink);
 				let sedit = '<div><b>'+plink+': </b> Scale: <input id="pls_'+plink+'" type="number" placeholder="'+plob.s+'"/></div>';
-				positionlink.innerHTML = sedit + '<div class="dpl" id="dpl_'+plink+'"> 🗑️ </div>';
+				positionlink.innerHTML = '<div class="tog" id="tog_'+plink+'"> 👁️ </div>' + sedit + '<div class="dpl" id="dpl_'+plink+'"> 🗑️ </div>';
 				document.getElementById("positions").append(positionlink);
 				let scaleid = "pls_"+plink;
 				let dplid = "dpl_"+plink;
+				let togid = "tog_"+plink;
+				document.getElementById(togid).addEventListener("click", function(e) {
+					//turn every other link toggle off
+					
+					//set clinkplink (don't forget to set current link-position-link to false in switchTab)
+				});
 				document.getElementById(dplid).addEventListener("click", function(e) {
-					console.log(e.id);
+					const viewname = document.getElementById("linkdataname").value;
+					const plinkTo = e.target.id.substring(4);
+					//delete position link
+					for (const j in links.full[viewname][plinkTo]) {
+						delete links.full[viewname][plinkTo][j];
+					}
+					delete links.full[viewname][plinkTo];
+					switchTabs(viewname);
 				});
 				document.getElementById(scaleid).addEventListener("input", function(e) {
-					console.log(e.id);
+					const viewname = document.getElementById("linkdataname").value;
+					const plinkTo = e.target.id.substring(4);
+					//update position link scale
+					links.full[viewname][plinkTo].s = parseInt(e.target.value);
 				});
 			}
 		}
@@ -380,12 +397,6 @@ let links = {
 		
 	}
 };
-
-//set tab headers
-for (const x in links.full){
-	//this will be useful if we can load saved projects
-	
-}
 
 main();
 
