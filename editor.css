@@ -137,6 +137,14 @@ input {
 }
 .plink {
 	display: flex;
+	background: white;
+}
+.pl_edit {
+	background: white;
+	cursor: pointer;
+}
+.pl_edit:hover {
+	background: grey;
 }
 .dpl {
 	cursor: pointer;

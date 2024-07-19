@@ -49,6 +49,19 @@ let main = async (view) => {
 	button1Mesh.name = "PIC_1";
 	pickableObjs.add(button1Mesh);
 	
+	//position link placer
+	let clinkplink = false;
+	let plinkplacer = new THREE.Object3D();
+	plinkplacer.position.set(0, 1.6, 0);
+	scene.add(plinkplacer);
+	let gizmoMaterial = new THREE.MeshPhongMaterial({emissive: 0xFFFFFF, opacity:1.0, transparent: true});
+	const gizmoGeometry = new THREE.SphereGeometry(2, 64, 16);
+	let plinkgizmo = new THREE.Mesh(gizmoGeometry, gizmoMaterial);
+	plinkgizmo.position.z = 80;
+	plinkgizmo.visible = false;
+	plinkplacer.add(plinkgizmo);
+	plinkgizmo.scale.set(2, 1, 2);
+	
 	scene.add(pickableObjs);
 	
 	//THE SPHERE
@@ -115,6 +128,19 @@ let main = async (view) => {
 				if (this.selectedObject) { 
 					this.dispatchEvent({type: event.type, object: this.selectedObject});
 				}
+				if (clinkplink && (event.target.id == "c")){
+					//set plinkplacer rotation to raycaster rotation
+					plinkplacer.position.copy(camera.position);
+					plinkplacer.lookAt(this.raycaster.ray.direction);
+					//update the new link position in the link object
+					let ldname = document.getElementById("linkdataname").value;
+					let worldposition = new THREE.Vector3();
+					plinkgizmo.getWorldPosition(worldposition);
+					links.full[ldname][clinkplink]["x"] = worldposition.x;
+					links.full[ldname][clinkplink]["y"] = worldposition.y;
+					links.full[ldname][clinkplink]["z"] = worldposition.z;
+					console.log(JSON.stringify(links.full[ldname][clinkplink]));
+				}					
 			}
 			
 			//window.addEventListener('pointerdown', onPointerDown);
@@ -131,12 +157,28 @@ let main = async (view) => {
 			//objects intersecting the Desktop Raycaster
 			const intersections = this.raycaster.intersectObjects(pickablesParent.children);
 			
-			for ( let i = 0; i < intersections.length; i++ ) {
-				switch (intersections[ i ].object.name){
-					case 'PIC_1':
-						this.selectedObject = intersections[i].object;
-						intersections[i].object.material.opacity = 1;
-						break;
+			if (clinkplink){
+				const ldname = document.getElementById("linkdataname").value;
+				const clpl = links.full[ldname][clinkplink];
+				//set position gizmo to clinkplink's position
+				plinkplacer.position.copy(camera.position);
+				plinkplacer.lookAt(clpl["x"], clpl["y"], clpl["z"]);
+				const scale = clpl["s"];
+				plinkgizmo.scale.set(scale, scale/2, scale);
+				
+				//toggle link position gizmo on to see its link position
+				plinkgizmo.visible = true;
+			} else {
+				plinkgizmo.visible = false;
+				
+				//links are still functional when not editing them
+				for ( let i = 0; i < intersections.length; i++ ) {
+					switch (intersections[ i ].object.name){
+						case 'PIC_1':
+							this.selectedObject = intersections[i].object;
+							intersections[i].object.material.opacity = 1;
+							break;
+					}
 				}
 			}
 		}
@@ -271,23 +313,38 @@ let main = async (view) => {
 		document.getElementById("linkdataname").value = name;
 		document.getElementById("linkdatalink").value = links.full[name].img;
 		document.getElementById("positions").innerHTML = "";
+		clinkplink = false;
 		for (const plink in links.full[name]){
 			if ((plink != name) && (plink != "img") && (plink != "stereo")){
 				//adding positions from links
 				let plob = links.full[name][plink];
 				let positionlink = document.createElement("div");
 				positionlink.setAttribute("class", "plink");
-				positionlink.setAttribute("id", "pl_"+plink);
-				let sedit = '<div><b>'+plink+': </b> Scale: <input id="pls_'+plink+'" type="number" placeholder="'+plob.s+'"/></div>';
-				positionlink.innerHTML = '<div class="tog" id="tog_'+plink+'"> 👁️ </div>' + sedit + '<div class="dpl" id="dpl_'+plink+'"> 🗑️ </div>';
+				let sedit = '<div><span class="pl_edit" id="pl_'+plink+'">📝</span><b> '+plink+': </b> Scale: <input id="pls_'+plink+'" type="number" placeholder="'+plob.s+'"/></div>';
+				positionlink.innerHTML = sedit + '<div class="dpl" id="dpl_'+plink+'"> 🗑️ </div>';
 				document.getElementById("positions").append(positionlink);
+				let plid = "pl_"+plink;
 				let scaleid = "pls_"+plink;
 				let dplid = "dpl_"+plink;
-				let togid = "tog_"+plink;
-				document.getElementById(togid).addEventListener("click", function(e) {
+				document.getElementById(plid).addEventListener("click", function(e) {
+					const viewname = document.getElementById("linkdataname").value;
+					const idplink = e.target.id;
+					const plinkTo = e.target.id.substring(3);
 					//turn every other link toggle off
-					
-					//set clinkplink (don't forget to set current link-position-link to false in switchTab)
+					for (const z in links.full[viewname]){
+						if ((z != viewname) && (z != "img") && (z != "stereo")){
+							const zid = "pl_"+z;
+							document.getElementById(zid).style.background = "white";
+						}
+					}
+					//toggle link placer visibility
+					if (clinkplink == plinkTo){
+						clinkplink = false;
+						document.getElementById(idplink).style.background = "white";
+					} else {
+						clinkplink = plinkTo;
+						document.getElementById(idplink).style.background = "blue";
+					}
 				});
 				document.getElementById(dplid).addEventListener("click", function(e) {
 					const viewname = document.getElementById("linkdataname").value;
@@ -303,7 +360,7 @@ let main = async (view) => {
 					const viewname = document.getElementById("linkdataname").value;
 					const plinkTo = e.target.id.substring(4);
 					//update position link scale
-					links.full[viewname][plinkTo].s = parseInt(e.target.value);
+					links.full[viewname][plinkTo]["s"] = parseFloat(e.target.value);
 				});
 			}
 		}
@@ -390,6 +447,9 @@ let main = async (view) => {
 
 //texture view/link properties
 let links = {
+	"header": {
+		"version": 0.1
+	},
 	"full": {
 		
 	},
@@ -397,6 +457,10 @@ let links = {
 		
 	}
 };
+
+//export html, save and load .hvrj (humangle vr json)
+//before that make sure the pointers are appropriate for its actions, panning, pointing to links,
+//make sure the gizmo is blue and render the buttons for the links;
 
 main();
 
