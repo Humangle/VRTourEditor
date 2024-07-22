@@ -54,7 +54,7 @@ let main = async (view) => {
 	let plinkplacer = new THREE.Object3D();
 	plinkplacer.position.set(0, 1.6, 0);
 	scene.add(plinkplacer);
-	let gizmoMaterial = new THREE.MeshPhongMaterial({emissive: 0xFFFFFF, opacity:1.0, transparent: true});
+	let gizmoMaterial = new THREE.MeshPhongMaterial({emissive: 0x0000FF, opacity:0.8, transparent: true});
 	const gizmoGeometry = new THREE.SphereGeometry(2, 64, 16);
 	let plinkgizmo = new THREE.Mesh(gizmoGeometry, gizmoMaterial);
 	plinkgizmo.position.z = 80;
@@ -139,11 +139,16 @@ let main = async (view) => {
 					links.full[ldname][clinkplink]["x"] = worldposition.x;
 					links.full[ldname][clinkplink]["y"] = worldposition.y;
 					links.full[ldname][clinkplink]["z"] = worldposition.z;
-					console.log(JSON.stringify(links.full[ldname][clinkplink]));
-				}					
+					//console.log(JSON.stringify(links.full[ldname][clinkplink]));
+				}
+				document.getElementById("c").style.cursor = "grab";
 			}
 			
-			//window.addEventListener('pointerdown', onPointerDown);
+			const onPointerDown = (event) => {
+				document.getElementById("c").style.cursor = "grabbing";
+			}
+			
+			window.addEventListener('pointerdown', onPointerDown);
 			window.addEventListener('pointerup', onPointerUp);
 		}
 		reset(){
@@ -175,6 +180,7 @@ let main = async (view) => {
 				for ( let i = 0; i < intersections.length; i++ ) {
 					switch (intersections[ i ].object.name){
 						case 'PIC_1':
+							document.getElementById("c").style.cursor = "pointer";
 							this.selectedObject = intersections[i].object;
 							intersections[i].object.material.opacity = 1;
 							break;
@@ -459,7 +465,7 @@ let links = {
 };
 
 //export html, save and load .hvrj (humangle vr json)
-//before that make sure the pointers are appropriate for its actions, panning, pointing to links,
+//before that make sure the pointers are appropriate for its pointing to links,
 //make sure the gizmo is blue and render the buttons for the links;
 
 main();
