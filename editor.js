@@ -43,11 +43,11 @@ let main = async (view) => {
 	let newView;
 	
 	//button linking to PIC_1
-	let button1Material = new THREE.MeshPhongMaterial({emissive: 0xFFFFFF, opacity: 0.4, transparent: true});
-	const button1Geometry = new THREE.SphereGeometry(1, 64, 16);
-	let button1Mesh = new THREE.Mesh(button1Geometry, button1Material);
-	button1Mesh.name = "PIC_1";
-	pickableObjs.add(button1Mesh);
+	//let button1Material = new THREE.MeshPhongMaterial({emissive: 0xFFFFFF, opacity: 0.4, transparent: true});
+	//const button1Geometry = new THREE.SphereGeometry(1, 64, 16);
+	//let button1Mesh = new THREE.Mesh(button1Geometry, button1Material);
+	//button1Mesh.name = "PIC_1";
+	//pickableObjs.add(button1Mesh);
 	
 	//position link placer
 	let clinkplink = false;
@@ -62,7 +62,7 @@ let main = async (view) => {
 	plinkplacer.add(plinkgizmo);
 	plinkgizmo.scale.set(2, 1, 2);
 	
-	scene.add(pickableObjs);
+	//scene.add(pickableObjs);
 	
 	//THE SPHERE
 	const radius = 100;
@@ -285,7 +285,7 @@ let main = async (view) => {
 		time *= 0.001; //milliseconds to seconds
 		
 		if (ready){
-			button1Mesh.material.opacity = 0.4;
+			//button1Mesh.material.opacity = 0.4;
 			
 			//update the vr raycaster and calculate objects intersecting it
 			VRPicker.update(pickableObjs, time);

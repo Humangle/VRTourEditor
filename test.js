@@ -38,30 +38,25 @@ let main = async (view) => {
 	scene.background = new THREE.Color(0x010101);
 	
 	const pickableObjs = new THREE.Object3D();
+	let viewTextures = {};
 	
 	//setting the view
 	let newView;
 	
-	//button linking to PIC_1
-	let button1Material = new THREE.MeshPhongMaterial({emissive: 0xFFFFFF, opacity: 0.4, transparent: true});
-	const button1Geometry = new THREE.SphereGeometry(1, 64, 16);
-	let button1Mesh = new THREE.Mesh(button1Geometry, button1Material);
-	button1Mesh.name = "PIC_1";
-	pickableObjs.add(button1Mesh);
+	//button template
+	const makeButton = (buttonName) => {
+		//button linking to PIC
+		const buttonMaterial = new THREE.MeshPhongMaterial({emissive: 0xFFFFFF, opacity: 0.4, transparent: true});
+		const buttonGeometry = new THREE.SphereGeometry(1, 64, 16);
+		const buttonMesh = new THREE.Mesh(buttonGeometry, buttonMaterial);
+		buttonMesh.name = buttonName;
+		return buttonMesh;
+	}
 	
-	//button linking to PIC_2
-	let button2Material = new THREE.MeshPhongMaterial({emissive: 0xFFFFFF, opacity: 0.4, transparent: true});
-	const button2Geometry = new THREE.SphereGeometry(1, 64, 16);
-	let button2Mesh = new THREE.Mesh(button2Geometry, button2Material);
-	button2Mesh.name = "PIC_2";
-	pickableObjs.add(button2Mesh);
-	
-	//button linking to PIC_3
-	let button3Material = new THREE.MeshPhongMaterial({emissive: 0xFFFFFF, opacity: 0.4, transparent: true});
-	const button3Geometry = new THREE.SphereGeometry(1, 64, 16);
-	let button3Mesh = new THREE.Mesh(button3Geometry, button3Material);
-	button3Mesh.name = "PIC_3";
-	pickableObjs.add(button3Mesh);
+	//make buttons for each view with button template
+	for (const a in view){
+		pickableObjs.add(makeButton(a));
+	}
 	
 	scene.add(pickableObjs);
 	
@@ -78,20 +73,35 @@ let main = async (view) => {
 	const loader = new THREE.ImageBitmapLoader(loadManager);
 	loader.setOptions( { imageOrientation: 'flipY' } );
 	
-	const sT1 = await loader.loadAsync(view.PIC_1.img);
-	const sphereTexture1 = new THREE.CanvasTexture(sT1);
-	sphereTexture1.colorSpace = THREE.SRGBColorSpace;
-	const sT2 = await loader.loadAsync(view.PIC_2.img);
-	const sphereTexture2 = new THREE.CanvasTexture(sT2);
-	sphereTexture2.colorSpace = THREE.SRGBColorSpace;
-	const sT3 = await loader.loadAsync(view.PIC_3.img);
-	const sphereTexture3 = new THREE.CanvasTexture(sT3);
-	sphereTexture3.colorSpace = THREE.SRGBColorSpace;
-	const sphereMaterial = new THREE.MeshBasicMaterial({side: THREE.BackSide, color: 0xFFFFFF, map: sphereTexture1});
+	const sT = await loader.loadAsync("../no-image.jpg");
+	const sphereTexture = new THREE.CanvasTexture(sT);
+	sphereTexture.colorSpace = THREE.SRGBColorSpace;
+	
+	const sphereMaterial = new THREE.MeshBasicMaterial({side: THREE.BackSide, color: 0xFFFFFF, map: sphereTexture});
 	let sphereMesh;
-	renderer.initTexture(sphereTexture1);
-	renderer.initTexture(sphereTexture2);
-	renderer.initTexture(sphereTexture3);
+	renderer.initTexture(sphereTexture);
+	
+	//load textures for links in a view
+	const loadTextures = async (viewname) => {
+		document.body.style.cursor = "wait";
+		if (viewTextures[viewname] != undefined){
+			sphereMaterial.map = viewTextures[viewname];
+			console.log("already in memory: using that to save resources");
+		}
+		for (const b in view[viewname]){
+			if (b!="img" && b!="stereo" && viewTextures[b] == undefined){
+				const sTX = await loader.loadAsync(view[b].img);
+				const sphereTextureX = new THREE.CanvasTexture(sTX);
+				sphereTextureX.colorSpace = THREE.SRGBColorSpace;
+				viewTextures[b] = sphereTextureX;
+				renderer.initTexture(viewTextures[b]);
+				if (b == viewname && viewTextures[b] != undefined){
+					sphereMaterial.map = viewTextures[b];
+				}
+			}
+		}
+	}
+	
 	loadingElem.style.display = 'none';
 	sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
 	sphereMesh.name = "sphere";
@@ -105,56 +115,33 @@ let main = async (view) => {
 		progressBarElem.style.transform = `scaleX(${progress})`;
 	};
 	
+	loadManager.onLoad = () => {
+		document.body.style.cursor = "auto";
+	}
+	
 	//switch to the view of the button selected
-	const teleport = (pic) => {
-		switch (pic){
-			case 'PIC_1':
-				//if pic1 link was clicked on
-				sphereMaterial.map = sphereTexture1;
-				newView = view.PIC_1;
-				button1Mesh.position.set(newView.PIC_1.x, newView.PIC_1.y, newView.PIC_1.z);
-				button1Mesh.scale.set(newView.PIC_1.s, newView.PIC_1.s/2, newView.PIC_1.s);
-				button1Mesh.visible = false;
-				button2Mesh.position.set(newView.PIC_2.x, newView.PIC_2.y, newView.PIC_2.z);
-				button2Mesh.scale.set(newView.PIC_2.s, newView.PIC_2.s/2, newView.PIC_2.s);
-				button2Mesh.visible = true;
-				button3Mesh.position.set(newView.PIC_3.x, newView.PIC_3.y, newView.PIC_3.z);
-				button3Mesh.scale.set(newView.PIC_3.s, newView.PIC_3.s/2, newView.PIC_3.s);
-				button3Mesh.visible = true;
-				break;
-			case 'PIC_2':
-				//if pic2 link was clicked on
-				sphereMaterial.map = sphereTexture2;
-				newView = view.PIC_2;
-				button1Mesh.position.set(newView.PIC_1.x, newView.PIC_1.y, newView.PIC_1.z);
-				button1Mesh.scale.set(newView.PIC_1.s, newView.PIC_1.s/2, newView.PIC_1.s);
-				button1Mesh.visible = true;
-				button2Mesh.position.set(newView.PIC_2.x, newView.PIC_2.y, newView.PIC_2.z);
-				button2Mesh.scale.set(newView.PIC_2.s, newView.PIC_2.s/2, newView.PIC_2.s);
-				button2Mesh.visible = false;
-				button3Mesh.position.set(newView.PIC_3.x, newView.PIC_3.y, newView.PIC_3.z);
-				button3Mesh.scale.set(newView.PIC_3.s, newView.PIC_3.s/2, newView.PIC_3.s);
-				button3Mesh.visible = true;
-				break;
-			case 'PIC_3':
-				//if pic3 link was clicked on
-				sphereMaterial.map = sphereTexture3;
-				newView = view.PIC_3;
-				button1Mesh.position.set(newView.PIC_1.x, newView.PIC_1.y, newView.PIC_1.z);
-				button1Mesh.scale.set(newView.PIC_1.s, newView.PIC_1.s/2, newView.PIC_1.s);
-				button1Mesh.visible = true;
-				button2Mesh.position.set(newView.PIC_2.x, newView.PIC_2.y, newView.PIC_2.z);
-				button2Mesh.scale.set(newView.PIC_2.s, newView.PIC_2.s/2, newView.PIC_2.s);
-				button2Mesh.visible = true;
-				button3Mesh.position.set(newView.PIC_3.x, newView.PIC_3.y, newView.PIC_3.z);
-				button3Mesh.scale.set(newView.PIC_3.s, newView.PIC_3.s/2, newView.PIC_3.s);
-				button3Mesh.visible = false;
-				break;
-			case 'sphere':
-				//
-				break;
-			default:
-				//
+	const teleport = async (viewname) => {
+		if (view[viewname] != undefined){
+			loadTextures(viewname);
+			
+			newView = view[viewname];
+			console.log("View:"+viewname);
+			console.log(pickableObjs.children);
+			
+			for (const c in pickableObjs.children){
+				let btnMesh = pickableObjs.children[c];
+				let ln = pickableObjs.children[c].name;
+				if (ln!="img" && ln!="stereo" && newView[ln].s != 0) {
+					console.log(ln + "is a link under " + viewname + " view");
+					btnMesh.position.set(newView[ln].x, newView[ln].y, newView[ln].z);
+					btnMesh.scale.set(newView[ln].s, newView[ln].s/2, newView[ln].s);
+					btnMesh.visible = true;
+				} else if (ln!="img" && ln!="stereo" && newView[ln].s == 0) {
+					btnMesh.position.set(newView[ln].x, newView[ln].y, newView[ln].z);
+					btnMesh.scale.set(newView[ln].s, newView[ln].s/2, newView[ln].s);
+					btnMesh.visible = false;
+				}
+			}
 		}
 	}
 	
@@ -170,9 +157,14 @@ let main = async (view) => {
 				if (this.selectedObject) { 
 					this.dispatchEvent({type: event.type, object: this.selectedObject});
 				}
+				document.getElementById("c").style.cursor = "grab";
 			}
 			
-			//window.addEventListener('pointerdown', onPointerDown);
+			const onPointerDown = (event) => {
+				document.getElementById("c").style.cursor = "grabbing";
+			}
+			
+			window.addEventListener('pointerdown', onPointerDown);
 			window.addEventListener('pointerup', onPointerUp);
 		}
 		reset(){
@@ -187,19 +179,10 @@ let main = async (view) => {
 			const intersections = this.raycaster.intersectObjects(pickablesParent.children);
 			
 			for ( let i = 0; i < intersections.length; i++ ) {
-				switch (intersections[ i ].object.name){
-					case 'PIC_1':
-						this.selectedObject = intersections[i].object;
-						intersections[i].object.material.opacity = 1;
-						break;
-					case 'PIC_2':
-						this.selectedObject = intersections[i].object;
-						intersections[i].object.material.opacity = 1;
-						break;
-					case 'PIC_3':
-						this.selectedObject = intersections[i].object;
-						intersections[i].object.material.opacity = 1;
-						break;
+				if (intersections[i].object.name != "sphere"){
+					document.getElementById("c").style.cursor = "pointer";
+					this.selectedObject = intersections[i].object;
+					intersections[i].object.material.opacity = 1;
 				}
 			}
 		}
@@ -257,19 +240,9 @@ let main = async (view) => {
 				const vrintersections = this.raycaster.intersectObjects(pickablesParent.children);
 				
 				for ( let i = 0; i < vrintersections.length; i++) {
-					switch (vrintersections[i].object.name){
-						case 'PIC_1':
-							this.controllerToObjectMap.set(controller, vrintersections[i].object);
-							vrintersections[i].object.material.opacity = 1;
-							break;
-						case 'PIC_2':
-							this.controllerToObjectMap.set(controller, vrintersections[i].object);
-							vrintersections[i].object.material.opacity = 1;
-							break;
-						case 'PIC_3':
-							this.controllerToObjectMap.set(controller, vrintersections[i].object);
-							vrintersections[i].object.material.opacity = 1;
-							break;
+					if (intersections[i].object.name != "sphere"){
+						this.controllerToObjectMap.set(controller, vrintersections[i].object);
+						vrintersections[i].object.material.opacity = 1;
 					}
 				}
 			}
@@ -308,9 +281,10 @@ let main = async (view) => {
 		time *= 0.001; //milliseconds to seconds
 		
 		if (ready){
-			button1Mesh.material.opacity = 0.4;
-			button2Mesh.material.opacity = 0.4;
-			button3Mesh.material.opacity = 0.4;
+			for (const d in pickableObjs.children){
+				let btnMesh = pickableObjs.children[d];
+				btnMesh.material.opacity = 0.4;
+			}
 			
 			//update the vr raycaster and calculate objects intersecting it
 			VRPicker.update(pickableObjs, time);
@@ -326,7 +300,7 @@ let main = async (view) => {
 	renderer.setAnimationLoop(render);
 	window.addEventListener('pointermove', onPointerMove);
 	window.addEventListener('resize', onWindowResize);
-	teleport("PIC_1"); //teleport to the root
+	teleport(pickableObjs.children[0].name); //teleport to the root
 }
 
 //texture view/link properties
@@ -381,6 +355,7 @@ const links = {
 
 let version = links.full;
 navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
+	//should probably also check if it's mobile here
 	if (!supported){
 		version = links.lite;
 	}
