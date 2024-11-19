@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {VRButton} from 'three/addons/webxr/VRButton.js';
 
-let ready = false; //state of the software; do we have all textures/resources ready to render?
+let ready = false;
 
 let main = async (view) => {
 	
@@ -47,7 +47,7 @@ let main = async (view) => {
 	const makeButton = (buttonName) => {
 		//button linking to PIC
 		const buttonMaterial = new THREE.MeshPhongMaterial({emissive: 0xFFFFFF, opacity: 0.4, transparent: true});
-		const buttonGeometry = new THREE.SphereGeometry(1, 64, 16);
+		const buttonGeometry = new THREE.SphereGeometry(2, 64, 16);
 		const buttonMesh = new THREE.Mesh(buttonGeometry, buttonMaterial);
 		buttonMesh.name = buttonName;
 		return buttonMesh;
@@ -125,20 +125,22 @@ let main = async (view) => {
 			loadTextures(viewname);
 			
 			newView = view[viewname];
-			console.log("View:"+viewname);
-			console.log(pickableObjs.children);
 			
 			for (const c in pickableObjs.children){
 				let btnMesh = pickableObjs.children[c];
 				let ln = pickableObjs.children[c].name;
-				if (ln!="img" && ln!="stereo" && newView[ln].s != 0) {
+				if (ln!="img" && ln!="stereo" && newView[ln] != undefined && newView[ln].s != 0) {
 					console.log(ln + "is a link under " + viewname + " view");
 					btnMesh.position.set(newView[ln].x, newView[ln].y, newView[ln].z);
 					btnMesh.scale.set(newView[ln].s, newView[ln].s/2, newView[ln].s);
 					btnMesh.visible = true;
-				} else if (ln!="img" && ln!="stereo" && newView[ln].s == 0) {
+				} else if (ln!="img" && ln!="stereo" && newView[ln] != undefined && newView[ln].s == 0) {
 					btnMesh.position.set(newView[ln].x, newView[ln].y, newView[ln].z);
 					btnMesh.scale.set(newView[ln].s, newView[ln].s/2, newView[ln].s);
+					btnMesh.visible = false;
+				} else if (ln!="img" && ln!="stereo" && newView[ln] == undefined){
+					btnMesh.position.set(0, -1.6, 0);
+					btnMesh.scale.set(1, 0.5, 1);
 					btnMesh.visible = false;
 				}
 			}
@@ -240,7 +242,7 @@ let main = async (view) => {
 				const vrintersections = this.raycaster.intersectObjects(pickablesParent.children);
 				
 				for ( let i = 0; i < vrintersections.length; i++) {
-					if (intersections[i].object.name != "sphere"){
+					if (vrintersections[i].object.name != "sphere"){
 						this.controllerToObjectMap.set(controller, vrintersections[i].object);
 						vrintersections[i].object.material.opacity = 1;
 					}
@@ -300,11 +302,15 @@ let main = async (view) => {
 	renderer.setAnimationLoop(render);
 	window.addEventListener('pointermove', onPointerMove);
 	window.addEventListener('resize', onWindowResize);
-	teleport(pickableObjs.children[0].name); //teleport to the root
+	teleport(links.header.index); //teleport to the root
 }
 
 //texture view/link properties
 const links = {
+	"header": {
+		"version": 0.1,
+		"index": "PIC_1"
+	},
 	"lite": {
 		"PIC_1": {
 			"img": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_1-min.jpg",

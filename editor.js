@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {VRButton} from 'three/addons/webxr/VRButton.js';
 
-let ready = false; //state of the software; do we have all textures/resources ready to render?
+let ready = false;
 
 let main = async (view) => {
 	
@@ -38,16 +38,27 @@ let main = async (view) => {
 	scene.background = new THREE.Color(0x010101);
 	
 	const pickableObjs = new THREE.Object3D();
+	let viewTextures = {};
 	
 	//setting the view
 	let newView;
 	
-	//button linking to PIC_1
-	//let button1Material = new THREE.MeshPhongMaterial({emissive: 0xFFFFFF, opacity: 0.4, transparent: true});
-	//const button1Geometry = new THREE.SphereGeometry(1, 64, 16);
-	//let button1Mesh = new THREE.Mesh(button1Geometry, button1Material);
-	//button1Mesh.name = "PIC_1";
-	//pickableObjs.add(button1Mesh);
+	//button template
+	let makeButton = (buttonName) => {
+		//button linking to PIC
+		const buttonMaterial = new THREE.MeshPhongMaterial({emissive: 0xFFFFFF, opacity: 0.4, transparent: true});
+		const buttonGeometry = new THREE.SphereGeometry(2, 64, 16);
+		let buttonMesh = new THREE.Mesh(buttonGeometry, buttonMaterial);
+		buttonMesh.name = buttonName;
+		return buttonMesh;
+	}
+	
+	//make buttons to each 360 image
+	for (const a in links.full){
+		if (!pickableObjs.getObjectByName(a)) {
+			pickableObjs.add(makeButton(a));
+		}
+	}
 	
 	//position link placer
 	let clinkplink = false;
@@ -55,14 +66,14 @@ let main = async (view) => {
 	plinkplacer.position.set(0, 1.6, 0);
 	scene.add(plinkplacer);
 	let gizmoMaterial = new THREE.MeshPhongMaterial({emissive: 0x0000FF, opacity:0.8, transparent: true});
-	const gizmoGeometry = new THREE.SphereGeometry(2, 64, 16);
+	const gizmoGeometry = new THREE.SphereGeometry(1, 64, 16);
 	let plinkgizmo = new THREE.Mesh(gizmoGeometry, gizmoMaterial);
 	plinkgizmo.position.z = 80;
 	plinkgizmo.visible = false;
 	plinkplacer.add(plinkgizmo);
-	plinkgizmo.scale.set(2, 1, 2);
+	plinkgizmo.scale.set(3, 3, 3);
 	
-	//scene.add(pickableObjs);
+	scene.add(pickableObjs);
 	
 	//THE SPHERE
 	const radius = 100;
@@ -84,6 +95,28 @@ let main = async (view) => {
 	const sphereMaterial = new THREE.MeshBasicMaterial({side: THREE.BackSide, color: 0xFFFFFF, map: sphereTexture});
 	let sphereMesh;
 	renderer.initTexture(sphereTexture);
+	
+	//load textures for links in a view
+	const loadTextures = async (viewname) => {
+		document.body.style.cursor = "wait";
+		if (viewTextures[viewname] != undefined){
+			sphereMaterial.map = viewTextures[viewname];
+			console.log("already in memory: using that to save resources");
+		}
+		for (const b in links.full[viewname]){
+			if (b!="img" && b!="stereo" && viewTextures[b] == undefined){
+				const sTX = await loader.loadAsync(links.full[b].img);
+				const sphereTextureX = new THREE.CanvasTexture(sTX);
+				sphereTextureX.colorSpace = THREE.SRGBColorSpace;
+				viewTextures[b] = sphereTextureX;
+				renderer.initTexture(viewTextures[b]);
+				if (b == viewname && viewTextures[b] != undefined){
+					sphereMaterial.map = viewTextures[b];
+				}
+			}
+		}
+	}
+	
 	loadingElem.style.display = 'none';
 	sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
 	sphereMesh.name = "sphere";
@@ -98,22 +131,35 @@ let main = async (view) => {
 	};
 	
 	loadManager.onLoad = () => {
-		document.body.style.cursor = "auto";
+		document.body.style.cursor = "pointer";
 	}
 	
 	//switch to the view of the button selected
-	const teleport = async (imglink) => {
-		//if pic1 link was clicked on
-		document.body.style.cursor = "wait";
-		const sT0 = await loader.loadAsync(imglink);
-		const sphereTexture0 = new THREE.CanvasTexture(sT0);
-		sphereTexture0.colorSpace = THREE.SRGBColorSpace;
-		renderer.initTexture(sphereTexture0);
-		sphereMaterial.map = sphereTexture0;
-		//newView = view.PIC_1;
-		//button1Mesh.position.set(newView.PIC_1.x, newView.PIC_1.y, newView.PIC_1.z);
-		//button1Mesh.scale.set(newView.PIC_1.s, newView.PIC_1.s/2, newView.PIC_1.s);
-		//button1Mesh.visible = false;
+	const teleport = async (viewname) => {
+		if (links.full[viewname] != undefined){
+			loadTextures(viewname);
+			
+			newView = links.full[viewname];
+			
+			for (const c in pickableObjs.children){
+				let btnMesh = pickableObjs.children[c];
+				let ln = pickableObjs.children[c].name;
+				if (ln!="img" && ln!="stereo" && newView[ln] != undefined && newView[ln].s != 0) {
+					console.log(ln + "is a link under " + viewname + " view");
+					btnMesh.position.set(newView[ln].x, newView[ln].y, newView[ln].z);
+					btnMesh.scale.set(newView[ln].s, newView[ln].s/2, newView[ln].s);
+					btnMesh.visible = true;
+				} else if (ln!="img" && ln!="stereo" && newView[ln] != undefined && newView[ln].s == 0) {
+					btnMesh.position.set(newView[ln].x, newView[ln].y, newView[ln].z);
+					btnMesh.scale.set(newView[ln].s, newView[ln].s/2, newView[ln].s);
+					btnMesh.visible = false;
+				} else if (ln!="img" && ln!="stereo" && newView[ln] == undefined){
+					btnMesh.position.set(0, -1.6, 0);
+					btnMesh.scale.set(1, 0.5, 1);
+					btnMesh.visible = false;
+				}
+			}
+		}
 	}
 	
 	//desktop raycaster
@@ -125,7 +171,9 @@ let main = async (view) => {
 			this.pointer = new THREE.Vector2();
 			
 			const onPointerUp = (event) => {
-				if (this.selectedObject) { 
+				if ((this.selectedObject.name != '') && (clinkplink == false) && event.target.id != "c") {
+					console.log("thisSelectedObject");
+					console.log(this.selectedObject);
 					this.dispatchEvent({type: event.type, object: this.selectedObject});
 				}
 				if (clinkplink && (event.target.id == "c")){
@@ -136,10 +184,17 @@ let main = async (view) => {
 					let ldname = document.getElementById("linkdataname").value;
 					let worldposition = new THREE.Vector3();
 					plinkgizmo.getWorldPosition(worldposition);
+					pickableObjs.getObjectByName(clinkplink).position.set(worldposition.x, worldposition.y, worldposition.z);
+					
+					if (pickableObjs.getObjectByName(clinkplink).name == clinkplink){
+						//if link exists
+						console.log("POSITION UPDATED!! Check here why it doesn't update the button");
+					}
 					links.full[ldname][clinkplink]["x"] = worldposition.x;
 					links.full[ldname][clinkplink]["y"] = worldposition.y;
 					links.full[ldname][clinkplink]["z"] = worldposition.z;
-					//console.log(JSON.stringify(links.full[ldname][clinkplink]));
+					const sl = links.full[ldname][clinkplink]["s"];
+					pickableObjs.getObjectByName(clinkplink).scale.set(sl, sl/2, sl);
 				}
 				document.getElementById("c").style.cursor = "grab";
 			}
@@ -169,21 +224,19 @@ let main = async (view) => {
 				plinkplacer.position.copy(camera.position);
 				plinkplacer.lookAt(clpl["x"], clpl["y"], clpl["z"]);
 				const scale = clpl["s"];
-				plinkgizmo.scale.set(scale, scale/2, scale);
-				
-				//toggle link position gizmo on to see its link position
-				plinkgizmo.visible = true;
+				plinkgizmo.scale.set(scale/2, scale/2, scale/2);
+			
+				document.getElementById("c").style.cursor = "move";
 			} else {
-				plinkgizmo.visible = false;
 				
 				//links are still functional when not editing them
 				for ( let i = 0; i < intersections.length; i++ ) {
-					switch (intersections[ i ].object.name){
-						case 'PIC_1':
-							document.getElementById("c").style.cursor = "pointer";
-							this.selectedObject = intersections[i].object;
-							intersections[i].object.material.opacity = 1;
-							break;
+					if (intersections[i].object.name != "sphere"){
+						document.getElementById("c").style.cursor = "pointer";
+						this.selectedObject = intersections[i].object;
+						intersections[i].object.material.opacity = 1;
+					} else {
+						document.getElementById("c").style.cursor = "grab";
 					}
 				}
 			}
@@ -242,11 +295,9 @@ let main = async (view) => {
 				const vrintersections = this.raycaster.intersectObjects(pickablesParent.children);
 				
 				for ( let i = 0; i < vrintersections.length; i++) {
-					switch (vrintersections[i].object.name){
-						case 'PIC_1':
-							this.controllerToObjectMap.set(controller, vrintersections[i].object);
-							vrintersections[i].object.material.opacity = 1;
-							break;
+					if (vrintersections[i].object.name != "sphere"){
+						this.controllerToObjectMap.set(controller, vrintersections[i].object);
+						vrintersections[i].object.material.opacity = 1;
 					}
 				}
 			}
@@ -257,14 +308,21 @@ let main = async (view) => {
 	const DesktopPicker = new MousePickHelper(scene);
 	DesktopPicker.addEventListener('pointerup', (event) => {
 		//switch to the view of the button selected
-		teleport(event.object.name);
+		if (event.object.name && event.object.visible){
+			console.log("Desktop Click");
+			console.log(event.object);
+			switchTabs(event.object.name);
+		}
 	});
 	
 	//On VR click
 	const VRPicker = new ControllerPickHelper(scene);
 	VRPicker.addEventListener('select', (event) => {
 		//switch to the view of the button selected
-		teleport(event.object.name);
+		if (event.object.name){
+			console.log("VR Click");
+			switchTabs(event.object.name);
+		}
 	});
 	
 	const onPointerMove = (event) => {
@@ -303,8 +361,9 @@ let main = async (view) => {
 	window.addEventListener('resize', onWindowResize);
 	
 	const switchTabs = (name) => {
+		console.log("switchTabs: "+name);
 		//teleport to view
-		teleport(links.full[name].img);
+		teleport(name);
 		
 		//set tabheader to white
 		const tabname = "tab_" + name;
@@ -324,9 +383,17 @@ let main = async (view) => {
 			if ((plink != name) && (plink != "img") && (plink != "stereo")){
 				//adding positions from links
 				let plob = links.full[name][plink];
+				if (pickableObjs.getObjectByName(plink) && (plob.s!=0) && ((plob.x+plob.z)!=0)){
+					pickableObjs.getObjectByName(plink).position.set(plob.x, plob.y, plob.z);
+					pickableObjs.getObjectByName(plink).scale.set(plob.s, plob.s/2, plob.s);
+				} else if (pickableObjs.getObjectByName(plink) && (plob.s!=0) && ((plob.x+plob.z)==0)) {
+					pickableObjs.getObjectByName(plink).position.set(0, 78.4, 0);
+					pickableObjs.getObjectByName(plink).scale.set(plob.s, plob.s/2, plob.s);
+				}
+				console.log("Did Button Reset?")
 				let positionlink = document.createElement("div");
 				positionlink.setAttribute("class", "plink");
-				let sedit = '<div><span class="pl_edit" id="pl_'+plink+'">📝</span><b> '+plink+': </b> Scale: <input id="pls_'+plink+'" type="number" placeholder="'+plob.s+'"/></div>';
+				let sedit = '<div><span class="pl_edit" id="pl_'+plink+'">📝</span><b> '+plink+': </b> Scale: <input id="pls_'+plink+'" type="number" step="0.1" value="'+plob.s+'" placeholder="'+plob.s+'"/></div>';
 				positionlink.innerHTML = sedit + '<div class="dpl" id="dpl_'+plink+'"> 🗑️ </div>';
 				document.getElementById("positions").append(positionlink);
 				let plid = "pl_"+plink;
@@ -344,12 +411,14 @@ let main = async (view) => {
 						}
 					}
 					//toggle link placer visibility
-					if (clinkplink == plinkTo){
+					if (clinkplink == plinkTo && plinkgizmo.visible){
 						clinkplink = false;
 						document.getElementById(idplink).style.background = "white";
+						plinkgizmo.visible = false;
 					} else {
 						clinkplink = plinkTo;
 						document.getElementById(idplink).style.background = "blue";
+						plinkgizmo.visible = true;
 					}
 				});
 				document.getElementById(dplid).addEventListener("click", function(e) {
@@ -360,14 +429,23 @@ let main = async (view) => {
 						delete links.full[viewname][plinkTo][j];
 					}
 					delete links.full[viewname][plinkTo];
+					console.log("dplid");
 					switchTabs(viewname);
 				});
 				document.getElementById(scaleid).addEventListener("input", function(e) {
 					const viewname = document.getElementById("linkdataname").value;
 					const plinkTo = e.target.id.substring(4);
 					//update position link scale
+					const sl = parseFloat(e.target.value);
 					links.full[viewname][plinkTo]["s"] = parseFloat(e.target.value);
+					pickableObjs.getObjectByName(plinkTo).scale.set(sl, sl/2, sl);
 				});
+			} else if (plink == name && pickableObjs.getObjectByName(plink)) {
+				//making link to self invisible
+				let plob = links.full[name][plink];
+				pickableObjs.getObjectByName(plink).position.set(plob.x, plob.y, plob.z);
+				pickableObjs.getObjectByName(plink).scale.set(plob.s, plob.s, plob.s);
+				pickableObjs.getObjectByName(plink).visible = false;
 			}
 		}
 	}
@@ -411,8 +489,7 @@ let main = async (view) => {
 			}
 			document.getElementById("newlink").style.display = "none";
 			document.getElementById("create").style.display = "block";
-			console.log(JSON.stringify(links.full));
-			teleport(links.full[linkname].img);
+			teleport(linkname);
 			//clear tab data
 			document.getElementById("linkdata").style.display = "block";
 			document.getElementById("createposition").style.display = "block";
@@ -425,36 +502,44 @@ let main = async (view) => {
 			tabhead.setAttribute("id", tabid);
 			document.getElementById("tabheader").append(tabhead);
 			document.getElementById(tabid).addEventListener("click", function(e) {
+				console.log("tabid");
 				switchTabs(e.target.innerText);
 			});
+			console.log("newlinkbtn");
 			switchTabs(linkname);
 		} else {
-			console.log("empty!");
+			console.log("name or link not long enough");
 		}
 	});
 	
 	document.getElementById("newplinkbtn").addEventListener('click', (event) => {
-		//add plink to links object
 		const linkname = document.getElementById("linkdataname").value;
 		const plinkname = document.getElementById("picklink").value;
+		
+		//make button for the new link position
+		if (!pickableObjs.getObjectByName(plinkname)){
+			pickableObjs.add(makeButton(plinkname));
+		}
+		//add plink to links object
 		links.full[linkname][plinkname] = {
 			"s" : 1.0,
 			"x" : 0.0,
 			"y" : -1.6,
 			"z" : 0.0
 		}
-		console.log(JSON.stringify(links.full));
-		const plink = links.full[linkname][plinkname];
-		switchTabs(linkname);
+		
 		document.getElementById("newplink").style.display = "none";
 		document.getElementById("createposition").style.display = "block";
+		console.log("newplinkbtn");
+		switchTabs(linkname);
 	});
 }
 
 //texture view/link properties
 let links = {
 	"header": {
-		"version": 0.1
+		"version": 0.1,
+		"index": ""
 	},
 	"full": {
 		
