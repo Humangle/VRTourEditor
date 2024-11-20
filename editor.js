@@ -65,13 +65,13 @@ let main = async (view) => {
 	let plinkplacer = new THREE.Object3D();
 	plinkplacer.position.set(0, 1.6, 0);
 	scene.add(plinkplacer);
-	let gizmoMaterial = new THREE.MeshPhongMaterial({emissive: 0x0000FF, opacity:0.8, transparent: true});
+	let gizmoMaterial = new THREE.MeshPhongMaterial({emissive: 0x0000FF, opacity:0.2, transparent: true});
 	const gizmoGeometry = new THREE.SphereGeometry(1, 64, 16);
 	let plinkgizmo = new THREE.Mesh(gizmoGeometry, gizmoMaterial);
 	plinkgizmo.position.z = 80;
 	plinkgizmo.visible = false;
 	plinkplacer.add(plinkgizmo);
-	plinkgizmo.scale.set(3, 3, 3);
+	plinkgizmo.scale.set(1, 1, 1);
 	
 	scene.add(pickableObjs);
 	
@@ -131,7 +131,7 @@ let main = async (view) => {
 	};
 	
 	loadManager.onLoad = () => {
-		document.body.style.cursor = "pointer";
+		document.body.style.cursor = "auto";
 	}
 	
 	//switch to the view of the button selected
@@ -171,7 +171,8 @@ let main = async (view) => {
 			this.pointer = new THREE.Vector2();
 			
 			const onPointerUp = (event) => {
-				if ((this.selectedObject.name != '') && (clinkplink == false) && event.target.id != "c") {
+				console.log(this.selectedObject.name + " " + clinkplink + " " + event.target.id);
+				if ((this.selectedObject.name != "") && (clinkplink == false)) {
 					console.log("thisSelectedObject");
 					console.log(this.selectedObject);
 					this.dispatchEvent({type: event.type, object: this.selectedObject});
@@ -188,6 +189,7 @@ let main = async (view) => {
 					
 					if (pickableObjs.getObjectByName(clinkplink).name == clinkplink){
 						//if link exists
+						console.log(event.target.id);
 						console.log("POSITION UPDATED!! Check here why it doesn't update the button");
 					}
 					links.full[ldname][clinkplink]["x"] = worldposition.x;
@@ -224,7 +226,7 @@ let main = async (view) => {
 				plinkplacer.position.copy(camera.position);
 				plinkplacer.lookAt(clpl["x"], clpl["y"], clpl["z"]);
 				const scale = clpl["s"];
-				plinkgizmo.scale.set(scale/2, scale/2, scale/2);
+				plinkgizmo.scale.set(scale, scale, scale);
 			
 				document.getElementById("c").style.cursor = "move";
 			} else {
@@ -343,7 +345,13 @@ let main = async (view) => {
 		time *= 0.001; //milliseconds to seconds
 		
 		if (ready){
-			//button1Mesh.material.opacity = 0.4;
+			for (const d in pickableObjs.children){
+				let btnMesh = pickableObjs.children[d];
+				btnMesh.material.opacity = 0.4;
+				if (document.getElementById("c").style.cursor != "grab"){
+					document.getElementById("c").style.cursor = "grab";
+				}
+			}
 			
 			//update the vr raycaster and calculate objects intersecting it
 			VRPicker.update(pickableObjs, time);
@@ -371,6 +379,9 @@ let main = async (view) => {
 			//every other tab back to blue
 			const tabid = "tab_" + x;
 			document.getElementById(tabid).style.background = "blue";
+			if (pickableObjs.getObjectByName(x)){
+				pickableObjs.getObjectByName(x).material.emissive = new THREE.Color(0xFFFFFF);
+			}
 		}
 		document.getElementById(tabname).style.background = "white";
 		
@@ -408,17 +419,20 @@ let main = async (view) => {
 						if ((z != viewname) && (z != "img") && (z != "stereo")){
 							const zid = "pl_"+z;
 							document.getElementById(zid).style.background = "white";
+							if (pickableObjs.getObjectByName(z)){
+								pickableObjs.getObjectByName(z).material.emissive = new THREE.Color(0xFFFFFF);
+							}
 						}
 					}
 					//toggle link placer visibility
-					if (clinkplink == plinkTo && plinkgizmo.visible){
+					if (clinkplink == plinkTo){
 						clinkplink = false;
 						document.getElementById(idplink).style.background = "white";
-						plinkgizmo.visible = false;
+						pickableObjs.getObjectByName(plinkTo).material.emissive = new THREE.Color(0xFFFFFF);
 					} else {
 						clinkplink = plinkTo;
 						document.getElementById(idplink).style.background = "blue";
-						plinkgizmo.visible = true;
+						pickableObjs.getObjectByName(plinkTo).material.emissive = new THREE.Color(0x0000FF);
 					}
 				});
 				document.getElementById(dplid).addEventListener("click", function(e) {
@@ -550,8 +564,6 @@ let links = {
 };
 
 //export html, save and load .hvrj (humangle vr json)
-//before that make sure the pointers are appropriate for its pointing to links,
-//make sure the gizmo is blue and render the buttons for the links;
 
 main();
 
