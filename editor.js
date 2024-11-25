@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {VRButton} from 'three/addons/webxr/VRButton.js';
 
+//version 170
 let ready = false;
 
 let main = async (view) => {
