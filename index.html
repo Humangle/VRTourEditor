@@ -17,11 +17,11 @@
 			import * as THREE from 'three';
 			import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 			import {VRButton} from 'three/addons/webxr/VRButton.js';
-			
-			let ready = false; //state of the software; do we have all textures/resources ready to render?
-			
+
+			let ready = false;
+
 			let main = async (view) => {
-			
+				
 				//set up the canvas for THREE.js
 				const canvas = document.getElementById("c");
 				const renderer = new THREE.WebGLRenderer({antialias: true, canvas});
@@ -54,41 +54,25 @@
 				scene.background = new THREE.Color(0x010101);
 				
 				const pickableObjs = new THREE.Object3D();
+				let viewTextures = {};
 				
-				//setting new view
+				//setting the view
 				let newView;
 				
-				//button linking to PIC_1
-				let button1Material = new THREE.MeshPhongMaterial({emissive: 0xFFFFFF, opacity: 0.4, transparent: true});
-				const button1Geometry = new THREE.SphereGeometry(1, 64, 16);
-				let button1Mesh = new THREE.Mesh(button1Geometry, button1Material);
-				button1Mesh.name = "PIC_1";
-				pickableObjs.add(button1Mesh);
+				//button template
+				const makeButton = (buttonName) => {
+					//button linking to PIC
+					const buttonMaterial = new THREE.MeshPhongMaterial({emissive: 0xFFFFFF, opacity: 0.4, transparent: true});
+					const buttonGeometry = new THREE.SphereGeometry(2, 64, 16);
+					const buttonMesh = new THREE.Mesh(buttonGeometry, buttonMaterial);
+					buttonMesh.name = buttonName;
+					return buttonMesh;
+				}
 				
-				//button linking to PIC_2
-				let button2Material = new THREE.MeshPhongMaterial({emissive: 0xFFFFFF, opacity: 0.4, transparent: true});
-				const button2Geometry = new THREE.SphereGeometry(1, 64, 16);
-				let button2Mesh = new THREE.Mesh(button2Geometry, button2Material);
-				button2Mesh.name = "PIC_2";
-				pickableObjs.add(button2Mesh);
-				
-				//button linking to PIC_3
-				let button3Material = new THREE.MeshPhongMaterial({emissive: 0xFFFFFF, opacity: 0.4, transparent: true});
-				const button3Geometry = new THREE.SphereGeometry(1, 64, 16);
-				let button3Mesh = new THREE.Mesh(button3Geometry, button3Material);
-				button3Mesh.name = "PIC_3";
-				pickableObjs.add(button3Mesh);
-				
-				//youtube logo/link
-				let buttontestMaterial = new THREE.MeshPhongMaterial({emissive: 0xFFFFFF, opacity: 0.8, transparent: true});
-				const buttontestGeometry = new THREE.SphereGeometry(1, 64, 16);
-				let buttontestMesh = new THREE.Mesh(buttontestGeometry, buttontestMaterial);
-				const ctp = CoordToPosition(0,0,90,0,0,0);
-				buttontestMesh.position.set(ctp.x, ctp.y, ctp.z);
-				buttontestMesh.scale.set(5, 5, 5);
-				buttontestMesh.name = "video";
-				console.log(buttontestMesh.position);
-				pickableObjs.add(buttontestMesh);
+				//make buttons for each view with button template
+				for (const a in view){
+					pickableObjs.add(makeButton(a));
+				}
 				
 				scene.add(pickableObjs);
 				
@@ -97,6 +81,7 @@
 				const widthSegments = 64;
 				const heightSegments = 32;
 				const sphereGeometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments);
+				sphereGeometry.scale(-1, 1, 1);
 				
 				//loading textures
 				const loadingElem = document.querySelector('#loading');
@@ -105,25 +90,39 @@
 				const loader = new THREE.ImageBitmapLoader(loadManager);
 				loader.setOptions( { imageOrientation: 'flipY' } );
 				
-				const sT1 = await loader.loadAsync(view.PIC_1.img);
-				const sphereTexture1 = new THREE.CanvasTexture(sT1);
-				sphereTexture1.colorSpace = THREE.SRGBColorSpace;
-				const sT2 = await loader.loadAsync(view.PIC_2.img);
-				const sphereTexture2 = new THREE.CanvasTexture(sT2);
-				sphereTexture2.colorSpace = THREE.SRGBColorSpace;
-				const sT3 = await loader.loadAsync(view.PIC_3.img);
-				const sphereTexture3 = new THREE.CanvasTexture(sT3);
-				sphereTexture3.colorSpace = THREE.SRGBColorSpace;
-				const sphereMaterial = new THREE.MeshBasicMaterial({side: THREE.BackSide, color: 0xFFFFFF, map: sphereTexture1});
+				const sT = await loader.loadAsync("../no-image.jpg");
+				const sphereTexture = new THREE.CanvasTexture(sT);
+				sphereTexture.colorSpace = THREE.SRGBColorSpace;
+				
+				const sphereMaterial = new THREE.MeshBasicMaterial({side: THREE.FrontSide, color: 0xFFFFFF, map: sphereTexture});
 				let sphereMesh;
-				renderer.initTexture(sphereTexture1);
-				renderer.initTexture(sphereTexture2);
-				renderer.initTexture(sphereTexture3);
+				renderer.initTexture(sphereTexture);
+				
+				//load textures for links in a view
+				const loadTextures = async (viewname) => {
+					document.body.style.cursor = "wait";
+					if (viewTextures[viewname] != undefined){
+						sphereMaterial.map = viewTextures[viewname];
+						console.log("already in memory: using that to save resources");
+					}
+					for (const b in view[viewname]){
+						if (b!="img" && b!="stereo" && viewTextures[b] == undefined){
+							const sTX = await loader.loadAsync(view[b].img);
+							const sphereTextureX = new THREE.CanvasTexture(sTX);
+							sphereTextureX.colorSpace = THREE.SRGBColorSpace;
+							viewTextures[b] = sphereTextureX;
+							renderer.initTexture(viewTextures[b]);
+							if (b == viewname && viewTextures[b] != undefined){
+								sphereMaterial.map = viewTextures[b];
+							}
+						}
+					}
+				}
+				
 				loadingElem.style.display = 'none';
 				sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
 				sphereMesh.name = "sphere";
 				sphereMesh.position.set(0,1.6,0);
-				sphereMesh.scale.x = -1;//flipping the material back because THREE.Backside means we're looking from behind which means it's flipped
 				scene.add(sphereMesh);
 				ready = true;
 				
@@ -132,59 +131,35 @@
 					progressBarElem.style.transform = `scaleX(${progress})`;
 				};
 				
+				loadManager.onLoad = () => {
+					document.body.style.cursor = "auto";
+				}
+				
 				//switch to the view of the button selected
-				const teleport = (pic) => {
-					switch (pic){
-						case 'PIC_1':
-							//if pic1 link was clicked on
-							sphereMaterial.map = sphereTexture1;
-							newView = view.PIC_1;
-							button1Mesh.position.set(newView.PIC_1.x, newView.PIC_1.y, newView.PIC_1.z);
-							button1Mesh.scale.set(newView.PIC_1.s, newView.PIC_1.s/2, newView.PIC_1.s);
-							button1Mesh.visible = false;
-							button2Mesh.position.set(newView.PIC_2.x, newView.PIC_2.y, newView.PIC_2.z);
-							button2Mesh.scale.set(newView.PIC_2.s, newView.PIC_2.s/2, newView.PIC_2.s);
-							button2Mesh.visible = true;
-							button3Mesh.position.set(newView.PIC_3.x, newView.PIC_3.y, newView.PIC_3.z);
-							button3Mesh.scale.set(newView.PIC_3.s, newView.PIC_3.s/2, newView.PIC_3.s);
-							button3Mesh.visible = true;
-							break;
-						case 'PIC_2':
-							//if pic2 link was clicked on
-							sphereMaterial.map = sphereTexture2;
-							newView = view.PIC_2;
-							button1Mesh.position.set(newView.PIC_1.x, newView.PIC_1.y, newView.PIC_1.z);
-							button1Mesh.scale.set(newView.PIC_1.s, newView.PIC_1.s/2, newView.PIC_1.s);
-							button1Mesh.visible = true;
-							button2Mesh.position.set(newView.PIC_2.x, newView.PIC_2.y, newView.PIC_2.z);
-							button2Mesh.scale.set(newView.PIC_2.s, newView.PIC_2.s/2, newView.PIC_2.s);
-							button2Mesh.visible = false;
-							button3Mesh.position.set(newView.PIC_3.x, newView.PIC_3.y, newView.PIC_3.z);
-							button3Mesh.scale.set(newView.PIC_3.s, newView.PIC_3.s/2, newView.PIC_3.s);
-							button3Mesh.visible = true;
-							break;
-						case 'PIC_3':
-							//if pic3 link was clicked on
-							sphereMaterial.map = sphereTexture3;
-							newView = view.PIC_3;
-							button1Mesh.position.set(newView.PIC_1.x, newView.PIC_1.y, newView.PIC_1.z);
-							button1Mesh.scale.set(newView.PIC_1.s, newView.PIC_1.s/2, newView.PIC_1.s);
-							button1Mesh.visible = true;
-							button2Mesh.position.set(newView.PIC_2.x, newView.PIC_2.y, newView.PIC_2.z);
-							button2Mesh.scale.set(newView.PIC_2.s, newView.PIC_2.s/2, newView.PIC_2.s);
-							button2Mesh.visible = true;
-							button3Mesh.position.set(newView.PIC_3.x, newView.PIC_3.y, newView.PIC_3.z);
-							button3Mesh.scale.set(newView.PIC_3.s, newView.PIC_3.s/2, newView.PIC_3.s);
-							button3Mesh.visible = false;
-							break;
-						case 'sphere':
-							//
-							break;
-						case 'video':
-							window.open("https://youtu.be/syAvaIfiUgs?si=c405e4atfNZW0LoU");
-							break;
-						default:
-							//
+				const teleport = async (viewname) => {
+					if (view[viewname] != undefined){
+						loadTextures(viewname);
+						
+						newView = view[viewname];
+						
+						for (const c in pickableObjs.children){
+							let btnMesh = pickableObjs.children[c];
+							let ln = pickableObjs.children[c].name;
+							if (ln!="img" && ln!="stereo" && newView[ln] != undefined && newView[ln].s != 0) {
+								console.log(ln + "is a link under " + viewname + " view");
+								btnMesh.position.set(newView[ln].x, newView[ln].y, newView[ln].z);
+								btnMesh.scale.set(newView[ln].s, newView[ln].s/2, newView[ln].s);
+								btnMesh.visible = true;
+							} else if (ln!="img" && ln!="stereo" && newView[ln] != undefined && newView[ln].s == 0) {
+								btnMesh.position.set(newView[ln].x, newView[ln].y, newView[ln].z);
+								btnMesh.scale.set(newView[ln].s, newView[ln].s/2, newView[ln].s);
+								btnMesh.visible = false;
+							} else if (ln!="img" && ln!="stereo" && newView[ln] == undefined){
+								btnMesh.position.set(0, -1.6, 0);
+								btnMesh.scale.set(1, 0.5, 1);
+								btnMesh.visible = false;
+							}
+						}
 					}
 				}
 				
@@ -200,9 +175,14 @@
 							if (this.selectedObject) { 
 								this.dispatchEvent({type: event.type, object: this.selectedObject});
 							}
+							document.getElementById("c").style.cursor = "grab";
 						}
 						
-						//window.addEventListener('pointerdown', onPointerDown);
+						const onPointerDown = (event) => {
+							document.getElementById("c").style.cursor = "grabbing";
+						}
+						
+						window.addEventListener('pointerdown', onPointerDown);
 						window.addEventListener('pointerup', onPointerUp);
 					}
 					reset(){
@@ -212,31 +192,18 @@
 						this.reset();
 						
 						this.raycaster.setFromCamera(this.pointer, camera);
-
+						
 						//objects intersecting the Desktop Raycaster
 						const intersections = this.raycaster.intersectObjects(pickablesParent.children);
-
+						
 						for ( let i = 0; i < intersections.length; i++ ) {
-							switch (intersections[ i ].object.name){
-								case 'PIC_1':
-									this.selectedObject = intersections[i].object;
-									intersections[i].object.material.opacity = 1;
-									break;
-								case 'PIC_2':
-									this.selectedObject = intersections[i].object;
-									intersections[i].object.material.opacity = 1;
-									break;
-								case 'PIC_3':
-									this.selectedObject = intersections[i].object;
-									intersections[i].object.material.opacity = 1;
-									break;
-								case 'video':
-									this.selectedObject = intersections[i].object;
-									intersections[i].object.material.opacity = 1;
-									break;
+							if (intersections[i].object.name != "sphere"){
+								document.getElementById("c").style.cursor = "pointer";
+								this.selectedObject = intersections[i].object;
+								intersections[i].object.material.opacity = 1;
 							}
 						}
-					};
+					}
 				}
 				
 				//vr raycaster
@@ -246,12 +213,12 @@
 						this.raycaster = new THREE.Raycaster();
 						this.controllerToObjectMap = new Map();
 						this.tempMatrix = new THREE.Matrix4();
-				 
+						
 						const pointerGeometry = new THREE.BufferGeometry().setFromPoints([
 							new THREE.Vector3(0, 0, 0),
 							new THREE.Vector3(0, 0, -1),
 						]);
-				 
+						
 						this.controllers = [];
 						
 						const selectListener = (event) => {
@@ -263,18 +230,17 @@
 						};
 						
 						for ( let i = 0; i < 2; ++ i ) {
-
 							const controller = renderer.xr.getController( i );
 							controller.addEventListener('select', selectListener);
 							//controller.addEventListener('selectstart', startListener);
 							//controller.addEventListener('selectend', endListener);
 							scene.add(controller);
-
+							
 							const line = new THREE.Line(pointerGeometry);
 							line.scale.z = 100;
 							controller.add(line);
 							this.controllers.push({ controller, line });
-
+							
 						}
 					}
 					reset() {
@@ -292,23 +258,9 @@
 							const vrintersections = this.raycaster.intersectObjects(pickablesParent.children);
 							
 							for ( let i = 0; i < vrintersections.length; i++) {
-								switch (vrintersections[i].object.name){
-									case 'PIC_1':
-										this.controllerToObjectMap.set(controller, vrintersections[i].object);
-										vrintersections[i].object.material.opacity = 1;
-										break;
-									case 'PIC_2':
-										this.controllerToObjectMap.set(controller, vrintersections[i].object);
-										vrintersections[i].object.material.opacity = 1;
-										break;
-									case 'PIC_3':
-										this.controllerToObjectMap.set(controller, vrintersections[i].object);
-										vrintersections[i].object.material.opacity = 1;
-										break;
-									case 'video':
-										this.controllerToObjectMap.set(controller, vrintersections[i].object);
-										vrintersections[i].object.material.opacity = 1;
-										break;
+								if (vrintersections[i].object.name != "sphere"){
+									this.controllerToObjectMap.set(controller, vrintersections[i].object);
+									vrintersections[i].object.material.opacity = 1;
 								}
 							}
 						}
@@ -339,7 +291,7 @@
 				const onWindowResize = () => {
 					camera.aspect = canvas.clientWidth/canvas.clientHeight;
 					camera.updateProjectionMatrix();
-
+					
 					renderer.setSize(canvas.clientWidth, canvas.clientHeight);
 				}
 				
@@ -347,32 +299,34 @@
 					time *= 0.001; //milliseconds to seconds
 					
 					if (ready){
-						
-						
-						button1Mesh.material.opacity = 0.4;
-						button2Mesh.material.opacity = 0.4;
-						button3Mesh.material.opacity = 0.4;
-						buttontestMesh.material.opacity = 0.8;
+						for (const d in pickableObjs.children){
+							let btnMesh = pickableObjs.children[d];
+							btnMesh.material.opacity = 0.4;
+						}
 						
 						//update the vr raycaster and calculate objects intersecting it
 						VRPicker.update(pickableObjs, time);
 						
 						//update the desktop raycaster and calculate the objects intersecting it
-						DesktopPicker.update(pickableObjs, time);	
-						
+						DesktopPicker.update(pickableObjs, time);
 					}
 					
 					renderer.render(scene, camera);
 					
 				}
+				
 				renderer.setAnimationLoop(render);
 				window.addEventListener('pointermove', onPointerMove);
 				window.addEventListener('resize', onWindowResize);
-				teleport("PIC_1");
+				teleport(links.header.index); //teleport to the root
 			}
-			
+
 			//texture view/link properties
 			const links = {
+				"header": {
+					"version": 0.1,
+					"index": "PIC_1"
+				},
 				"lite": {
 					"PIC_1": {
 						"img": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_1-min.jpg",
@@ -420,27 +374,16 @@
 					}
 				}
 			};
-			
+
 			let version = links.full;
 			navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
+				//should probably also check if it's mobile here
 				if (!supported){
 					version = links.lite;
 				}
 			}).finally(() => {
 				main(version);
 			});
-			
-			const CoordToPosition = (lat, lon, dep, cx, cy, cz) => {
-				let latRad = lat * Math.PI / 180;
-				let lonRad = lon * Math.PI / 180;
-
-				let xPos= dep * Math.cos(latRad) * Math.cos(lonRad);
-				let zPos = dep * Math.cos(latRad) * Math.sin(lonRad);
-				let yPos = dep * Math.sin(latRad);
-				
-				let worldcoord = {"x": xPos+cx, "y": yPos, "z": zPos+cz};
-				return worldcoord;
-			}
 			
 		</script>
 		<link rel="stylesheet" href="main.css" />
