@@ -72,7 +72,7 @@ let main = async (view) => {
 	const progressBarElem = loadingElem.querySelector('.progressbar');
 	const loadManager = new THREE.LoadingManager();
 	const loader = new THREE.ImageBitmapLoader(loadManager);
-	loader.setOptions( { imageOrientation: 'flipY' } );
+	//loader.setOptions( { imageOrientation: 'flipY' } );
 	
 	const sT = await loader.loadAsync("https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/no-image.jpg");
 	const sphereTexture = new THREE.CanvasTexture(sT);
