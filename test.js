@@ -65,7 +65,6 @@ let main = async (view) => {
 	const widthSegments = 64;
 	const heightSegments = 32;
 	const sphereGeometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments);
-	sphereGeometry.scale(-1, 1, 1);
 	
 	//loading textures
 	const loadingElem = document.querySelector('#loading');
@@ -78,7 +77,7 @@ let main = async (view) => {
 	const sphereTexture = new THREE.CanvasTexture(sT);
 	sphereTexture.colorSpace = THREE.SRGBColorSpace;
 	
-	const sphereMaterial = new THREE.MeshBasicMaterial({side: THREE.FrontSide, color: 0xFFFFFF, map: sphereTexture});
+	const sphereMaterial = new THREE.MeshBasicMaterial({side: THREE.BackSide, color: 0xFFFFFF, map: sphereTexture});
 	let sphereMesh;
 	renderer.initTexture(sphereTexture);
 	
@@ -107,6 +106,7 @@ let main = async (view) => {
 	sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
 	sphereMesh.name = "sphere";
 	sphereMesh.position.set(0,1.6,0);
+	sphereMesh.scale.x = -1;//flipping the material back because THREE.Backside means we're looking from behind which means it's flipped
 	scene.add(sphereMesh);
 	ready = true;
 	
