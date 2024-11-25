@@ -80,6 +80,7 @@ let main = async (view) => {
 	const widthSegments = 64;
 	const heightSegments = 32;
 	const sphereGeometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments);
+	sphereGeometry.scale(-1, 1, 1);
 	
 	//loading textures
 	const loadingElem = document.querySelector('#loading');
@@ -88,11 +89,12 @@ let main = async (view) => {
 	const loader = new THREE.ImageBitmapLoader(loadManager);
 	loader.setOptions( { imageOrientation: 'flipY' } );
 	
-	const sT = await loader.loadAsync("../no-image.jpg");
+	const sT = await loader.loadAsync("https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/no-image.jpg"");
 	const sphereTexture = new THREE.CanvasTexture(sT);
 	sphereTexture.colorSpace = THREE.SRGBColorSpace;
+	sphereTexture.flipY = false;
 	
-	const sphereMaterial = new THREE.MeshBasicMaterial({side: THREE.BackSide, color: 0xFFFFFF, map: sphereTexture});
+	const sphereMaterial = new THREE.MeshBasicMaterial({side: THREE.FrontSide, color: 0xFFFFFF, map: sphereTexture});
 	let sphereMesh;
 	renderer.initTexture(sphereTexture);
 	
@@ -104,10 +106,11 @@ let main = async (view) => {
 			console.log("already in memory: using that to save resources");
 		}
 		for (const b in links.full[viewname]){
-			if (b!="img" && b!="stereo" && viewTextures[b] == undefined){
+			if (b!="img" && viewTextures[b] == undefined){
 				const sTX = await loader.loadAsync(links.full[b].img);
 				const sphereTextureX = new THREE.CanvasTexture(sTX);
 				sphereTextureX.colorSpace = THREE.SRGBColorSpace;
+				sphereTextureX.flipY = false;
 				viewTextures[b] = sphereTextureX;
 				renderer.initTexture(viewTextures[b]);
 				if (b == viewname && viewTextures[b] != undefined){
@@ -121,7 +124,6 @@ let main = async (view) => {
 	sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
 	sphereMesh.name = "sphere";
 	sphereMesh.position.set(0,1.6,0);
-	sphereMesh.scale.x = -1;//flipping the material back because THREE.Backside means we're looking from behind which means it's flipped
 	scene.add(sphereMesh);
 	ready = true;
 	
@@ -144,16 +146,19 @@ let main = async (view) => {
 			for (const c in pickableObjs.children){
 				let btnMesh = pickableObjs.children[c];
 				let ln = pickableObjs.children[c].name;
-				if (ln!="img" && ln!="stereo" && newView[ln] != undefined && newView[ln].s != 0) {
+				if (ln!="img" && newView[ln] != undefined && newView[ln].s != 0) {
 					console.log(ln + "is a link under " + viewname + " view");
+					//viable link
 					btnMesh.position.set(newView[ln].x, newView[ln].y, newView[ln].z);
 					btnMesh.scale.set(newView[ln].s, newView[ln].s/2, newView[ln].s);
 					btnMesh.visible = true;
-				} else if (ln!="img" && ln!="stereo" && newView[ln] != undefined && newView[ln].s == 0) {
+				} else if (ln!="img" && newView[ln] != undefined && newView[ln].s == 0) {
+					//link to self
 					btnMesh.position.set(newView[ln].x, newView[ln].y, newView[ln].z);
 					btnMesh.scale.set(newView[ln].s, newView[ln].s/2, newView[ln].s);
 					btnMesh.visible = false;
-				} else if (ln!="img" && ln!="stereo" && newView[ln] == undefined){
+				} else if (ln!="img" && newView[ln] == undefined){
+					//no link
 					btnMesh.position.set(0, -1.6, 0);
 					btnMesh.scale.set(1, 0.5, 1);
 					btnMesh.visible = false;
@@ -312,7 +317,6 @@ let main = async (view) => {
 		//switch to the view of the button selected
 		if (event.object.name && event.object.visible){
 			console.log("Desktop Click");
-			console.log(event.object);
 			switchTabs(event.object.name);
 		}
 	});
@@ -391,7 +395,7 @@ let main = async (view) => {
 		document.getElementById("positions").innerHTML = "";
 		clinkplink = false;
 		for (const plink in links.full[name]){
-			if ((plink != name) && (plink != "img") && (plink != "stereo")){
+			if ((plink != name) && (plink != "img")){
 				//adding positions from links
 				let plob = links.full[name][plink];
 				if (pickableObjs.getObjectByName(plink) && (plob.s!=0) && ((plob.x+plob.z)!=0)){
@@ -416,7 +420,7 @@ let main = async (view) => {
 					const plinkTo = e.target.id.substring(3);
 					//turn every other link toggle off
 					for (const z in links.full[viewname]){
-						if ((z != viewname) && (z != "img") && (z != "stereo")){
+						if ((z != viewname) && (z != "img")){
 							const zid = "pl_"+z;
 							document.getElementById(zid).style.background = "white";
 							if (pickableObjs.getObjectByName(z)){
@@ -498,7 +502,6 @@ let main = async (view) => {
 		if ((linklink.length > 5) && (linkname.length > 3)){
 			links.full[linkname] = {
 				"img": linklink,
-				"stereo": false,
 				[linkname]: {"s": 0, "x": 0, "y": -1.6, "z": 0}
 			}
 			document.getElementById("newlink").style.display = "none";
@@ -552,7 +555,8 @@ let main = async (view) => {
 //texture view/link properties
 let links = {
 	"header": {
-		"version": 0.1,
+		"version": 0.2,
+		"stereo": false,
 		"index": ""
 	},
 	"full": {

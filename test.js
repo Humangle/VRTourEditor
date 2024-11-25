@@ -72,11 +72,12 @@ let main = async (view) => {
 	const progressBarElem = loadingElem.querySelector('.progressbar');
 	const loadManager = new THREE.LoadingManager();
 	const loader = new THREE.ImageBitmapLoader(loadManager);
-	//loader.setOptions( { imageOrientation: 'flipY' } );
+	loader.setOptions( { imageOrientation: 'flipY' } );
 	
 	const sT = await loader.loadAsync("https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/no-image.jpg");
 	const sphereTexture = new THREE.CanvasTexture(sT);
 	sphereTexture.colorSpace = THREE.SRGBColorSpace;
+	sphereTexture.flipY = false;
 	
 	const sphereMaterial = new THREE.MeshBasicMaterial({side: THREE.FrontSide, color: 0xFFFFFF, map: sphereTexture});
 	let sphereMesh;
@@ -90,10 +91,11 @@ let main = async (view) => {
 			console.log("already in memory: using that to save resources");
 		}
 		for (const b in view[viewname]){
-			if (b!="img" && b!="stereo" && viewTextures[b] == undefined){
+			if (b!="img" && viewTextures[b] == undefined){
 				const sTX = await loader.loadAsync(view[b].img);
 				const sphereTextureX = new THREE.CanvasTexture(sTX);
 				sphereTextureX.colorSpace = THREE.SRGBColorSpace;
+				sphereTextureX.flipY = false;
 				viewTextures[b] = sphereTextureX;
 				renderer.initTexture(viewTextures[b]);
 				if (b == viewname && viewTextures[b] != undefined){
@@ -129,16 +131,19 @@ let main = async (view) => {
 			for (const c in pickableObjs.children){
 				let btnMesh = pickableObjs.children[c];
 				let ln = pickableObjs.children[c].name;
-				if (ln!="img" && ln!="stereo" && newView[ln] != undefined && newView[ln].s != 0) {
+				if (ln!="img" && newView[ln] != undefined && newView[ln].s != 0) {
 					console.log(ln + "is a link under " + viewname + " view");
+					//viable link
 					btnMesh.position.set(newView[ln].x, newView[ln].y, newView[ln].z);
 					btnMesh.scale.set(newView[ln].s, newView[ln].s/2, newView[ln].s);
 					btnMesh.visible = true;
-				} else if (ln!="img" && ln!="stereo" && newView[ln] != undefined && newView[ln].s == 0) {
+				} else if (ln!="img" && newView[ln] != undefined && newView[ln].s == 0) {
+					//link to self
 					btnMesh.position.set(newView[ln].x, newView[ln].y, newView[ln].z);
 					btnMesh.scale.set(newView[ln].s, newView[ln].s/2, newView[ln].s);
 					btnMesh.visible = false;
-				} else if (ln!="img" && ln!="stereo" && newView[ln] == undefined){
+				} else if (ln!="img" && newView[ln] == undefined){
+					//no link
 					btnMesh.position.set(0, -1.6, 0);
 					btnMesh.scale.set(1, 0.5, 1);
 					btnMesh.visible = false;
@@ -308,27 +313,25 @@ let main = async (view) => {
 //texture view/link properties
 const links = {
 	"header": {
-		"version": 0.1,
+		"version": 0.2,
+		"stereo": false,
 		"index": "PIC_1"
 	},
 	"lite": {
 		"PIC_1": {
 			"img": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_1-min.jpg",
-			"stereo": false,
 			"PIC_1": {"s": 0, "x": 0, "y": -1.6, "z": 0},
 			"PIC_2": {"s": 4, "x": 16.55099055399931, "y": -74.61338152995376, "z": 47.527970799803576},
 			"PIC_3": {"s": 2, "x": -7.500365624785212, "y": -44.45476799258078, "z": 77.894275259613}
 		},
 		"PIC_2": {
 			"img": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_2-min.jpg",
-			"stereo": false,
 			"PIC_1": {"s": 4, "x": -3.337599303613126, "y": -72.62642809294218, "z": -53.04962180213184},
 			"PIC_2": {"s": 0, "x": 0, "y": -1.6, "z": 0},
 			"PIC_3": {"s": 4, "x": -38.36253246210393, "y": -60.22175457229724, "z": 54.78737426933343}
 		},
 		"PIC_3": {
 			"img": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_3-min.jpg",
-			"stereo": false,
 			"PIC_1": {"s": 2, "x": -32.01658952848355, "y": -43.63286582217034, "z": -71.91043745597072},
 			"PIC_2": {"s": 4, "x": -7.067563684490447, "y": -59.4001501164843, "z": -67.2433766976704},
 			"PIC_3": {"s": 0, "x": 0, "y": -1.6, "z": 0}
@@ -337,21 +340,18 @@ const links = {
 	"full": {
 		"PIC_1": {
 			"img": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_1.jpg",
-			"stereo": false,
 			"PIC_1": {"s": 0, "x": 0, "y": -1.6, "z": 0},
 			"PIC_2": {"s": 4, "x": 16.55099055399931, "y": -74.61338152995376, "z": 47.527970799803576},
 			"PIC_3": {"s": 2, "x": -7.500365624785212, "y": -44.45476799258078, "z": 77.894275259613}
 		},
 		"PIC_2": {
 			"img": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_2.jpg",
-			"stereo": false,
 			"PIC_1": {"s": 4, "x": -3.337599303613126, "y": -72.62642809294218, "z": -53.04962180213184},
 			"PIC_2": {"s": 0, "x": 0, "y": -1.6, "z": 0},
 			"PIC_3": {"s": 4, "x": -38.36253246210393, "y": -60.22175457229724, "z": 54.78737426933343}
 		},
 		"PIC_3": {
 			"img": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_3.jpg",
-			"stereo": false,
 			"PIC_1": {"s": 2, "x": -32.01658952848355, "y": -43.63286582217034, "z": -71.91043745597072},
 			"PIC_2": {"s": 4, "x": -7.067563684490447, "y": -59.4001501164843, "z": -67.2433766976704},
 			"PIC_3": {"s": 0, "x": 0, "y": -1.6, "z": 0}
