@@ -93,6 +93,7 @@
 				const sT = await loader.loadAsync("../no-image.jpg");
 				const sphereTexture = new THREE.CanvasTexture(sT);
 				sphereTexture.colorSpace = THREE.SRGBColorSpace;
+				sphereTexture.flipY = true;
 				
 				const sphereMaterial = new THREE.MeshBasicMaterial({side: THREE.FrontSide, color: 0xFFFFFF, map: sphereTexture});
 				let sphereMesh;
