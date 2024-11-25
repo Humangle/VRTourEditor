@@ -93,7 +93,7 @@
 				const sT = await loader.loadAsync("https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/no-image.jpg");
 				const sphereTexture = new THREE.CanvasTexture(sT);
 				sphereTexture.colorSpace = THREE.SRGBColorSpace;
-				sphereTexture.flipY = true;
+				sphereTexture.flipY = false;
 				
 				const sphereMaterial = new THREE.MeshBasicMaterial({side: THREE.FrontSide, color: 0xFFFFFF, map: sphereTexture});
 				let sphereMesh;
