@@ -90,7 +90,7 @@
 				const loader = new THREE.ImageBitmapLoader(loadManager);
 				loader.setOptions( { imageOrientation: 'flipY' } );
 				
-				const sT = await loader.loadAsync("../no-image.jpg");
+				const sT = await loader.loadAsync("https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/no-image.jpg");
 				const sphereTexture = new THREE.CanvasTexture(sT);
 				sphereTexture.colorSpace = THREE.SRGBColorSpace;
 				sphereTexture.flipY = true;
@@ -387,7 +387,7 @@
 			});
 			
 		</script>
-		<link rel="stylesheet" href="main.css" />
+		<link rel="stylesheet" href="./main.css" />
 	</head>
 	<body>
 		<div id="loading">
