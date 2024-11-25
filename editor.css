@@ -33,12 +33,12 @@ body {
 }
 #loading .progress {
     margin: 1.5em;
-    border: 1px solid #FFFFFF;
+    border: 1px solid white;
     width: 50vw;
 }
 #loading .progressbar {
     margin: 2px;
-    background: #FFFFFF;
+    background: white;
     height: 1em;
     transform-origin: top left;
     transform: scaleX(0);
@@ -50,7 +50,7 @@ body {
 	margin: 10%;
 	padding: 10%;
 	display: none;
-	background: #FFFFFF;
+	background: white;
 }
 #newplink {
 	position: fixed;
@@ -59,7 +59,7 @@ body {
 	margin: 10%;
 	padding: 10%;
 	display: none;
-	background: #FFFFFF;
+	background: white;
 }
 .close {
 	float: right;
@@ -107,20 +107,20 @@ input {
 	scrollbar-width: none;
 	-ms-overflowstyle: none;
 	font-size: 0.8em;
-	background: #4bc0e1;
+	background: blue;
 }
 .tabhead {
 	cursor: pointer;
 	padding: 10px;
-	background: #4bc0e1;
+	background: blue;
 	max-width: 10vw;
 	min-width: 5vw;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
-	border-top: 1px solid #4bc0e1;
-	border-left: 1px solid #4bc0e1;
-	border-right: 1px solid #4bc0e1;
+	border-top: 1px solid blue;
+	border-left: 1px solid blue;
+	border-right: 1px solid blue;
 }
 #linkdata {
 	display: none;
@@ -145,14 +145,14 @@ input {
 }
 .plink {
 	display: flex;
-	background: #FFFFFF;
+	background: white;
 }
 .pl_edit {
-	background: #FFFFFF;
+	background: white;
 	cursor: pointer;
 }
 .pl_edit:hover {
-	background: #4bc0e166;
+	background: grey;
 }
 .dpl {
 	cursor: pointer;

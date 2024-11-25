@@ -65,7 +65,7 @@ let main = async (view) => {
 	let plinkplacer = new THREE.Object3D();
 	plinkplacer.position.set(0, 1.6, 0);
 	scene.add(plinkplacer);
-	let gizmoMaterial = new THREE.MeshPhongMaterial({emissive: 0x4bc0e1, opacity:0.2, transparent: true});
+	let gizmoMaterial = new THREE.MeshPhongMaterial({emissive: 0x0000FF, opacity:0.2, transparent: true});
 	const gizmoGeometry = new THREE.SphereGeometry(1, 64, 16);
 	let plinkgizmo = new THREE.Mesh(gizmoGeometry, gizmoMaterial);
 	plinkgizmo.position.z = 80;
@@ -378,12 +378,12 @@ let main = async (view) => {
 		for (const x in links.full){
 			//every other tab back to blue
 			const tabid = "tab_" + x;
-			document.getElementById(tabid).style.background = "#4bc0e1";
+			document.getElementById(tabid).style.background = "blue";
 			if (pickableObjs.getObjectByName(x)){
 				pickableObjs.getObjectByName(x).material.emissive = new THREE.Color(0xFFFFFF);
 			}
 		}
-		document.getElementById(tabname).style.background = "#FFFFFF";
+		document.getElementById(tabname).style.background = "white";
 		
 		//fill tab contents
 		document.getElementById("linkdataname").value = name;
@@ -427,12 +427,12 @@ let main = async (view) => {
 					//toggle link placer visibility
 					if (clinkplink == plinkTo){
 						clinkplink = false;
-						document.getElementById(idplink).style.background = "#FFFFFF";
+						document.getElementById(idplink).style.background = "white";
 						pickableObjs.getObjectByName(plinkTo).material.emissive = new THREE.Color(0xFFFFFF);
 					} else {
 						clinkplink = plinkTo;
-						document.getElementById(idplink).style.background = "#4bc0e1";
-						pickableObjs.getObjectByName(plinkTo).material.emissive = new THREE.Color(0x4bc0e1);
+						document.getElementById(idplink).style.background = "blue";
+						pickableObjs.getObjectByName(plinkTo).material.emissive = new THREE.Color(0x0000FF);
 					}
 				});
 				document.getElementById(dplid).addEventListener("click", function(e) {
