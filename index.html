@@ -111,7 +111,7 @@
 							const sTX = await loader.loadAsync(view[b].img);
 							const sphereTextureX = new THREE.CanvasTexture(sTX);
 							sphereTextureX.colorSpace = THREE.SRGBColorSpace;
-							sphereTexture.flipY = false;
+							sphereTextureX.flipY = false;
 							viewTextures[b] = sphereTextureX;
 							renderer.initTexture(viewTextures[b]);
 							if (b == viewname && viewTextures[b] != undefined){
