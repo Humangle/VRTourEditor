@@ -361,7 +361,7 @@ const links = {
 
 let version = links.full;
 navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
-	//should probably also check if it's mobile here
+	//should check if it's mobile here
 	if (!supported){
 		version = links.lite;
 	}
