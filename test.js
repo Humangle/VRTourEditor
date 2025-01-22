@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
-import {VRButton} from 'three/addons/webxr/VRButton.js';
+import {XRButton} from 'three/addons/webxr/XRButton.js';
 
 let ready = false;
 
@@ -8,13 +8,12 @@ let main = async (view) => {
 	
 	//set up the canvas for THREE.js
 	const canvas = document.getElementById("c");
-	const renderer = new THREE.WebGLRenderer({antialias: true, canvas});
+	const renderer = new THREE.WebGLRenderer({canvas, alpha: true, premultipliedAlpha: false});
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(canvas.clientWidth, canvas.clientHeight);
 	renderer.xr.enabled = true;
 	renderer.xr.setReferenceSpaceType('local');
 	renderer.xr.setFoveation(1.0);
-	document.body.appendChild(VRButton.createButton(renderer));
 	
 	//set the camera up
 	const fov = 45;
@@ -26,6 +25,7 @@ let main = async (view) => {
 	
 	//orbital camera controls
 	const controls = new OrbitControls(camera, renderer.domElement);
+	controls.rotateSpeed *= -1;
 	controls.enableDamping = true;
 	controls.minDistance = 0.001;
 	controls.maxDistance = 0.001;
@@ -35,7 +35,6 @@ let main = async (view) => {
 	
 	//here we go!
 	const scene = new THREE.Scene();
-	scene.background = new THREE.Color(0x010101);
 	
 	const pickableObjs = new THREE.Object3D();
 	let viewTextures = {};
@@ -120,6 +119,11 @@ let main = async (view) => {
 	loadManager.onLoad = () => {
 		document.body.style.cursor = "auto";
 	}
+	
+	document.body.appendChild(XRButton.createButton(renderer, {
+		requiredFeatures: ['local'],
+		optionalFeatures: ['light-estimation']
+	}));
 	
 	//switch to the view of the button selected
 	const teleport = async (viewname) => {
@@ -275,6 +279,9 @@ let main = async (view) => {
 		//(-1 to +1) for both components
 		DesktopPicker.pointer.x = (event.clientX/canvas.clientWidth) * 2 - 1;
 		DesktopPicker.pointer.y = - (event.clientY/canvas.clientHeight) * 2 + 1;
+		
+		//camera.rotation.y = THREE.MathUtils.lerp(camera.rotation.y, (event.clientY * Math.PI) / 10, 0.1);
+		//camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, (event.clientX * Math.PI) / 10, 0.1);
 	}
 	
 	const onWindowResize = () => {
@@ -360,7 +367,7 @@ const links = {
 };
 
 let version = links.full;
-navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
+navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
 	//should check if it's mobile here
 	if (!supported){
 		version = links.lite;

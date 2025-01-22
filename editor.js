@@ -568,7 +568,7 @@ let links = {
 	}
 };
 
-//export html, save and load .hvrj (humangle vr json)
+//export zip, save and load .hvrj (humangle vr json)
 
 main();
 
