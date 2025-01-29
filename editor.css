@@ -1,6 +1,7 @@
 body {
 	margin: 0px;
 	display: flex;
+	font-family: Arial, Helvetica, sans-serif;
 }
 #c {
 	display: block;
@@ -20,6 +21,8 @@ body {
 	bottom: 0;
 	left: 0;
 	display: block;
+	background: #22b2d7;
+	padding: 5px;
 }
 #loading {
     position: fixed;
@@ -44,11 +47,14 @@ body {
     transform: scaleX(0);
 }
 #newlink {
+	color: #22b2d7;
 	position: fixed;
 	top: 0;
 	left: 0;
-	margin: 10%;
-	padding: 10%;
+	margin: 0px;
+	width: 100vw;
+	height: 100vh;
+	padding: 10vw;
 	display: none;
 	background: #FFFFFF;
 }
@@ -67,12 +73,15 @@ body {
 }
 #create {
 	cursor: pointer;
-	font-size: 24px;
+	font-size: 42px;
 	position: fixed;
 	margin: 1%;
-	padding: 1%;
+	padding: 1vw;
+	padding-left: 2vw;
+	padding-right: 2vw;
 	bottom: 0;
 	right: 0;
+	color: #22b2d7;
 }
 #createposition {
 	display: block;
@@ -88,11 +97,13 @@ button {
 	cursor: pointer;
 	margin-top: 10px;
 	padding: 10px;
+	border-radius: 5px;
 }
 input {
 	margin-top: 10px;
 	padding: 10px;
 	width: 50vw;
+	border-radius: 5px;
 }
 #tabs {
 	margin: 0px;
@@ -107,20 +118,21 @@ input {
 	scrollbar-width: none;
 	-ms-overflowstyle: none;
 	font-size: 0.8em;
-	background: #4bc0e1;
+	background: #22b2d7;
 }
 .tabhead {
 	cursor: pointer;
 	padding: 10px;
-	background: #4bc0e1;
+	background: #22b2d7;
 	max-width: 10vw;
 	min-width: 5vw;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
-	border-top: 1px solid #4bc0e1;
-	border-left: 1px solid #4bc0e1;
-	border-right: 1px solid #4bc0e1;
+	border-top: 1px solid #22b2d7;
+	border-left: 1px solid #22b2d7;
+	border-right: 1px solid #22b2d7;
+	border-top-right-radius: 10px;
 }
 #linkdata {
 	display: none;

@@ -14,6 +14,7 @@
 		<title>HumAngle VR Tour Editor</title>
 		<link rel="icon" href="https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png" sizes="32x32">
 		<link rel="icon" href="https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-192x192.png" sizes="32x32">
+		<link rel="stylesheet" href="./font-awesome-4.7.0/css/font-awesome.min.css">
 	</head>
 	<body>
 		<div id="loading">
@@ -32,21 +33,24 @@
 				<div id="positions"></div>
 			</div>
 		</div>
-		<div id="create">➕</div>
+		<div id="create"><i class="fa fa-plus" aria-hidden="true"></i></div>
 		<div id="newlink">
-			<div id="close"><span class="close">❌</span></div>
+			<h3>Add a 360 Image</h3>
+			<div id="close"><span class="close"><div id="create"><i class="fa fa-times" aria-hidden="true"></i></div></span></div>
 			<input id="linkname" type="text" placeholder="Name" /><br/>
 			<input id="linklink" type="text" placeholder="Link" /><br/>
 			<button id="newlinkbtn"> Add </button>
 		</div>
 		<div id="newplink">
-			<div id="closepl"><span class="close">❌</span></div>
+			<div id="closepl"><span class="close"><i class="fa fa-times" aria-hidden="true"></i></span></div>
 			<select name="LinkTo" id="picklink">
 			</select><br/>
 			<button id="newplinkbtn"> Add </button>
 		</div>
 		<div id="menu">
-			Export Save Load
+			<span>Export</span>
+			<span>Save</span>
+			<span>Load</span>
 		</div>
 	</body>
 	<script>

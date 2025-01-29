@@ -383,7 +383,7 @@ let main = async (view) => {
 		for (const x in links.full){
 			//every other tab back to blue
 			const tabid = "tab_" + x;
-			document.getElementById(tabid).style.background = "#4bc0e1";
+			document.getElementById(tabid).style.background = "#22b2d7";
 			if (pickableObjs.getObjectByName(x)){
 				pickableObjs.getObjectByName(x).material.emissive = new THREE.Color(0xFFFFFF);
 			}
@@ -436,7 +436,7 @@ let main = async (view) => {
 						pickableObjs.getObjectByName(plinkTo).material.emissive = new THREE.Color(0xFFFFFF);
 					} else {
 						clinkplink = plinkTo;
-						document.getElementById(idplink).style.background = "#4bc0e1";
+						document.getElementById(idplink).style.background = "#22b2d7";
 						pickableObjs.getObjectByName(plinkTo).material.emissive = new THREE.Color(0x4bc0e1);
 					}
 				});
