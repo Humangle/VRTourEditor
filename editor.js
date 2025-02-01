@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
-import {VRButton} from 'three/addons/webxr/VRButton.js';
 
 //version 170
 let ready = false;
@@ -15,7 +14,6 @@ let main = async (view) => {
 	renderer.xr.enabled = true;
 	renderer.xr.setReferenceSpaceType('local');
 	renderer.xr.setFoveation(1.0);
-	document.body.appendChild(VRButton.createButton(renderer));
 	
 	//set the camera up
 	const fov = 45;
@@ -66,7 +64,7 @@ let main = async (view) => {
 	let plinkplacer = new THREE.Object3D();
 	plinkplacer.position.set(0, 1.6, 0);
 	scene.add(plinkplacer);
-	let gizmoMaterial = new THREE.MeshPhongMaterial({emissive: 0x4bc0e1, opacity:0.2, transparent: true});
+	let gizmoMaterial = new THREE.MeshPhongMaterial({emissive: 0x22b2d7, opacity:0.2, transparent: true});
 	const gizmoGeometry = new THREE.SphereGeometry(1, 64, 16);
 	let plinkgizmo = new THREE.Mesh(gizmoGeometry, gizmoMaterial);
 	plinkgizmo.position.z = 80;
@@ -134,7 +132,7 @@ let main = async (view) => {
 	};
 	
 	loadManager.onLoad = () => {
-		document.body.style.cursor = "auto";
+		document.body.style.cursor = "default";
 	}
 	
 	//switch to the view of the button selected
@@ -384,11 +382,14 @@ let main = async (view) => {
 			//every other tab back to blue
 			const tabid = "tab_" + x;
 			document.getElementById(tabid).style.background = "#22b2d7";
+			document.getElementById(tabid).style.color = "#FFFFFF";
 			if (pickableObjs.getObjectByName(x)){
 				pickableObjs.getObjectByName(x).material.emissive = new THREE.Color(0xFFFFFF);
 			}
 		}
 		document.getElementById(tabname).style.background = "#FFFFFF";
+		document.getElementById(tabname).style.color = "#22b2d7";
+		document.getElementById(tabname).scrollIntoView({ behavior: "smooth"});
 		
 		//fill tab contents
 		document.getElementById("linkdataname").value = name;
@@ -470,8 +471,11 @@ let main = async (view) => {
 	}
 	
 	document.getElementById("create").addEventListener('click', (event) => {
+		document.getElementById("linkname").value = "";
+		document.getElementById("linklink").value = "";
 		document.getElementById("newlink").style.display = "block";
 		document.getElementById("create").style.display = "none";
+		document.getElementById("errora").innerText = "";
 	});
 	document.getElementById("close").addEventListener('click', (event) => {
 		document.getElementById("newlink").style.display = "none";
@@ -491,16 +495,19 @@ let main = async (view) => {
 				viewlist.append(linkoptions);
 			}
 		}
+		document.getElementById("errorb").innerText = "";
+		document.getElementById("cimgn").innerText = "‟"+tabname+"”";
 	});
 	document.getElementById("closepl").addEventListener('click', (event) => {
 		document.getElementById("newplink").style.display = "none";
 		document.getElementById("createposition").style.display = "block";
 	});
 	let linkname, linklink;
-	document.getElementById("newlinkbtn").addEventListener('click', (event) => {
+	document.getElementById("imageupload").addEventListener('submit', (event) => {
+		event.preventDefault();
 		linkname = document.getElementById("linkname").value;
 		linklink = document.getElementById("linklink").value;
-		if ((linklink.length > 5) && (linkname.length > 3)){
+		if ((linklink.length > 5) && (linkname.length > 3) && (!links.full[linkname])){
 			links.full[linkname] = {
 				"img": linklink,
 				[linkname]: {"s": 0, "x": 0, "y": -1.6, "z": 0}
@@ -523,33 +530,41 @@ let main = async (view) => {
 				console.log("tabid");
 				switchTabs(e.target.innerText);
 			});
-			console.log("newlinkbtn");
+			console.log("image uploaded");
 			switchTabs(linkname);
 		} else {
-			console.log("name or link not long enough");
+			console.log("name or link not long enough or name already exists");
+			document.getElementById("errora").innerText = "Error: ‟"+linkname+"” already exists.";
 		}
 	});
 	
-	document.getElementById("newplinkbtn").addEventListener('click', (event) => {
+	document.getElementById("connection").addEventListener('submit', (event) => {
+		event.preventDefault();
 		const linkname = document.getElementById("linkdataname").value;
 		const plinkname = document.getElementById("picklink").value;
 		
-		//make button for the new link position
-		if (!pickableObjs.getObjectByName(plinkname)){
-			pickableObjs.add(makeButton(plinkname));
+		if (!links.full[linkname][plinkname]){
+			//make button for the new link position
+			if (!pickableObjs.getObjectByName(plinkname)){
+				pickableObjs.add(makeButton(plinkname));
+			}
+			
+			//add plink to links object
+			links.full[linkname][plinkname] = {
+				"s" : 1.0,
+				"x" : 0.0,
+				"y" : -1.6,
+				"z" : 0.0
+			}
+			
+			document.getElementById("newplink").style.display = "none";
+			document.getElementById("createposition").style.display = "block";
+			console.log("connection created");
+			switchTabs(linkname);
+		} else {
+			console.log("connection already exists");
+			document.getElementById("errorb").innerText = "Error: ‟"+linkname+"” is already connected to ‟"+plinkname+"”.";
 		}
-		//add plink to links object
-		links.full[linkname][plinkname] = {
-			"s" : 1.0,
-			"x" : 0.0,
-			"y" : -1.6,
-			"z" : 0.0
-		}
-		
-		document.getElementById("newplink").style.display = "none";
-		document.getElementById("createposition").style.display = "block";
-		console.log("newplinkbtn");
-		switchTabs(linkname);
 	});
 }
 

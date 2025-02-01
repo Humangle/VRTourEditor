@@ -2,6 +2,7 @@ body {
 	margin: 0px;
 	display: flex;
 	font-family: Arial, Helvetica, sans-serif;
+	background: #00000010;
 }
 #c {
 	display: block;
@@ -14,7 +15,9 @@ body {
 }
 #tabs {
 	display: block;
-	height: 70%;
+	height: 70vh;
+	background: #FFFFFF;
+	border-left: solid #00000044 1px;
 }
 #menu {
 	position: fixed;
@@ -22,7 +25,10 @@ body {
 	left: 0;
 	display: block;
 	background: #22b2d7;
-	padding: 5px;
+	padding: 10px;
+	font-size: 0.8em;
+	width: 100vw;
+	color: #FFFFFF;
 }
 #loading {
     position: fixed;
@@ -54,16 +60,47 @@ body {
 	margin: 0px;
 	width: 100vw;
 	height: 100vh;
-	padding: 10vw;
 	display: none;
 	background: #FFFFFF;
 }
+#newlinkbtn {
+	max-width: fit-content;
+	cursor: pointer;
+	margin-top: 10px;
+	padding: 10px;
+	border-radius: 5px;
+	border: none;
+	background: #22b2d7;
+	color: #FFFFFF;
+}
+#newplinkbtn {
+	max-width: fit-content;
+	cursor: pointer;
+	margin-top: 10px;
+	padding: 10px;
+	border-radius: 5px;
+	border: none;
+	background: #22b2d7;
+	color: #FFFFFF;
+}
+#imageupload {
+	max-width: fit-content;
+	margin: auto;
+	margin-top: 30vh;
+}
+#connection {
+	max-width: fit-content;
+	margin: auto;
+	margin-top: 30vh;
+}
 #newplink {
+	color: #22b2d7;
 	position: fixed;
 	top: 0;
 	left: 0;
-	margin: 10%;
-	padding: 10%;
+	margin: 0px;
+	width: 100vw;
+	height: 100vh;
 	display: none;
 	background: #FFFFFF;
 }
@@ -76,34 +113,52 @@ body {
 	font-size: 42px;
 	position: fixed;
 	margin: 1%;
-	padding: 1vw;
+	padding: 3vw;
 	padding-left: 2vw;
 	padding-right: 2vw;
 	bottom: 0;
 	right: 0;
 	color: #22b2d7;
 }
+#positionbox{
+	border: solid #00000044 1px;
+	border-radius: 5px;
+	margin: 0;
+	width: 27vw;
+	padding: 10px;
+}
 #createposition {
+	text-align: center;
+	font-size: 12px;
 	display: block;
 	cursor: pointer;
-	font-size: 24px;
 	margin: 1%;
-	padding: 1%;
-	bottom: 0;
-	right: 0;
-	float: right;
+	padding: 10px;
+	background: #00000010;
+	border-radius: 5px;
 }
 button {
 	cursor: pointer;
 	margin-top: 10px;
 	padding: 10px;
 	border-radius: 5px;
+	background: #22b2d7;
+	color: #FFFFFF;
+	font-size: 20px;
 }
 input {
 	margin-top: 10px;
 	padding: 10px;
 	width: 50vw;
 	border-radius: 5px;
+	border: solid #00000044 1px;
+}
+#picklink {
+	margin-top: 10px;
+	padding: 10px;
+	width: 50vw;
+	border-radius: 5px;
+	border: solid #00000044 1px;
 }
 #tabs {
 	margin: 0px;
@@ -121,28 +176,30 @@ input {
 	background: #22b2d7;
 }
 .tabhead {
+	color: #FFFFFF;
+	font-size: 12px;
 	cursor: pointer;
 	padding: 10px;
 	background: #22b2d7;
 	max-width: 10vw;
-	min-width: 5vw;
+	min-width: 3vw;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
 	border-top: 1px solid #22b2d7;
 	border-left: 1px solid #22b2d7;
-	border-right: 1px solid #22b2d7;
-	border-top-right-radius: 10px;
+	border-right: 1px solid #FFFFFF44;
+	border-top-right-radius: 8px;
 }
 #linkdata {
 	display: none;
 	padding: 1vw;
 }
 #linkdataname {
-	width: 20vw;
+	width: 27vw;
 }
 #linkdatalink {
-	width: 20vw;
+	width: 27vw;
 }
 #positions {
 	display: block;
@@ -164,8 +221,16 @@ input {
 	cursor: pointer;
 }
 .pl_edit:hover {
-	background: #4bc0e166;
+	background: #22b2d7;
 }
 .dpl {
 	cursor: pointer;
+}
+#errora {
+	color: #FF0000;
+	font-size: 12px;
+}
+#errorb {
+	color: #FF0000;
+	font-size: 12px;
 }

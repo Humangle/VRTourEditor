@@ -29,28 +29,39 @@
 				<input id="linkdataname" type="text" placeholder="Name" /><br/>
 				<input id="linkdatalink" type="text" placeholder="Link" /><br/>
 				<input id="linkdatastereo" type="checkbox" placeholder="false" hidden="true"/><br/>
-				<div id="createposition">🔗</div><br/>
-				<div id="positions"></div>
+				<div id="positionbox">
+					<div id="createposition"> Create a Connection <i class="fa fa-link" aria-hidden="true"></i></div><br/>
+					<div id="positions"></div>
+				</div>
 			</div>
 		</div>
 		<div id="create"><i class="fa fa-plus" aria-hidden="true"></i></div>
 		<div id="newlink">
-			<h3>Add a 360 Image</h3>
-			<div id="close"><span class="close"><div id="create"><i class="fa fa-times" aria-hidden="true"></i></div></span></div>
-			<input id="linkname" type="text" placeholder="Name" /><br/>
-			<input id="linklink" type="text" placeholder="Link" /><br/>
-			<button id="newlinkbtn"> Add </button>
+			<form id="imageupload">
+				<h1>Add a 360 Image</h1>
+				<div id="errora"></div>
+				<div id="close"><span class="close"><div id="create"><i class="fa fa-times" aria-hidden="true"></i></div></span></div>
+				<input id="linkname" type="text" placeholder="Name" minlength="3" required /><br/>
+				<input id="linklink" type="text" placeholder="Link to PNG/JPEG" pattern=".*g$" required /><br/>
+				<input type="submit" id="newlinkbtn" value=" Add "/>
+			</form>
 		</div>
 		<div id="newplink">
-			<div id="closepl"><span class="close"><i class="fa fa-times" aria-hidden="true"></i></span></div>
-			<select name="LinkTo" id="picklink">
-			</select><br/>
-			<button id="newplinkbtn"> Add </button>
+			<form id="connection">
+				<h2>Connect <span id="cimgn"></span> to Another 360 Image</h2>
+				<div id="errorb"></div>
+				<div id="closepl"><span class="close"><div id="create"><i class="fa fa-times" aria-hidden="true"></i></div></span></div>
+				<select name="LinkTo" id="picklink" required>
+				</select><br/>
+				<input type="submit" id="newplinkbtn" value=" Add "/>
+			</form>
 		</div>
 		<div id="menu">
 			<span>Export</span>
 			<span>Save</span>
-			<span>Load</span>
+			<span>Load</span> | 
+			<span>Stereo</span>
+			<span>Index</span>
 		</div>
 	</body>
 	<script>
