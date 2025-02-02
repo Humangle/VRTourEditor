@@ -3,6 +3,7 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 
 //version 170
 let ready = false;
+screen.orientation.lock("landscape-primary");
 
 let main = async (view) => {
 	
@@ -373,6 +374,7 @@ let main = async (view) => {
 	
 	const switchTabs = (name) => {
 		console.log("switchTabs: "+name);
+		document.getElementById("intro").style.display = "none";
 		//teleport to view
 		teleport(name);
 		

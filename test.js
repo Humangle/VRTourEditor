@@ -312,6 +312,25 @@ let main = async (view) => {
 			DesktopPicker.update(pickableObjs, time);
 		}
 		
+		if (renderer.xr.isPresenting){
+			if (camera.fov != 45){
+				camera.fov = 45;
+				camera.updateProjectionMatrix();
+			}
+		} else {
+			if (window.innerHeight > window.innerWidth+(window.innerWidth/2)) {
+				if (camera.fov != 90){
+					camera.fov = 90;
+					camera.updateProjectionMatrix();
+				}
+			} else {
+				if (camera.fov != 45){
+					camera.fov = 45;
+					camera.updateProjectionMatrix();
+				}
+			}
+		}
+		
 		renderer.render(scene, camera);
 		
 	}
@@ -372,15 +391,15 @@ const links = {
 };
 
 let version = links.full;
-let deviceFOV = "45";
 navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
-	//should check if it's mobile/portrait to set FOV to 90-120
 	if (!supported){
 		version = links.lite;
+	} else {
+		version = links.full;
 	}
-	/**	also check headset? to determine approppriate FOV to set 
-		when the XR experience starts? and reser to 45 when it ends?
-	**/
 }).finally(() => {
+	if (window.innerHeight > window.innerWidth+(window.innerWidth/2)) {
+		version = links.lite;
+	}
 	main(version);
 });

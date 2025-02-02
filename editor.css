@@ -234,3 +234,13 @@ input {
 	color: #FF0000;
 	font-size: 12px;
 }
+#intro {
+	padding: 3vw;
+}
+.bmoption{
+	padding: 5px;
+	cursor: pointer;
+}
+.bmoption:hover {
+	background: #00000044;
+}

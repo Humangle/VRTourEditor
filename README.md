@@ -1,6 +1,8 @@
-HumAngle VR Tour Editor
+# HumAngle VR Tour Editor Documentation
 
+## Getting Started
 
+## Office Tour Sample
 
-HVRJ - HumAngle VR JSON
+## HVRJ - HumAngle VR JSON
 
