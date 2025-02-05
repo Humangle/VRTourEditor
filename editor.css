@@ -132,7 +132,7 @@ body {
 	font-size: 12px;
 	display: block;
 	cursor: pointer;
-	margin: 1%;
+	margin: 1vw;
 	padding: 10px;
 	background: #00000010;
 	border-radius: 5px;
@@ -205,6 +205,8 @@ input {
 	display: block;
 	overflow-y: auto;
 	padding: 1vw;
+	padding-bottom: 0px;
+	padding-top: 0px;
 }
 .plink input {
 	margin-top: 1px;
@@ -213,8 +215,9 @@ input {
 	font-size: 0.8em;
 }
 .plink {
-	display: flex;
 	background: #FFFFFF;
+	font-size: 12px;
+	margin-bottom: 1vw;
 }
 .pl_edit {
 	background: #FFFFFF;
@@ -225,6 +228,8 @@ input {
 }
 .dpl {
 	cursor: pointer;
+	margin: 5px;
+	float: right;
 }
 #errora {
 	color: #FF0000;
@@ -243,4 +248,26 @@ input {
 }
 .bmoption:hover {
 	background: #00000044;
+}
+details {
+	border: 1px solid #00000044;
+	border-radius: 5px;
+	padding: 0px;
+}
+summary {
+	list-style-type: '🔗 ';
+	border-radius: 5px;
+	margin: 0px;
+	padding: 10px;
+}
+details[open] {
+	padding: 0px;
+}
+details[open] summary {
+	list-style-type: '🔗 ';
+	border: 1px solid #00000044;
+	color: #FFFFFF;
+}
+.pld {
+	padding: 20px;
 }

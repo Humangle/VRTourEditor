@@ -412,8 +412,8 @@ let main = async (view) => {
 				console.log("Did Button Reset?")
 				let positionlink = document.createElement("div");
 				positionlink.setAttribute("class", "plink");
-				let sedit = '<div><span class="pl_edit" id="pl_'+plink+'">📝</span><b> '+plink+': </b> Scale: <input id="pls_'+plink+'" type="number" step="0.1" value="'+plob.s+'" placeholder="'+plob.s+'"/></div>';
-				positionlink.innerHTML = sedit + '<div class="dpl" id="dpl_'+plink+'"> 🗑️ </div>';
+				let sedit = '<details name="conns"><summary class="pl_edit" id="pl_'+plink+'"> Edit Connection to '+plink+'</summary><div class="pld">Scale: <input id="pls_'+plink+'" type="number" step="0.1" value="'+plob.s+'" placeholder="'+plob.s+'"/>';
+				positionlink.innerHTML = sedit + '<span class="dpl" id="dpl_'+plink+'"> 🗑️ </span></div></details>';
 				document.getElementById("positions").append(positionlink);
 				let plid = "pl_"+plink;
 				let scaleid = "pls_"+plink;
@@ -422,7 +422,7 @@ let main = async (view) => {
 					const viewname = document.getElementById("linkdataname").value;
 					const idplink = e.target.id;
 					const plinkTo = e.target.id.substring(3);
-					//turn every other link toggle off
+					//turn every other link toggle off and close the detail
 					for (const z in links.full[viewname]){
 						if ((z != viewname) && (z != "img")){
 							const zid = "pl_"+z;
@@ -440,7 +440,7 @@ let main = async (view) => {
 					} else {
 						clinkplink = plinkTo;
 						document.getElementById(idplink).style.background = "#22b2d7";
-						pickableObjs.getObjectByName(plinkTo).material.emissive = new THREE.Color(0x4bc0e1);
+						pickableObjs.getObjectByName(plinkTo).material.emissive = new THREE.Color(0x22b2d7);
 					}
 				});
 				document.getElementById(dplid).addEventListener("click", function(e) {
@@ -574,6 +574,7 @@ let main = async (view) => {
 let links = {
 	"header": {
 		"version": 0.2,
+		"project": "untitled",
 		"stereo": false,
 		"index": ""
 	},
@@ -586,6 +587,15 @@ let links = {
 };
 
 //export zip, save and load .hvrj (humangle vr json)
+
+document.getElementById("save").addEventListener('click', (event) => {
+	const link = document.createElement("a");
+    const file = new Blob([JSON.stringify(links)], { type: 'text/plain' });
+    link.href = URL.createObjectURL(file);
+    link.download = links["header"]["project"]+".hvrj";
+    link.click();
+    URL.revokeObjectURL(link.href);
+});
 
 main();
 
