@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script  type="importmap">
+			{
+				"imports": {
+					"three": "https://threejs.org/build/three.module.js",
+					"three/addons/" : "https://threejs.org/examples/jsm/"
+				}
+			}
+		</script>
+		<script type="module" src="./sample.js"></script>
+		<link rel="stylesheet" href="./main.css" />
+		<meta charset="utf-8" />
+		<meta name="keywords" content="HumAngle, VR, Tour, 360, HumAngle VR Office Tour" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1, shrink-to-fit=no"
+		/>
+
+		<meta property="og:title" content="HumAngle VR Tour" />
+		<meta property="og:type" content="website" />
+		<meta
+			property="og:description"
+			content="A VR Tour of HumAngle's Office"
+		/>
+		<meta
+			property="og:image"
+			content="https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png"
+		/>
+		<meta property="og:url" content="https://humangle.github.io/VRTourEditor/sample" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<title>HumAngle VR Tour</title>
+		<link rel="icon" href="https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png" sizes="32x32">
+		<link rel="icon" href="https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-192x192.png" sizes="32x32">
+	</head>
+	<body>
+		<div id="loading">
+			<div class="progress"><div class="progressbar"></div></div>
+		</div>
+		<canvas id="c">
+		</canvas>
+	</body>
+</html>

@@ -573,7 +573,7 @@ let main = async (view) => {
 //texture view/link properties
 let links = {
 	"header": {
-		"version": 0.2,
+		"version": 0.4,
 		"project": "untitled",
 		"stereo": false,
 		"index": ""
@@ -590,7 +590,7 @@ let links = {
 
 document.getElementById("save").addEventListener('click', (event) => {
 	const link = document.createElement("a");
-    const file = new Blob([JSON.stringify(links)], { type: 'text/plain' });
+    const file = new Blob([JSON.stringify(links)], { type: 'application/json' });
     link.href = URL.createObjectURL(file);
     link.download = links["header"]["project"]+".hvrj";
     link.click();

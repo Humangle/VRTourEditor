@@ -1,25 +1,25 @@
 # HumAngle VR Tour Editor Documentation
 
-## Getting Started
+	## Getting Started
 
-### Office Tour Sample
+		### Office Tour Sample
 
-### Create Your Tour
+		### Create Your Tour
 
-### Export and Embed
+		### Export and Embed
+		
+	## Features
 
-## Features
+		### Images and Videos
 
-### Images and Videos
+		### Connections
 
-### Connections
+		### Audio
 
-### Audio
+		### Image and Video Panels
 
-### Image and Video Panels
+		### Options
 
-### Options
+		### glTF Models
 
-### glTF Models
-
-## HVRJ - HumAngle VR JSON
+	## HVRJ - HumAngle VR JSON
