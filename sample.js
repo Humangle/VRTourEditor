@@ -25,7 +25,7 @@ let main = async (view) => {
 	
 	//orbital camera controls
 	const controls = new OrbitControls(camera, renderer.domElement);
-	controls.rotateSpeed *= -0.1;
+	controls.rotateSpeed *= -0.3;
 	controls.autoRotate = false;
 	controls.enableDamping = false;
 	controls.enableZoom = false;
@@ -54,7 +54,9 @@ let main = async (view) => {
 	
 	//make buttons for each view with button template
 	for (const a in view){
-		pickableObjs.add(makeButton(a));
+		if (!pickableObjs.getObjectByName(a)) {
+			pickableObjs.add(makeButton(a));
+		}
 	}
 	
 	scene.add(pickableObjs);
@@ -144,12 +146,12 @@ let main = async (view) => {
 				} else if (ln!="img" && newView[ln] != undefined && newView[ln].s == 0) {
 					//link to self
 					btnMesh.position.set(newView[ln].x, newView[ln].y, newView[ln].z);
-					btnMesh.scale.set(newView[ln].s, newView[ln].s/2, newView[ln].s);
+					btnMesh.scale.set(0, 0, 0);
 					btnMesh.visible = false;
 				} else if (ln!="img" && newView[ln] == undefined){
 					//no link
 					btnMesh.position.set(0, -1.6, 0);
-					btnMesh.scale.set(1, 0.5, 1);
+					btnMesh.scale.set(0, 0, 0);
 					btnMesh.visible = false;
 				}
 			}
@@ -165,7 +167,7 @@ let main = async (view) => {
 			this.pointer = new THREE.Vector2();
 			
 			const onPointerUp = (event) => {
-				if (this.selectedObject) { 
+				if (this.selectedObject.name != "") { 
 					this.dispatchEvent({type: event.type, object: this.selectedObject});
 				}
 				document.getElementById("c").style.cursor = "grab";
@@ -194,9 +196,10 @@ let main = async (view) => {
 					document.getElementById("c").style.cursor = "pointer";
 					this.selectedObject = intersections[i].object;
 					intersections[i].object.material.opacity = 1;
-				} else {
-					document.getElementById("c").style.cursor = "grab";
 				}
+			}
+			if ((intersections.length == 0) && (document.getElementById("c").style.cursor == "pointer")){
+				document.getElementById("c").style.cursor = "grab";
 			}
 		}
 	}
@@ -266,14 +269,18 @@ let main = async (view) => {
 	const DesktopPicker = new MousePickHelper(scene);
 	DesktopPicker.addEventListener('pointerup', (event) => {
 		//switch to the view of the button selected
-		teleport(event.object.name);
+		if (event.object.name && event.object.visible){
+			teleport(event.object.name);
+		}
 	});
 	
 	//On VR click
 	const VRPicker = new ControllerPickHelper(scene);
 	VRPicker.addEventListener('select', (event) => {
 		//switch to the view of the button selected
-		teleport(event.object.name);
+		if (event.object.name){
+			teleport(event.object.name);
+		}
 	});
 	
 	const onPointerMove = (event) => {
@@ -281,9 +288,6 @@ let main = async (view) => {
 		//(-1 to +1) for both components
 		DesktopPicker.pointer.x = (event.clientX/canvas.clientWidth) * 2 - 1;
 		DesktopPicker.pointer.y = - (event.clientY/canvas.clientHeight) * 2 + 1;
-		
-		//camera.rotation.y = THREE.MathUtils.lerp(camera.rotation.y, (event.clientY * Math.PI) / 10, 0.1);
-		//camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, (event.clientX * Math.PI) / 10, 0.1);
 	}
 	
 	const onWindowResize = () => {
@@ -300,9 +304,6 @@ let main = async (view) => {
 			for (const d in pickableObjs.children){
 				let btnMesh = pickableObjs.children[d];
 				btnMesh.material.opacity = 0.4;
-				if (document.getElementById("c").style.cursor != "grab"){
-					document.getElementById("c").style.cursor = "grab";
-				}
 			}
 			
 			//update the vr raycaster and calculate objects intersecting it
@@ -343,78 +344,28 @@ let main = async (view) => {
 
 //texture view/link properties
 const links = {
-	"header":{
-		"version":0.4,
-		"project":"HumAngle VR Tour",
-		"stereo":false,
-		"index":"Stairs_HUFO_4"
+	"header": {
+		"version": 0.4,
+		"project": "HumAngle VR Tour",
+		"stereo": false,
+		"index": "Stairs_HUFO_4"
 	},
-	"full":{
-		"Stairs_HUFO_3":{
-			"img":"https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/mono/Stairs_HUFO_3.jpg",
-			"Stairs_HUFO_3":{
-				"s":0,
-				"x":0,
-				"y":-1.6,
-				"z":0
-			},
-			"Stairs_HUFO_4":{
-				"s":2,
-				"x":-50.654855931342496,
-				"y":-54.3976612312982,
-				"z":29.57701952184722
-			},
-			"Stairs_HUFO_2":{
-				"s":2.6,
-				"x":50.35333959861948,
-				"y":-58.54493630002844,
-				"z":-20.901148268290488
-			},
-			"Stairs_HUFO_1":{
-				"s":1.2,
-				"x":64.15382791606615,
-				"y":-36.22621492894544,
-				"z":-31.173506653711332
-			},
-			"Merch_HUFO_1":{
-				"s":2.1,
-				"x":52.60005298059414,
-				"y":-49.063624266384274,
-				"z":35.012625239909255
-			},
-			"Merch_HUFO_2":{
-				"s":1.6,
-				"x":47.71216203219712,
-				"y":-35.26127158521899,
-				"z":53.665610498057106
-			}
+	"full": {
+		"Stairs_HUFO_3": {
+			"img": "https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/mono/Stairs_HUFO_3.jpg",
+			"Stairs_HUFO_3": {"s": 0, "x": 0, "y": -1.6, "z": 0},
+			"Stairs_HUFO_4": {"s": 2, "x": -50.654855931342496, "y": -54.3976612312982, "z": 29.57701952184722},
+			"Stairs_HUFO_2": {"s": 2.6, "x": 50.35333959861948, "y": -58.54493630002844, "z": -20.901148268290488},
+			"Stairs_HUFO_1": {"s": 1.2, "x": 64.15382791606615, "y": -36.22621492894544, "z": -31.173506653711332},
+			"Merch_HUFO_1": {"s": 2.1, "x": 52.60005298059414, "y": -49.063624266384274, "z": 35.012625239909255},
+			"Merch_HUFO_2": {"s": 1.6, "x": 47.71216203219712, "y": -35.26127158521899, "z": 53.665610498057106}
 		},
-		"Stairs_HUFO_4":{
+		"Stairs_HUFO_4": {
 			"img":"https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/mono/Stairs_HUFO_4.jpg",
-			"Stairs_HUFO_4":{
-				"s":0,
-				"x":0,
-				"y":-1.6,
-				"z":0
-			},
-			"Stairs_HUFO_3":{
-				"s":2,
-				"x":55.05961624976712,
-				"y":-49.86813968478652,
-				"z":-29.689159924692746
-			},
-			"Stairs_HUFO_2":{
-				"s":1.3,
-				"x":61.920420118489886,
-				"y":-36.50016015861607,
-				"z":-35.12038753478213
-			},
-			"Stairs_HUFO_1":{
-				"s":0.8,
-				"x":65.58566132402711,
-				"y":-25.300935167960674,
-				"z":-38.18676211255512
-			}
+			"Stairs_HUFO_4": {"s": 0, "x": 0, "y": -1.6, "z": 0},
+			"Stairs_HUFO_3": {"s": 2, "x": 55.05961624976712, "y": -49.86813968478652, "z": -29.689159924692746},
+			"Stairs_HUFO_2": {"s": 1.3, "x": 61.920420118489886, "y": -36.50016015861607, "z": -35.12038753478213},
+			"Stairs_HUFO_1": {"s": 0.8, "x": 65.58566132402711, "y": -25.300935167960674, "z": -38.18676211255512}
 		},
 		"Stairs_HUFO_2":{
 			"img":"https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/mono/Stairs_HUFO_2.jpg",

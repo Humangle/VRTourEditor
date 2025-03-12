@@ -13,6 +13,17 @@ body {
 	background: none;
 	cursor: grab;
 }
+#settings {
+	position: fixed;
+	bottom: 0.9em;
+	height: 20%;
+	margin: 0px;
+	opacity: 0.5;
+}
+.setting {
+	display: inline-block;
+	width: 5vw;
+}
 #tabs {
 	display: block;
 	height: 70vh;
@@ -93,7 +104,33 @@ body {
 	margin: auto;
 	margin-top: 30vh;
 }
+#fileupload {
+	max-width: fit-content;
+	margin: auto;
+	margin-top: 30vh;
+}
 #newplink {
+	color: #22b2d7;
+	position: fixed;
+	top: 0;
+	left: 0;
+	margin: 0px;
+	width: 100vw;
+	height: 100vh;
+	display: none;
+	background: #FFFFFF;
+}
+#contentfile {
+	max-width: fit-content;
+	cursor: pointer;
+	margin-top: 10px;
+	padding: 10px;
+	border-radius: 5px;
+	border: none;
+	background: #22b2d7;
+	color: #FFFFFF;
+}
+#newfile {
 	color: #22b2d7;
 	position: fixed;
 	top: 0;
@@ -154,6 +191,20 @@ input {
 	border: solid #00000044 1px;
 }
 #picklink {
+	margin-top: 10px;
+	padding: 10px;
+	width: 50vw;
+	border-radius: 5px;
+	border: solid #00000044 1px;
+}
+#projectindex {
+	margin-top: 10px;
+	padding: 10px;
+	width: 50vw;
+	border-radius: 5px;
+	border: solid #00000044 1px;
+}
+#projectstereo {
 	margin-top: 10px;
 	padding: 10px;
 	width: 50vw;

@@ -17,7 +17,7 @@ let main = async (view) => {
 	renderer.xr.setFoveation(1.0);
 	
 	//set the camera up
-	const fov = 45;
+	const fov = 60;
 	const aspect = canvas.clientWidth/canvas.clientHeight;
 	const near = 0.1;
 	const far = 128;
@@ -26,9 +26,10 @@ let main = async (view) => {
 	
 	//orbital camera controls
 	const controls = new OrbitControls(camera, renderer.domElement);
-	controls.enableDamping = true;
-	controls.minDistance = 0.001;
-	controls.maxDistance = 0.001;
+	controls.rotateSpeed *= -0.3;
+	controls.autoRotate = false;
+	controls.enableDamping = false;
+	controls.enableZoom = false;
 	controls.maxPolarAngle = 2;
 	controls.minPolarAngle = 0.86;
 	controls.update();
@@ -155,12 +156,12 @@ let main = async (view) => {
 				} else if (ln!="img" && newView[ln] != undefined && newView[ln].s == 0) {
 					//link to self
 					btnMesh.position.set(newView[ln].x, newView[ln].y, newView[ln].z);
-					btnMesh.scale.set(newView[ln].s, newView[ln].s/2, newView[ln].s);
+					btnMesh.scale.set(0, 0, 0);
 					btnMesh.visible = false;
 				} else if (ln!="img" && newView[ln] == undefined){
 					//no link
 					btnMesh.position.set(0, -1.6, 0);
-					btnMesh.scale.set(1, 0.5, 1);
+					btnMesh.scale.set(0, 0, 0);
 					btnMesh.visible = false;
 				}
 			}
@@ -242,9 +243,10 @@ let main = async (view) => {
 						document.getElementById("c").style.cursor = "pointer";
 						this.selectedObject = intersections[i].object;
 						intersections[i].object.material.opacity = 1;
-					} else {
-						document.getElementById("c").style.cursor = "grab";
 					}
+				}
+				if ((intersections.length == 0) && (document.getElementById("c").style.cursor == "pointer")){
+					document.getElementById("c").style.cursor = "grab";
 				}
 			}
 		}
@@ -352,9 +354,6 @@ let main = async (view) => {
 			for (const d in pickableObjs.children){
 				let btnMesh = pickableObjs.children[d];
 				btnMesh.material.opacity = 0.4;
-				if (document.getElementById("c").style.cursor != "grab"){
-					document.getElementById("c").style.cursor = "grab";
-				}
 			}
 			
 			//update the vr raycaster and calculate objects intersecting it
@@ -568,6 +567,67 @@ let main = async (view) => {
 			document.getElementById("errorb").innerText = "Error: ‟"+linkname+"” is already connected to ‟"+plinkname+"”.";
 		}
 	});
+	
+	//export zip, save and load .hvrj (humangle vr json)
+
+	document.getElementById("save").addEventListener('click', (event) => {
+		const link = document.createElement("a");
+		const file = new Blob([JSON.stringify(links)], { type: 'application/json' });
+		link.href = URL.createObjectURL(file);
+		link.download = links["header"]["project"]+".hvrj";
+		link.click();
+		URL.revokeObjectURL(link.href);
+	});
+
+	document.getElementById("load").addEventListener('click', (event) => {
+		document.getElementById("newfile").style.display = "block";
+	});
+
+	document.getElementById('contentfile').onchange = function(cevt) {
+		try {
+			let files = cevt.target.files;
+			if (!files.length) {
+				alert('No file selected!');
+				return;
+			}
+			let file = files[0];
+			let reader = new FileReader();
+			const self = this;
+			reader.onload = (revt) => {
+				console.log('FILE CONTENT', revt.target.result);
+				links = JSON.parse(revt.target.result);
+				document.getElementById("newfile").style.display = "none";
+				
+				teleport(links.header.index);
+				//clear tab data
+				document.getElementById("linkdata").style.display = "block";
+				document.getElementById("createposition").style.display = "block";
+				
+				//make tabs and buttons to each 360 image
+				for (const a in links.full){
+					if (!pickableObjs.getObjectByName(a)) {
+						pickableObjs.add(makeButton(a));
+					}
+					
+					let tabhead = document.createElement("div");
+					tabhead.setAttribute("class", "tabhead");
+					tabhead.innerText = a;
+					tabhead.setAttribute("title", a);
+					const tabid = "tab_" + a;
+					tabhead.setAttribute("id", tabid);
+					document.getElementById("tabheader").append(tabhead);
+					document.getElementById(tabid).addEventListener("click", function(e) {
+						console.log("tabid");
+						switchTabs(e.target.innerText);
+					});
+				}
+				switchTabs(links.header.index);
+			};
+			reader.readAsText(file);
+		} catch (err) {
+			console.error(err);
+		}
+	}
 }
 
 //texture view/link properties
@@ -586,20 +646,9 @@ let links = {
 	}
 };
 
-//export zip, save and load .hvrj (humangle vr json)
-
-document.getElementById("save").addEventListener('click', (event) => {
-	const link = document.createElement("a");
-    const file = new Blob([JSON.stringify(links)], { type: 'application/json' });
-    link.href = URL.createObjectURL(file);
-    link.download = links["header"]["project"]+".hvrj";
-    link.click();
-    URL.revokeObjectURL(link.href);
-});
-
 main();
 
-const CoordToPosition = (lat, lon, dep, cx, cy, cz) => {
+const coordToPosition = (lat, lon, dep, cx, cy, cz) => {
 	let latRad = lat * Math.PI / 180;
 	let lonRad = lon * Math.PI / 180;
 	

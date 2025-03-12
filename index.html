@@ -41,6 +41,11 @@
 		</div>
 		<canvas id="c">
 		</canvas>
+		<div id="settings">
+			<span class="setting">Title</span><input id="projectname" type="text" placeholder="Title" /><br>
+			<span class="setting">Index</span><select id="projectindex" name="projectindex"><option value="">--Please choose an option--</option></select><br>
+			<span class="setting">Stereo</span><input id="projectstereo" type="checkbox" value="unchecked" /><br>
+		</div>
 		<div id="tabs">
 			<div id="intro">
 				Click on + below to start creating your experience.<br>
@@ -77,6 +82,11 @@
 				<select name="LinkTo" id="picklink" required>
 				</select><br/>
 				<input type="submit" id="newplinkbtn" value=" Add "/>
+			</form>
+		</div>
+		<div id="newfile">
+			<form id="fileupload">
+				<input id="contentfile" type="file" accept="application/hvrj" />
 			</form>
 		</div>
 		<div id="menu">

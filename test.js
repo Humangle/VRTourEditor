@@ -25,7 +25,7 @@ let main = async (view) => {
 	
 	//orbital camera controls
 	const controls = new OrbitControls(camera, renderer.domElement);
-	controls.rotateSpeed *= -0.1;
+	controls.rotateSpeed *= -0.2;
 	controls.autoRotate = false;
 	controls.enableDamping = false;
 	controls.enableZoom = false;
@@ -144,12 +144,12 @@ let main = async (view) => {
 				} else if (ln!="img" && newView[ln] != undefined && newView[ln].s == 0) {
 					//link to self
 					btnMesh.position.set(newView[ln].x, newView[ln].y, newView[ln].z);
-					btnMesh.scale.set(newView[ln].s, newView[ln].s/2, newView[ln].s);
+					btnMesh.scale.set(0, 0, 0);
 					btnMesh.visible = false;
 				} else if (ln!="img" && newView[ln] == undefined){
 					//no link
 					btnMesh.position.set(0, -1.6, 0);
-					btnMesh.scale.set(1, 0.5, 1);
+					btnMesh.scale.set(0, 0, 0);
 					btnMesh.visible = false;
 				}
 			}
@@ -194,9 +194,10 @@ let main = async (view) => {
 					document.getElementById("c").style.cursor = "pointer";
 					this.selectedObject = intersections[i].object;
 					intersections[i].object.material.opacity = 1;
-				} else {
-					document.getElementById("c").style.cursor = "grab";
 				}
+			}
+			if ((intersections.length == 0) && (document.getElementById("c").style.cursor == "pointer")){
+				document.getElementById("c").style.cursor = "grab";
 			}
 		}
 	}
@@ -281,9 +282,6 @@ let main = async (view) => {
 		//(-1 to +1) for both components
 		DesktopPicker.pointer.x = (event.clientX/canvas.clientWidth) * 2 - 1;
 		DesktopPicker.pointer.y = - (event.clientY/canvas.clientHeight) * 2 + 1;
-		
-		//camera.rotation.y = THREE.MathUtils.lerp(camera.rotation.y, (event.clientY * Math.PI) / 10, 0.1);
-		//camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, (event.clientX * Math.PI) / 10, 0.1);
 	}
 	
 	const onWindowResize = () => {
@@ -300,9 +298,6 @@ let main = async (view) => {
 			for (const d in pickableObjs.children){
 				let btnMesh = pickableObjs.children[d];
 				btnMesh.material.opacity = 0.4;
-				if (document.getElementById("c").style.cursor != "grab"){
-					document.getElementById("c").style.cursor = "grab";
-				}
 			}
 			
 			//update the vr raycaster and calculate objects intersecting it
