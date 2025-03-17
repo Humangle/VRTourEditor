@@ -4,8 +4,8 @@
 		<script	type="importmap">
 			{
 				"imports": {
-					"three": "https://threejs.org/build/three.module.js",
-					"three/addons/" : "https://threejs.org/examples/jsm/"
+					"three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+					"three/addons/" : "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
 				}
 			}
 		</script>
@@ -42,9 +42,9 @@
 		<canvas id="c">
 		</canvas>
 		<div id="settings">
-			<span class="setting">Title</span><input id="projectname" type="text" placeholder="Title" /><br>
-			<span class="setting">Index</span><select id="projectindex" name="projectindex"><option value="">--Please choose an option--</option></select><br>
-			<span class="setting">Stereo</span><input id="projectstereo" type="checkbox" value="unchecked" /><br>
+			<input id="projectname" type="text" value="Untitled Project" title="Project Name"/><br>
+			<select id="projectindex" name="projectindex" title="Project Index"></select><br>
+			<small id="stps"> Is Stereoscopic? </small><input id="projectstereo" type="checkbox" value="unchecked" title="Project Stereo"/><br>
 		</div>
 		<div id="tabs">
 			<div id="intro">
@@ -84,10 +84,31 @@
 				<input type="submit" id="newplinkbtn" value=" Add "/>
 			</form>
 		</div>
-		<div id="newfile">
-			<form id="fileupload">
-				<input id="contentfile" type="file" accept="application/hvrj" />
-			</form>
+		<div id="newfile" >
+			<div style="margin-left: 50px; margin-top: 50px;">
+				<h1>Start a New Project</h1>
+				<p>Insert a project name, then select a template below to begin</p>
+				<input id="newproname" type="text" placeholder="Project Name"/>
+			</div>
+			<div id="fuflex">
+				<div id="templates">
+					<div class="temptab" id="newbtemp" style="background-image: url(./assets/no-image.jpg)">
+						New/Blank Project
+					</div>
+					<div class="temptab" id="ottemp" style="background-image: url(./assets/hvrtemptab.png)">
+						HumAngle Office Tour
+					</div>
+				</div>
+				<div style="background-color: #00000011; width: 1px;"></div>
+				<div id="recent">
+					Open Existing File...<br>
+					<div id="recentfiles">
+					</div>
+					<form id="fileupload">
+						<input id="contentfile" type="file" accept="application/hvrj" />
+					</form>
+				</div>
+			</div>
 		</div>
 		<div id="menu">
 			<span class="bmoption" id="export">
@@ -100,10 +121,13 @@
 			</span>
 			<span class="bmoption" id="load">
 				<i class="fa fa-file-text-o" aria-hidden="true"></i>
-				Load
+				New
 			</span>
-			<span style="padding:5px;color:#00000044"> | </span>
+			<span style="padding:5px;color:#00000044;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;"> | </span>
 			<span id="errorlog"></span>
+			<a id="feedback" title="Send Feedback" href="https://forms.gle/NUEcpxaWxXVaqytLA" target="_blank">
+				<i class="fa fa-commenting" aria-hidden="true"></i>
+			</a>
 		</div>
 	</body>
 	<script>

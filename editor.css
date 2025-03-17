@@ -18,11 +18,8 @@ body {
 	bottom: 0.9em;
 	height: 20%;
 	margin: 0px;
+	margin-left: 20px;
 	opacity: 0.5;
-}
-.setting {
-	display: inline-block;
-	width: 5vw;
 }
 #tabs {
 	display: block;
@@ -106,8 +103,6 @@ body {
 }
 #fileupload {
 	max-width: fit-content;
-	margin: auto;
-	margin-top: 30vh;
 }
 #newplink {
 	color: #22b2d7;
@@ -138,8 +133,8 @@ body {
 	margin: 0px;
 	width: 100vw;
 	height: 100vh;
-	display: none;
-	background: #FFFFFF;
+	background: #EFEFEF;
+	display: block;
 }
 .close {
 	float: right;
@@ -183,6 +178,36 @@ button {
 	color: #FFFFFF;
 	font-size: 20px;
 }
+#projectname {
+	margin-top: 10px;
+	padding: 6px;
+	border-radius: 5px;
+	border: solid #00000044 1px;
+	width: 40vw;
+}
+#projectindex {
+	margin-top: 10px;
+	border-radius: 5px;
+	border: solid #00000044 1px;
+	width: 30vw;
+	height: 25px;
+}
+#projectstereo {
+	margin: 0;
+	margin-top: 10px;
+	border-radius: 5px;
+	border: solid #00000044 1px;
+	height: 15px;
+	width: inherit;
+}
+#picklink {
+	margin-top: 10px;
+	padding: 5px;
+	width: inherit;
+	border-radius: 5px;
+	border: solid #00000044 1px;
+}
+
 input {
 	margin-top: 10px;
 	padding: 10px;
@@ -190,27 +215,10 @@ input {
 	border-radius: 5px;
 	border: solid #00000044 1px;
 }
-#picklink {
-	margin-top: 10px;
-	padding: 10px;
-	width: 50vw;
-	border-radius: 5px;
-	border: solid #00000044 1px;
+#stps{
+	padding-left: 5px;
 }
-#projectindex {
-	margin-top: 10px;
-	padding: 10px;
-	width: 50vw;
-	border-radius: 5px;
-	border: solid #00000044 1px;
-}
-#projectstereo {
-	margin-top: 10px;
-	padding: 10px;
-	width: 50vw;
-	border-radius: 5px;
-	border: solid #00000044 1px;
-}
+
 #tabs {
 	margin: 0px;
 	height: 100vh;
@@ -296,6 +304,12 @@ input {
 .bmoption{
 	padding: 10px;
 	cursor: pointer;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
 }
 .bmoption:hover {
 	background: #00000044;
@@ -321,4 +335,75 @@ details[open] summary {
 }
 .pld {
 	padding: 20px;
+}
+
+#fuflex {
+	display: flex;
+	margin: 25px;
+	border-radius: 15px;
+	background: #FFFFFF;
+}
+
+#recent {
+	width: 50%;
+	padding: 25px;
+}
+
+#templates {
+	width: 50%;
+	padding: 25px;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.temptab{
+	width: 10vw;
+	height: 8vw;
+	line-height: 15vw;
+	background-color: #000000;
+	background-size: cover;
+	background-repeat: no-repeat;
+	border: 5px solid #FFFFFF;
+	border-radius: 15px;
+	margin: 10px;
+	padding: 15px;
+	cursor: pointer;
+	-webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+	color: #FFFFFF;
+	font-size: 14px;
+	opacity: 0.9;
+}
+.temptab:hover {
+	border: 5px solid #22b2d7;
+	opacity: 1;
+}
+#feedback {
+	color: #FFFFFF;
+	float: right;
+	cursor: pointer;
+	margin-right: 25px;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+#feedback:hover {
+	color: #00000044;
+}
+.rplitems {
+	font-size: 12px;
+	display: flex;
+	cursor: pointer;
+	border-radius: 5px;
+	color: #00000088;
+}
+.rplitems:hover {
+	background: #00000011;
 }

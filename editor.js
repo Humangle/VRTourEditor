@@ -90,7 +90,7 @@ let main = async (view) => {
 	const loader = new THREE.ImageBitmapLoader(loadManager);
 	loader.setOptions( { imageOrientation: 'flipY' } );
 	
-	const sT = await loader.loadAsync("https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/no-image.jpg");
+	const sT = await loader.loadAsync("./assets/no-image.jpg");
 	const sphereTexture = new THREE.CanvasTexture(sT);
 	sphereTexture.colorSpace = THREE.SRGBColorSpace;
 	sphereTexture.flipY = false;
@@ -469,6 +469,23 @@ let main = async (view) => {
 				pickableObjs.getObjectByName(plink).visible = false;
 			}
 		}
+		
+		//update settings
+		document.getElementById("projectname").value = links.header.project;
+		let viewlist = document.getElementById("projectindex");
+		viewlist.innerHTML = "";
+		for (const x in links.full){
+			let linkoptions = document.createElement("option");
+			linkoptions.value = x;
+			linkoptions.innerHTML = x;
+			viewlist.append(linkoptions);
+		}
+		document.getElementById("projectindex").value = links.header.index;
+		document.getElementById("projectstereo").value = "unchecked";//temporary since stereo isn't ready
+		
+		//autosave
+		let recentlyedited = "recent::"+links.header.project.replaceAll(" ", "_");
+		localStorage.setItem(recentlyedited, JSON.stringify(links));
 	}
 	
 	document.getElementById("create").addEventListener('click', (event) => {
@@ -568,6 +585,16 @@ let main = async (view) => {
 		}
 	});
 	
+	//project settings input
+	document.getElementById("projectname").addEventListener('input', (event) => {
+		links.header.project = document.getElementById("projectname").value;
+	});
+	document.getElementById("projectindex").addEventListener('input', (event) => {
+		if (links.full[document.getElementById("projectindex").value]){
+			links.header.index = document.getElementById("projectindex").value;
+		}
+	});
+	
 	//export zip, save and load .hvrj (humangle vr json)
 
 	document.getElementById("save").addEventListener('click', (event) => {
@@ -578,11 +605,71 @@ let main = async (view) => {
 		link.click();
 		URL.revokeObjectURL(link.href);
 	});
-
+	
+	document.getElementById("newfile").style.display == 'block';
 	document.getElementById("load").addEventListener('click', (event) => {
-		document.getElementById("newfile").style.display = "block";
+		console.log("load");
+		if (document.getElementById("newfile").style.display == "none"){
+			document.getElementById("newfile").style.display = "block";
+		} else {
+			document.getElementById("newfile").style.display = "none";
+		}
 	});
-
+	
+	const loadHVRJ = (hvrj) => {
+		links = hvrj;
+		document.getElementById("newfile").style.display = "none";
+		teleport(links.header.index);
+		//clear tab data
+		document.getElementById("tabheader").innerHTML = "";
+		document.getElementById("linkdata").style.display = "block";
+		document.getElementById("createposition").style.display = "block";
+		
+		//make tabs and buttons to each 360 image
+			for (const a in links.full){
+				if (!pickableObjs.getObjectByName(a)) {
+					pickableObjs.add(makeButton(a));
+				}
+				
+				let tabhead = document.createElement("div");
+				tabhead.setAttribute("class", "tabhead");
+				tabhead.innerText = a;
+				tabhead.setAttribute("title", a);
+				const tabid = "tab_" + a;
+				tabhead.setAttribute("id", tabid);
+				document.getElementById("tabheader").append(tabhead);
+				document.getElementById(tabid).addEventListener("click", function(e) {
+					console.log("tabid");
+					switchTabs(e.target.innerText);
+				});
+			}
+		switchTabs(links.header.index);
+	}
+	
+	document.getElementById('newbtemp').addEventListener('click', (event) => {
+		if (document.getElementById("newproname").value == ""){
+			document.getElementById("newproname").focus();
+		} else {
+			document.getElementById("projectname").value = document.getElementById("newproname").value;
+			links.header.project = document.getElementById("newproname").value;
+			document.getElementById("newfile").style.display = "none";
+		}
+	});
+	
+	document.getElementById('ottemp').addEventListener('click', (event) => {
+		if (document.getElementById('newproname').value == ""){
+			fetch('./HumAngle VR Tour.hvrj').then(response => response.json()).then(template => {
+				template.header.project = "HumAngle Office Tour";
+				loadHVRJ(template);
+			});
+		} else {
+			fetch('./HumAngle VR Tour.hvrj').then(response => response.json()).then(template => {
+				template.header.project = document.getElementById('newproname').value;
+				loadHVRJ(template);
+			});
+		}
+	});
+	
 	document.getElementById('contentfile').onchange = function(cevt) {
 		try {
 			let files = cevt.target.files;
@@ -594,40 +681,40 @@ let main = async (view) => {
 			let reader = new FileReader();
 			const self = this;
 			reader.onload = (revt) => {
-				console.log('FILE CONTENT', revt.target.result);
-				links = JSON.parse(revt.target.result);
-				document.getElementById("newfile").style.display = "none";
-				
-				teleport(links.header.index);
-				//clear tab data
-				document.getElementById("linkdata").style.display = "block";
-				document.getElementById("createposition").style.display = "block";
-				
-				//make tabs and buttons to each 360 image
-				for (const a in links.full){
-					if (!pickableObjs.getObjectByName(a)) {
-						pickableObjs.add(makeButton(a));
-					}
-					
-					let tabhead = document.createElement("div");
-					tabhead.setAttribute("class", "tabhead");
-					tabhead.innerText = a;
-					tabhead.setAttribute("title", a);
-					const tabid = "tab_" + a;
-					tabhead.setAttribute("id", tabid);
-					document.getElementById("tabheader").append(tabhead);
-					document.getElementById(tabid).addEventListener("click", function(e) {
-						console.log("tabid");
-						switchTabs(e.target.innerText);
-					});
-				}
-				switchTabs(links.header.index);
+				loadHVRJ(JSON.parse(revt.target.result));
 			};
 			reader.readAsText(file);
 		} catch (err) {
 			console.error(err);
 		}
 	}
+	
+	//show recent projects
+	/**
+	let derpnametag = "";
+	let derpname = "";
+	for (const key in localStorage) {
+		if (Object.hasOwnProperty.call(localStorage, key)) {
+			const element = localStorage[key];
+			if (key.startsWith('recent::')){
+				derpnametag = key.replace('recent::','');
+				derpname = ""+derpnametag.replaceAll('_', ' ');
+				document.getElementById("recentfiles").innerHTML += '<div class="rplitems"><div style="padding:10px;width:100%;" id="'+derpnametag+'">'+derpname+'</div><div style="float:right;padding:10px;cursor:no-drop;" id="d_'+derpnametag+'"><i class="fa fa-trash" aria-hidden="true"></i></div></div>';
+				document.getElementById(derpnametag).addEventListener('click', function(e){
+					console.log("should load");
+					loadHVRJ(JSON.parse(localStorage.getItem("recent::"+e.target.id)));
+				});
+				document.getElementById("d_"+derpnametag).addEventListener('click', function(e) {
+					console.log("should delete");
+					var sure = confirm("Are you sure you want to delete "+derpnametag.replaceAll("_"," ")+" ?");
+					if(sure) {             
+						localStorage.removeItem("recent::"+derpnametag);
+						window.location.reload();
+					}
+				});
+			}
+		}
+	}**/
 }
 
 //texture view/link properties

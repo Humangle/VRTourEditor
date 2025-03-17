@@ -16,8 +16,6 @@
 
 ### 	Audio
 
-### 	Image and Video Panels
+###		glTF Models
 
-### 	glTF Models
-
-## 	HVRJ - HumAngle VR JSON
+## 	HVRJ - HumAngle VR JSON Format
