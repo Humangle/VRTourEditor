@@ -11,6 +11,7 @@
 		</script>
 		<script type="module" src="./sample.js"></script>
 		<link rel="stylesheet" href="./main.css" />
+		<link rel="stylesheet" href="./font-awesome-4.7.0/css/font-awesome.min.css">
 		<meta charset="utf-8" />
 		<meta name="keywords" content="HumAngle, VR, Tour, 360, HumAngle VR Office Tour" />
 		<meta
@@ -26,13 +27,14 @@
 		/>
 		<meta
 			property="og:image"
-			content="https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png"
+			content="./assets/hvrots.png"
 		/>
 		<meta property="og:url" content="https://humangle.github.io/VRTourEditor/sample" />
 		<meta name="twitter:card" content="summary_large_image" />
 		<title>HumAngle VR Tour</title>
 		<link rel="icon" href="https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png" sizes="32x32">
 		<link rel="icon" href="https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-192x192.png" sizes="32x32">
+		<link rel="stylesheet" href="./font-awesome-4.7.0/css/font-awesome.min.css">
 	</head>
 	<body>
 		<div id="loading">
@@ -40,5 +42,15 @@
 		</div>
 		<canvas id="c">
 		</canvas>
+		<div id="launchVR">
+			<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-headset-vr" viewBox="0 0 16 16">
+				<path d="M12 12a4 4 0 0 1-2.786-1.13l-.002-.002a1.6 1.6 0 0 0-.276-.167A2.2 2.2 0 0 0 8 10.5c-.414 0-.729.103-.935.201a1.6 1.6 0 0 0-.277.167l-.002.002A4 4 0 1 1 4 4h8a4 4 0 0 1 0 8"/>
+			</svg>
+		</div>
+		<div id="launchFS">
+			<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-fullscreen" viewBox="0 0 16 16">
+				<path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5M.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5"/>
+			</svg>
+		</div>
 	</body>
 </html>

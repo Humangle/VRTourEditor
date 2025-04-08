@@ -8,7 +8,7 @@ let main = async (view) => {
 	
 	//set up the canvas for THREE.js
 	const canvas = document.getElementById("c");
-	const renderer = new THREE.WebGLRenderer({canvas, alpha: true, premultipliedAlpha: false});
+	const renderer = new THREE.WebGLRenderer({canvas, alpha: true, premultipliedAlpha: false, powerPreference: 'low-power'});
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(canvas.clientWidth, canvas.clientHeight);
 	renderer.xr.enabled = true;
@@ -341,6 +341,34 @@ let main = async (view) => {
 	window.addEventListener('resize', onWindowResize);
 	teleport(links.header.index); //teleport to the root
 }
+
+document.getElementById('launchFS').addEventListener('click', (event) => {
+    var cel = document.getElementById('c');
+
+    if(cel.requestFullscreen) { /* Chrome */
+        cel.requestFullscreen();
+    } else if (cel.mozRequestFullScreen) { /* Mozilla */
+        cel.mozRequestFullScreen();
+    } else if (cel.msRequestFullscreen) { /* IE11 */
+		cel.msRequestFullscreen();
+	} else if (cel.webkitRequestFullscreen) { /* Safari */
+		cel.webkitRequestFullscreen();
+	} else {
+		cel.exitFullscreen();
+	}
+});
+
+document.getElementById('c').addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement) {
+    // Exited fullscreen — reset canvas size
+    const canvas = document.getElementById('c');
+    if (canvas) {
+      // You can restore to original dimensions or make it responsive
+      canvas.style.width = '100vw';
+      canvas.style.height = '100vh';
+    }
+  }
+});
 
 //texture view/link properties
 const links = {
@@ -3693,7 +3721,7 @@ navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
 	}
 }).finally(() => {
 	if (window.innerHeight > window.innerWidth+(window.innerWidth/2)) {
-		version = links.lite;
+		version = links.full;//this was links.lite if the quality is better in VR set it back and look for a better way to check if mobile
 	}
 	main(version);
 });

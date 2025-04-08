@@ -345,19 +345,19 @@ const links = {
 	},
 	"lite": {
 		"PIC_1": {
-			"img": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_1-ity.jpg",
+			"img": "./legacy/PIC_1-ity.jpg",
 			"PIC_1": {"s": 0, "x": 0, "y": -1.6, "z": 0},
 			"PIC_2": {"s": 4, "x": 16.55099055399931, "y": -74.61338152995376, "z": 47.527970799803576},
 			"PIC_3": {"s": 2, "x": -7.500365624785212, "y": -44.45476799258078, "z": 77.894275259613}
 		},
 		"PIC_2": {
-			"img": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_2-ity.jpg",
+			"img": "./legacy/PIC_2-ity.jpg",
 			"PIC_1": {"s": 4, "x": -3.337599303613126, "y": -72.62642809294218, "z": -53.04962180213184},
 			"PIC_2": {"s": 0, "x": 0, "y": -1.6, "z": 0},
 			"PIC_3": {"s": 4, "x": -38.36253246210393, "y": -60.22175457229724, "z": 54.78737426933343}
 		},
 		"PIC_3": {
-			"img": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_3-ity.jpg",
+			"img": "./legacy/PIC_3-ity.jpg",
 			"PIC_1": {"s": 2, "x": -32.01658952848355, "y": -43.63286582217034, "z": -71.91043745597072},
 			"PIC_2": {"s": 4, "x": -7.067563684490447, "y": -59.4001501164843, "z": -67.2433766976704},
 			"PIC_3": {"s": 0, "x": 0, "y": -1.6, "z": 0}
@@ -365,19 +365,19 @@ const links = {
 	},
 	"full": {
 		"PIC_1": {
-			"img": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_1.jpg",
+			"img": "./legacy/PIC_1.jpg",
 			"PIC_1": {"s": 0, "x": 0, "y": -1.6, "z": 0},
 			"PIC_2": {"s": 4, "x": 16.55099055399931, "y": -74.61338152995376, "z": 47.527970799803576},
 			"PIC_3": {"s": 2, "x": -7.500365624785212, "y": -44.45476799258078, "z": 77.894275259613}
 		},
 		"PIC_2": {
-			"img": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_2.jpg",
+			"img": "./legacy/PIC_2.jpg",
 			"PIC_1": {"s": 4, "x": -3.337599303613126, "y": -72.62642809294218, "z": -53.04962180213184},
 			"PIC_2": {"s": 0, "x": 0, "y": -1.6, "z": 0},
 			"PIC_3": {"s": 4, "x": -38.36253246210393, "y": -60.22175457229724, "z": 54.78737426933343}
 		},
 		"PIC_3": {
-			"img": "https://raw.githubusercontent.com/LearningMike/360images/main/PIC_3.jpg",
+			"img": "./legacy/PIC_3.jpg",
 			"PIC_1": {"s": 2, "x": -32.01658952848355, "y": -43.63286582217034, "z": -71.91043745597072},
 			"PIC_2": {"s": 4, "x": -7.067563684490447, "y": -59.4001501164843, "z": -67.2433766976704},
 			"PIC_3": {"s": 0, "x": 0, "y": -1.6, "z": 0}

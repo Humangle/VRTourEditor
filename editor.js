@@ -64,15 +64,15 @@ let main = async (view) => {
 	//position link placer
 	let clinkplink = false;
 	let plinkplacer = new THREE.Object3D();
-	plinkplacer.position.set(0, 1.6, 0);
+	plinkplacer.position.copy(camera.position);
 	scene.add(plinkplacer);
 	let gizmoMaterial = new THREE.MeshPhongMaterial({emissive: 0x22b2d7, opacity:0.2, transparent: true});
 	const gizmoGeometry = new THREE.SphereGeometry(1, 64, 16);
 	let plinkgizmo = new THREE.Mesh(gizmoGeometry, gizmoMaterial);
-	plinkgizmo.position.z = 80;
 	plinkgizmo.visible = false;
 	plinkplacer.add(plinkgizmo);
 	plinkgizmo.scale.set(1, 1, 1);
+	plinkgizmo.position.z = 80;
 	
 	scene.add(pickableObjs);
 	
@@ -183,10 +183,9 @@ let main = async (view) => {
 					console.log(this.selectedObject);
 					this.dispatchEvent({type: event.type, object: this.selectedObject});
 				}
-				if (clinkplink && (event.target.id == "c")){
+				if (clinkplink && event.target.id == "c"){
 					//set plinkplacer rotation to raycaster rotation
-					plinkplacer.position.copy(camera.position);
-					plinkplacer.lookAt(this.raycaster.ray.direction);
+					plinkplacer.lookAt(this.raycaster.ray.direction.normalize().multiplyScalar(80));
 					//update the new link position in the link object
 					let ldname = document.getElementById("linkdataname").value;
 					let worldposition = new THREE.Vector3();
@@ -481,7 +480,7 @@ let main = async (view) => {
 			viewlist.append(linkoptions);
 		}
 		document.getElementById("projectindex").value = links.header.index;
-		document.getElementById("projectstereo").value = "unchecked";//temporary since stereo isn't ready
+		//document.getElementById("projectstereo").value = "unchecked"; comment since stereo isn't ready
 		
 		//autosave
 		let recentlyedited = "recent::"+links.header.project.replaceAll(" ", "_");

@@ -32,3 +32,35 @@ body {
     transform-origin: top left;
     transform: scaleX(0);
 }
+#launchVR {
+	margin: 0px;
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+	z-index: 999999999;
+	background: #00000044;
+	color: #FFFFFFBB;
+	padding: 10px;
+	border-top-right-radius: 5px;
+	cursor: pointer;
+}
+#launchVR:hover {
+	background: #00000088;
+	color: #FFFFFFFF;
+}
+#launchFS {
+	margin: 0px;
+	position: fixed;
+	bottom: 0px;
+	right: 0px;
+	z-index: 999999999;
+	background: #00000044;
+	color: #FFFFFFBB;
+	padding: 10px;
+	border-top-left-radius: 5px;
+	cursor: pointer;
+}
+#launchFS:hover {
+	background: #00000088;
+	color: #FFFFFFFF;
+}

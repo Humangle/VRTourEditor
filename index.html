@@ -12,7 +12,7 @@
 		<script type="module" src="./editor.js"></script>
 		<link rel="stylesheet" href="./editor.css" />
 		<meta charset="utf-8" />
-		<meta name="keywords" content="HumAngle, VR, Tour, Editor, 360, Immersive, HumAngle VR Tour Editor" />
+		<meta name="keywords" content="HumAngle, VR, Tour, Editor, 360, Immersive, HumAngle VR Tour Editor, Matterport" />
 		<meta
 			name="viewport"
 			content="width=device-width, initial-scale=1, shrink-to-fit=no"
@@ -26,7 +26,7 @@
 		/>
 		<meta
 			property="og:image"
-			content="https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png"
+			content="./assets/hvrt2.png"
 		/>
 		<meta property="og:url" content="https://humangle.github.io/VRTourEditor" />
 		<meta name="twitter:card" content="summary_large_image" />
@@ -44,12 +44,11 @@
 		<div id="settings">
 			<input id="projectname" type="text" value="Untitled Project" title="Project Name"/><br>
 			<select id="projectindex" name="projectindex" title="Project Index"></select><br>
-			<small id="stps"> Is Stereoscopic? </small><input id="projectstereo" type="checkbox" value="unchecked" title="Project Stereo"/><br>
 		</div>
 		<div id="tabs">
 			<div id="intro">
 				Click on + below to start creating your experience.<br>
-				For further information, read the <a href="https://github.com/HumAngle">documentation</a>.
+				For further information, read the <a href="https://github.com/HumAngle" target="_blank">documentation</a>.
 			</div>
 			<div id="tabheader">
 			</div>
@@ -125,8 +124,9 @@
 			</span>
 			<span style="padding:5px;color:#00000044;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;"> | </span>
 			<span id="errorlog"></span>
-			<a id="feedback" title="Send Feedback" href="https://forms.gle/NUEcpxaWxXVaqytLA" target="_blank">
+			<a id="feedback" title="Send Feedback" href="https://forms.gle/NUEcpxaWxXVaqytLA" target="_blank" style="text-decoration: none;">
 				<i class="fa fa-commenting" aria-hidden="true"></i>
+				Feedback
 			</a>
 		</div>
 	</body>
