@@ -9,7 +9,7 @@
   "background_color": "#FFFFFF",
   "icons": [
 	{
-		"src": "./assets/hvrt1.png",
+		"src": "https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/hvrt1.png",
 		"sizes": "512x512",
 		"type": "image/png",
 		"purpose": "any"
@@ -23,13 +23,13 @@
   ],
   "screenshots": [
     {
-      "src": "./assets/screenshot-1.png",
+      "src": "https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/screenshot-1.png",
       "type": "image/png",
       "sizes": "1920x1080",
       "form_factor": "wide"
     },
     {
-      "src": "./assets/screenshot-3.png",
+      "src": "https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/screenshot-3.png",
       "type": "image/png",
       "sizes": "1920x1080",
       "form_factor": "wide"

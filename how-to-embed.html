@@ -1,9 +1,52 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta charset="utf-8" />
+		<meta name="keywords" content="Embed, How To, HumAngle, VR, Tour, 360, HumAngle VR Tour Editor" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1, shrink-to-fit=no"
+		/>
+
+		<meta property="og:title" content="HumAngle VR Tour" />
+		<meta property="og:type" content="website" />
+		<meta
+			property="og:description"
+			content="How To Embed a VR Tour or 360 image"
+		/>
+		<meta
+			property="og:image"
+			content="https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/title-image.png"
+		/>
+		<meta property="og:url" content="https://humangle.github.io/VRTourEditor/sample" />
+		<meta name="twitter:card" content="summary_large_image" />
 		<title>Embed Example</title>
+		<link rel="stylesheet" href="./font-awesome-4.7.0/css/font-awesome.min.css">
+		<link rel="icon" href="https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png" sizes="32x32">
+		<link rel="icon" href="https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-192x192.png" sizes="32x32">
 	</head>
 	<body>
-		<iframe src="./sample" style="width:500px; height: 300px;" allow="fullscreen"> </iframe>
+		<div style="padding: 50px; margin: auto; width: 104px;">
+			<img src="https://humanglemedia.com/wp-content/uploads/2020/02/humangle-logo-full-colour-rgb.png" height="41px" width="105px"/>
+		</div>
+		<div style="margin: auto; width: 100%; text-align: center;">
+			<button id="copy" size="64px"><i class="fa fa-clone" aria-hidden="true"></i></button><b id="copied">copied!</b>
+			<pre style="background-color: black; border: 2px; border-color: grey; color: grey;">
+				<code>
+				&lt;embed src="https://humangle.github.io/VRTourEditor/sample" style="width:500px; height: 300px;" allow="fullscreen"&gt;&lt;/embed&gt;</code>
+			</pre>
+		</div>
+		<div style="padding: 50px; margin: auto; width: 500px;">
+			<!--<iframe src="https://humangle.github.io/VRTourEditor/sample" style="width:500px; height: 300px;" allow="fullscreen"> </iframe>-->
+			<embed src="https://humangle.github.io/VRTourEditor/sample" style="width:500px; height: 300px;" allow="fullscreen"> </embed>
+		</div>
+		<script defer>
+			document.getElementById("copied").style.color = "#22b2d7";
+			document.getElementById("copied").style.display = "none";
+			document.getElementById("copy").addEventListener('click', () => {
+				navigator.clipboard.writeText('<embed src="https://humangle.github.io/VRTourEditor/sample" style="width:500px; height: 300px;" allow="fullscreen"></embed>');
+				document.getElementById("copied").style.display = "block";
+			});
+		</script>
 	</body>
 </html>
