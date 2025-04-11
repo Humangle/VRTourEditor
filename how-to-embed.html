@@ -26,26 +26,25 @@
 		<link rel="icon" href="https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-192x192.png" sizes="32x32">
 	</head>
 	<body>
-		<div style="padding: 50px; margin: auto; width: 104px;">
+		<div style="padding: 50px; margin: auto; width: 105px;">
 			<img src="https://humanglemedia.com/wp-content/uploads/2020/02/humangle-logo-full-colour-rgb.png" height="41px" width="105px"/>
 		</div>
-		<div style="margin: auto; width: 100%; text-align: center;">
-			<button id="copy" size="64px"><i class="fa fa-clone" aria-hidden="true"></i></button><b id="copied">copied!</b>
-			<pre style="background-color: black; border: 2px; border-color: grey; color: grey;">
-				<code>
-				&lt;embed src="https://humangle.github.io/VRTourEditor/sample" style="width:500px; height: 300px;" allow="fullscreen"&gt;&lt;/embed&gt;</code>
-			</pre>
+		<div style="width: 100%; text-align: center;">
+			Copy and include the code snippet below in your webpage. Make sure to replace the link in "src" to the link you're hosting your tour. 
+			<br><br>
+			<code style="border: 2px;">
+				&lt;iframe src="https://humangle.github.io/VRTourEditor/sample" style="width:500px; height:300px; border:none;" allowfullscreen"&gt;&lt;/iframe&gt;
+			</code>
+			<button id="copy" size="128px"><i class="fa fa-clone" aria-hidden="true" title="Copy Embed Snippet"></i></button>
 		</div>
 		<div style="padding: 50px; margin: auto; width: 500px;">
-			<!--<iframe src="https://humangle.github.io/VRTourEditor/sample" style="width:500px; height: 300px;" allow="fullscreen"> </iframe>-->
-			<embed src="https://humangle.github.io/VRTourEditor/sample" style="width:500px; height: 300px;" allow="fullscreen"> </embed>
+			<!--<embed src="https://humangle.github.io/VRTourEditor/sample" style="width:500px; height: 300px;" allow="fullscreen"> </embed>-->
+			<iframe src="https://humangle.github.io/VRTourEditor/sample" style="width:500px; height:300px; border:none;" allowfullscreen> </iframe>
 		</div>
 		<script defer>
-			document.getElementById("copied").style.color = "#22b2d7";
-			document.getElementById("copied").style.display = "none";
 			document.getElementById("copy").addEventListener('click', () => {
-				navigator.clipboard.writeText('<embed src="https://humangle.github.io/VRTourEditor/sample" style="width:500px; height: 300px;" allow="fullscreen"></embed>');
-				document.getElementById("copied").style.display = "block";
+				navigator.clipboard.writeText('<iframe src="https://humangle.github.io/VRTourEditor/sample" style="width:500px; height:300px; border:none;" allowfullscreen></iframe>');
+				alert("Embed code copied!");
 			});
 		</script>
 	</body>

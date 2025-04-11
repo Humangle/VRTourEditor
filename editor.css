@@ -338,6 +338,10 @@ details[open] summary {
 	padding: 25px;
 }
 
+#recentfiles {
+	margin-top: 10px;
+}
+
 #templates {
 	width: 50%;
 	padding: 25px;
@@ -395,4 +399,15 @@ details[open] summary {
 }
 .rplitems:hover {
 	background: #00000011;
+}
+.dbtn {
+	float:right;
+	padding:10px;
+	border-radius: 5px;
+	color: #00000044;
+}
+
+.dbtn:hover {
+	background: #00000044;
+	color: white;
 }

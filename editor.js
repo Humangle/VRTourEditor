@@ -605,24 +605,30 @@ let main = async (view) => {
 		URL.revokeObjectURL(link.href);
 	});
 	
-	document.getElementById("newfile").style.display == 'block';
+	document.getElementById("newfile").style.display = "block";
+	document.getElementById("menu").style.display = "none";
 	document.getElementById("load").addEventListener('click', (event) => {
 		console.log("load");
 		if (document.getElementById("newfile").style.display == "none"){
 			document.getElementById("newfile").style.display = "block";
+			document.getElementById("menu").style.display = "none";
+			showrecentprojects();
 		} else {
 			document.getElementById("newfile").style.display = "none";
+			document.getElementById("menu").style.display = "block";
 		}
 	});
 	
 	const loadHVRJ = (hvrj) => {
 		links = hvrj;
 		document.getElementById("newfile").style.display = "none";
+		document.getElementById("menu").style.display = "block";
 		teleport(links.header.index);
 		//clear tab data
 		document.getElementById("tabheader").innerHTML = "";
 		document.getElementById("linkdata").style.display = "block";
 		document.getElementById("createposition").style.display = "block";
+		pickableObjs.clear();
 		
 		//make tabs and buttons to each 360 image
 			for (const a in links.full){
@@ -649,9 +655,28 @@ let main = async (view) => {
 		if (document.getElementById("newproname").value == ""){
 			document.getElementById("newproname").focus();
 		} else {
+			links = {
+				"header": {
+					"version": 0.4,
+					"project": "untitled",
+					"stereo": false,
+					"index": ""
+				},
+				"full": {},
+				"lite":{}
+			};
 			document.getElementById("projectname").value = document.getElementById("newproname").value;
 			links.header.project = document.getElementById("newproname").value;
 			document.getElementById("newfile").style.display = "none";
+			document.getElementById("menu").style.display = "block";
+			//clear tab data
+			document.getElementById("tabheader").innerHTML = "";
+			document.getElementById("linkdata").style.display = "none";
+			document.getElementById("createposition").style.display = "none";
+			document.getElementById("intro").style.display = "block";
+			sphereMaterial.map = sphereTexture;
+			pickableObjs.clear();
+			document.getElementById("projectindex").innerHTML = "";
 		}
 	});
 	
@@ -687,33 +712,49 @@ let main = async (view) => {
 			console.error(err);
 		}
 	}
-	
-	//show recent projects
-	/**
-	let derpnametag = "";
-	let derpname = "";
-	for (const key in localStorage) {
-		if (Object.hasOwnProperty.call(localStorage, key)) {
-			const element = localStorage[key];
-			if (key.startsWith('recent::')){
-				derpnametag = key.replace('recent::','');
-				derpname = ""+derpnametag.replaceAll('_', ' ');
-				document.getElementById("recentfiles").innerHTML += '<div class="rplitems"><div style="padding:10px;width:100%;" id="'+derpnametag+'">'+derpname+'</div><div style="float:right;padding:10px;cursor:no-drop;" id="d_'+derpnametag+'"><i class="fa fa-trash" aria-hidden="true"></i></div></div>';
-				document.getElementById(derpnametag).addEventListener('click', function(e){
-					console.log("should load");
-					loadHVRJ(JSON.parse(localStorage.getItem("recent::"+e.target.id)));
-				});
-				document.getElementById("d_"+derpnametag).addEventListener('click', function(e) {
-					console.log("should delete");
-					var sure = confirm("Are you sure you want to delete "+derpnametag.replaceAll("_"," ")+" ?");
-					if(sure) {             
-						localStorage.removeItem("recent::"+derpnametag);
-						window.location.reload();
-					}
-				});
+	const showrecentprojects = () => {
+		document.getElementById("recentfiles").innerHTML = "";
+		let derpnametag = "";
+		let derpname = "";
+		for (const key in localStorage) {
+			if (Object.hasOwnProperty.call(localStorage, key)) {
+				const element = localStorage[key];
+				if (key.startsWith('recent::')){
+					derpnametag = key.replace('recent::','');
+					derpname = ""+derpnametag.replaceAll('_', ' ');
+					
+					let rplitems = document.createElement("div");
+					rplitems.setAttribute("class", "rplitems");
+					let rplitem_t = document.createElement("div");
+					rplitem_t.setAttribute("id", derpnametag);
+					rplitem_t.setAttribute("style", "padding:10px;width:100%;");
+					rplitem_t.innerText = derpname;
+					rplitem_t.addEventListener('click', function(e){
+						console.log("should load");
+						loadHVRJ(JSON.parse(localStorage.getItem("recent::"+e.target.id)));
+					});
+					rplitems.append(rplitem_t);
+					let rplitem_d = document.createElement("div");
+					rplitem_d.setAttribute("id", "d_"+derpnametag);
+					rplitem_d.setAttribute("class", "dbtn");
+					let rplitem_di = document.createElement("i");
+					rplitem_di.setAttribute("class", "fa fa-trash");
+					rplitem_di.setAttribute("aria-hidden", "true");
+					rplitem_d.append(rplitem_di);
+					rplitem_d.addEventListener('click', function(e) {
+						let proid = e.target.id;
+						let proname = proid.replaceAll("_"," ");
+						proname = proname.slice(2);         
+						localStorage.removeItem("recent::"+proid.slice(2));
+						showrecentprojects();
+					});
+					rplitems.append(rplitem_d);
+					document.getElementById("recentfiles").append(rplitems);
+				}
 			}
 		}
-	}**/
+	}
+	showrecentprojects();
 }
 
 //texture view/link properties
@@ -744,4 +785,12 @@ const coordToPosition = (lat, lon, dep, cx, cy, cz) => {
 	
 	let worldcoord = {"x": xPos+cx, "y": yPos, "z": zPos+cz};
 	return worldcoord;
+}
+
+const latToScale = () => {
+	
+}
+
+const distToScale = (size1maway, dist2move) => {
+	//assuming the we know how it looks 1m away
 }
