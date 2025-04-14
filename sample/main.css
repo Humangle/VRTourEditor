@@ -23,6 +23,8 @@ body {
 #loading .progress {
     margin: 1.5em;
     border: 1px solid white;
+	border-top: none;
+	padding-left: 50%;
     width: 50vw;
 }
 #loading .progressbar {
@@ -43,6 +45,7 @@ body {
 	padding: 10px;
 	border-top-right-radius: 5px;
 	cursor: pointer;
+	display: none;
 }
 #launchVR:hover {
 	background: #00000088;

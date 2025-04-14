@@ -51,6 +51,8 @@ body {
 #loading .progress {
     margin: 1.5em;
     border: 1px solid #FFFFFF;
+	border-top: none;
+	padding-left: 50%;
     width: 50vw;
 }
 #loading .progressbar {

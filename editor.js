@@ -130,7 +130,7 @@ let main = async (view) => {
 	
 	loadManager.onProgress = (urlOfLastItemLoaded, itemsLoaded, itemsTotal) => {
 		const progress = itemsLoaded / itemsTotal;
-		progressBarElem.style.transform = `scaleX(${progress})`;
+		progressBarElem.style.transform = "scaleX("+progress+")";
 	};
 	
 	loadManager.onLoad = () => {
@@ -595,8 +595,61 @@ let main = async (view) => {
 	});
 	
 	//export zip, save and load .hvrj (humangle vr json)
+	
+	async function GenerateZip(template) {
+		const zip = new JSZip();
+		const zipname = links.header.project.replaceAll(" ", "_");
+		
+		//HVRJ
+		const hvrjfile = new Blob([JSON.stringify(links)], { type: 'application/json' });
+		zip.file(links["header"]["project"]+".hvrj", hvrjfile);
+		
+		//Default No Image
+		const noimagefile = await fetch("./assets/no-image.jpg").then(r => r.blob());
+		zip.file("no-image.jpg", noimagefile); // adds the image file to the zip file
+		
+		//Embed Example
+		const embedfile = await fetch("./sample/how-to-embed.html").then(r => r.blob());
+		zip.file("How-To.html", embedfile);
+		
+		//HTML, JS, CSS and Manifest Templates
+		
+		const htmlfile = new Blob([template.html], { type: 'text/plain;charset=utf-8' });
+		zip.file("index.html", htmlfile);
+		
+		const jsfile = new Blob([template.js], { type: 'text/javascript' });
+		zip.file("index.js", jsfile);
+		
+		const cssfile = new Blob([template.css], { type: 'text/css' });
+		zip.file("main.css", cssfile);
+		
+		const manifestfile = new Blob([template.manifest], { type: 'application/json' });
+		zip.file("manifest.json", manifestfile);
+		
+		const zipData = await zip.generateAsync({
+			type: "blob",
+			streamFiles: true
+		})
+		
+		//autosave
+		let recentlyedited = "recent::"+links.header.project.replaceAll(" ", "_");
+		localStorage.setItem(recentlyedited, JSON.stringify(links));
+		//downloadzip
+		const link = document.createElement('a');
+		link.href = window.URL.createObjectURL(zipData);
+		link.download = links.header.project.replaceAll(" ", "_")+".zip";
+		link.click();
+	}
+	
+	document.getElementById("export").addEventListener('click', (event) => {
+		GenerateZip(GenerateFiles(links));
+	});
 
 	document.getElementById("save").addEventListener('click', (event) => {
+		//autosave
+		let recentlyedited = "recent::"+links.header.project.replaceAll(" ", "_");
+		localStorage.setItem(recentlyedited, JSON.stringify(links));
+		//downloadsave
 		const link = document.createElement("a");
 		const file = new Blob([JSON.stringify(links)], { type: 'application/json' });
 		link.href = URL.createObjectURL(file);
@@ -657,8 +710,10 @@ let main = async (view) => {
 		} else {
 			links = {
 				"header": {
-					"version": 0.4,
+					"version": 1.0,
 					"project": "untitled",
+					"icon": "https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png",
+					"image": "https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/title-image.png",
 					"stereo": false,
 					"index": ""
 				},
@@ -682,12 +737,12 @@ let main = async (view) => {
 	
 	document.getElementById('ottemp').addEventListener('click', (event) => {
 		if (document.getElementById('newproname').value == ""){
-			fetch('./HumAngle VR Tour.hvrj').then(response => response.json()).then(template => {
+			fetch('./sample/HumAngle VR Tour.hvrj').then(response => response.json()).then(template => {
 				template.header.project = "HumAngle Office Tour";
 				loadHVRJ(template);
 			});
 		} else {
-			fetch('./HumAngle VR Tour.hvrj').then(response => response.json()).then(template => {
+			fetch('./sample/HumAngle VR Tour.hvrj').then(response => response.json()).then(template => {
 				template.header.project = document.getElementById('newproname').value;
 				loadHVRJ(template);
 			});
@@ -760,8 +815,10 @@ let main = async (view) => {
 //texture view/link properties
 let links = {
 	"header": {
-		"version": 0.4,
+		"version": 1.0,
 		"project": "untitled",
+		"icon": "https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png",
+		"image": "https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/title-image.png",
 		"stereo": false,
 		"index": ""
 	},

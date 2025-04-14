@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {XRButton} from 'three/addons/webxr/XRButton.js';
 
 let ready = false;
 
@@ -7,7 +8,7 @@ let main = async (view) => {
 	
 	//set up the canvas for THREE.js
 	const canvas = document.getElementById("c");
-	const renderer = new THREE.WebGLRenderer({canvas, alpha: true, premultipliedAlpha: false, powerPreference: 'low-power'});
+	const renderer = new THREE.WebGLRenderer({canvas, alpha: true, premultipliedAlpha: false});
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(canvas.clientWidth, canvas.clientHeight);
 	renderer.xr.enabled = true;
@@ -24,7 +25,7 @@ let main = async (view) => {
 	
 	//orbital camera controls
 	const controls = new OrbitControls(camera, renderer.domElement);
-	controls.rotateSpeed *= -0.3;
+	controls.rotateSpeed *= -0.2;
 	controls.autoRotate = false;
 	controls.enableDamping = false;
 	controls.enableZoom = false;
@@ -53,9 +54,7 @@ let main = async (view) => {
 	
 	//make buttons for each view with button template
 	for (const a in view){
-		if (!pickableObjs.getObjectByName(a)) {
-			pickableObjs.add(makeButton(a));
-		}
+		pickableObjs.add(makeButton(a));
 	}
 	
 	scene.add(pickableObjs);
@@ -74,7 +73,7 @@ let main = async (view) => {
 	const loader = new THREE.ImageBitmapLoader(loadManager);
 	loader.setOptions( { imageOrientation: 'flipY' } );
 	
-	const sT = await loader.loadAsync("./assets/no-image.jpg");
+	const sT = await loader.loadAsync("./no-image.jpg");
 	const sphereTexture = new THREE.CanvasTexture(sT);
 	sphereTexture.colorSpace = THREE.SRGBColorSpace;
 	sphereTexture.flipY = false;
@@ -121,10 +120,10 @@ let main = async (view) => {
 		document.body.style.cursor = "auto";
 	}
 	
-	/*document.body.appendChild(XRButton.createButton(renderer, {
+	document.body.appendChild(XRButton.createButton(renderer, {
 		requiredFeatures: ['local'],
 		optionalFeatures: ['light-estimation']
-	}));*/
+	}));
 	
 	//switch to the view of the button selected
 	const teleport = async (viewname) => {
@@ -166,7 +165,7 @@ let main = async (view) => {
 			this.pointer = new THREE.Vector2();
 			
 			const onPointerUp = (event) => {
-				if (this.selectedObject.name != "") { 
+				if (this.selectedObject) { 
 					this.dispatchEvent({type: event.type, object: this.selectedObject});
 				}
 				document.getElementById("c").style.cursor = "grab";
@@ -268,18 +267,14 @@ let main = async (view) => {
 	const DesktopPicker = new MousePickHelper(scene);
 	DesktopPicker.addEventListener('pointerup', (event) => {
 		//switch to the view of the button selected
-		if (event.object.name && event.object.visible){
-			teleport(event.object.name);
-		}
+		teleport(event.object.name);
 	});
 	
 	//On VR click
 	const VRPicker = new ControllerPickHelper(scene);
 	VRPicker.addEventListener('select', (event) => {
 		//switch to the view of the button selected
-		if (event.object.name){
-			teleport(event.object.name);
-		}
+		teleport(event.object.name);
 	});
 	
 	const onPointerMove = (event) => {
@@ -341,113 +336,65 @@ let main = async (view) => {
 	teleport(links.header.index); //teleport to the root
 }
 
-document.getElementById('launchFS').addEventListener('click', (event) => {
-    var cel = document.getElementById('c');
-
-    if(cel.requestFullscreen) { /* Chrome */
-        cel.requestFullscreen();
-    } else if (cel.mozRequestFullScreen) { /* Mozilla */
-        cel.mozRequestFullScreen();
-    } else if (cel.msRequestFullscreen) { /* IE11 */
-		cel.msRequestFullscreen();
-	} else if (cel.webkitRequestFullscreen) { /* Safari */
-		cel.webkitRequestFullscreen();
-	} else {
-		cel.exitFullscreen();
+//texture view/link properties
+const links = {
+	"header": {
+		"version": 0.2,
+		"stereo": false,
+		"index": "PIC_1"
+	},
+	"lite": {
+		"PIC_1": {
+			"img": "../assets/legacy/PIC_1-ity.jpg",
+			"PIC_1": {"s": 0, "x": 0, "y": -1.6, "z": 0},
+			"PIC_2": {"s": 4, "x": 16.55099055399931, "y": -74.61338152995376, "z": 47.527970799803576},
+			"PIC_3": {"s": 2, "x": -7.500365624785212, "y": -44.45476799258078, "z": 77.894275259613}
+		},
+		"PIC_2": {
+			"img": "../assets/legacy/PIC_2-ity.jpg",
+			"PIC_1": {"s": 4, "x": -3.337599303613126, "y": -72.62642809294218, "z": -53.04962180213184},
+			"PIC_2": {"s": 0, "x": 0, "y": -1.6, "z": 0},
+			"PIC_3": {"s": 4, "x": -38.36253246210393, "y": -60.22175457229724, "z": 54.78737426933343}
+		},
+		"PIC_3": {
+			"img": "../assets/legacy/PIC_3-ity.jpg",
+			"PIC_1": {"s": 2, "x": -32.01658952848355, "y": -43.63286582217034, "z": -71.91043745597072},
+			"PIC_2": {"s": 4, "x": -7.067563684490447, "y": -59.4001501164843, "z": -67.2433766976704},
+			"PIC_3": {"s": 0, "x": 0, "y": -1.6, "z": 0}
+		}
+	},
+	"full": {
+		"PIC_1": {
+			"img": "../assets/legacy/PIC_1.jpg",
+			"PIC_1": {"s": 0, "x": 0, "y": -1.6, "z": 0},
+			"PIC_2": {"s": 4, "x": 16.55099055399931, "y": -74.61338152995376, "z": 47.527970799803576},
+			"PIC_3": {"s": 2, "x": -7.500365624785212, "y": -44.45476799258078, "z": 77.894275259613}
+		},
+		"PIC_2": {
+			"img": "../assets/legacy/PIC_2.jpg",
+			"PIC_1": {"s": 4, "x": -3.337599303613126, "y": -72.62642809294218, "z": -53.04962180213184},
+			"PIC_2": {"s": 0, "x": 0, "y": -1.6, "z": 0},
+			"PIC_3": {"s": 4, "x": -38.36253246210393, "y": -60.22175457229724, "z": 54.78737426933343}
+		},
+		"PIC_3": {
+			"img": "../assets/legacy/PIC_3.jpg",
+			"PIC_1": {"s": 2, "x": -32.01658952848355, "y": -43.63286582217034, "z": -71.91043745597072},
+			"PIC_2": {"s": 4, "x": -7.067563684490447, "y": -59.4001501164843, "z": -67.2433766976704},
+			"PIC_3": {"s": 0, "x": 0, "y": -1.6, "z": 0}
+		}
 	}
-});
+};
 
-document.getElementById('c').addEventListener('fullscreenchange', () => {
-  if (!document.fullscreenElement) {
-    // Exited fullscreen — reset canvas size
-    const canvas = document.getElementById('c');
-    if (canvas) {
-      // You can restore to original dimensions or make it responsive
-      canvas.style.width = '100vw';
-      canvas.style.height = '100vh';
-    }
-  }
-});
-
-if ('xr' in navigator) {
-	navigator.xr.isSessionSupported('immersive-ar').then(function(supported) {
-		if (supported) {
-
-			let currentSession = null;
-			async function onSessionStarted( session ) {
-				session.addEventListener( 'end', onSessionEnded );
-				await renderer.xr.setSession( session );
-				document.getElementById('launchVR').style.display = "none";
-				currentSession = session;
-			}
-				
-			function onSessionEnded( /*event*/ ) {
-				currentSession.removeEventListener( 'end', onSessionEnded );
-				document.getElementById('launchVR').style.display = "block";
-				currentSession = null;
-			}
-			const sessionInit = {
-				requiredFeatures: ['local'],
-				optionalFeatures: ['light-estimation']
-			};
-				
-			const sessionOptions = {
-				...sessionInit,
-				optionalFeatures: [
-					'local-floor',
-					'bounded-floor',
-					'layers',
-					...( sessionInit.optionalFeatures || [] )
-				],
-			};
-
-
-			document.getElementById('launchVR').addEventListener('click', (event) => {
-				if (currentSession === null) {
-					navigator.xr.requestSession(mode, sessionOptions).then(onSessionStarted);
-				} else {
-					currentSession.end();
-					
-					if ( navigator.xr.offerSession !== undefined ) {
-						navigator.xr.offerSession(mode, sessionOptions).then(onSessionStarted).catch((err) => {
-							console.warn(err);
-						} );
-					}
-				}
-			});
-
-			if (navigator.xr.offerSession !== undefined) {
-				navigator.xr.offerSession(mode, sessionOptions).then(onSessionStarted).catch((err) => {
-					console.warn(err);
-				});
-			}
-			
-		} else {
-			document.getElementById('launchVR').style.display = "none";
-		}
-	}).catch((err) => {
-		document.getElementById('launchVR').style.display = "none";
-		console.log("XR NOT ALLOWED: "+err);
-	});
-} else {
-	console.log("WEBXR NEEDS HTTPS!!!");
-}
-
-
-let links;
-fetch('./HumAngle VR Tour.hvrj').then(response => response.json()).then(hvrj => {
-	links = hvrj;
-	let version = links.full;
-	navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
-		if (!supported){
-			version = links.lite;
-		} else {
-			version = links.full;
-		}
-	}).finally(() => {
-		if (window.innerHeight > window.innerWidth+(window.innerWidth/2)) {
-			version = links.full;//this was links.lite if the quality is better in VR set it back and look for a better way to check if mobile
-		}
-		main(version);
-	});
+let version = links.full;
+navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
+	if (!supported){
+		version = links.lite;
+	} else {
+		version = links.full;
+	}
+}).finally(() => {
+	if (window.innerHeight > window.innerWidth+(window.innerWidth/2)) {
+		version = links.lite;
+	}
+	main(version);
 });

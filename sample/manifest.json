@@ -1,0 +1,38 @@
+{
+  "name": "HumAngle VR Tour",
+  "short_name": "HumAngle VR Office Tour",
+  "description": "A Tour of HumAngle's Office created with Humangle VR Tour Editor",
+  "display": "standalone",
+  "lang": "en",
+  "orientation": "landscape",
+  "theme_color": "#22b2d7",
+  "background_color": "#FFFFFF",
+  "icons": [
+	{
+		"src": "https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/title-image.png",
+		"sizes": "512x512",
+		"type": "image/png",
+		"purpose": "any"
+	},
+    {
+      "src": "https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/screenshot-2.png",
+      "type": "image/png",
+      "sizes": "1920x1080",
+      "form_factor": "wide"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/screenshot-4.png",
+      "type": "image/png",
+      "sizes": "1920x1080",
+      "form_factor": "wide"
+    }
+  ]
+}
