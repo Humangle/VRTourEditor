@@ -398,8 +398,8 @@ let main = async (view) => {
 	teleport(links.header.index); //teleport to the root
 }
 
-document.getElementById('launchFS_${links.header.project}').addEventListener('click', (event) => {
-    var cel = document.getElementById('c_${links.header.project}');
+document.getElementById('launchFS_${links.header.project.replaceAll(" ","_")}').addEventListener('click', (event) => {
+    var cel = document.getElementById('c_${links.header.project.replaceAll(" ","_")}');
 
     if(cel.requestFullscreen) { /* Chrome */
         cel.requestFullscreen();
