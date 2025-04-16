@@ -23,7 +23,7 @@ body {
 #loading .progress {
     margin: 1.5em;
     border: 1px solid white;
-	border-top: none;
+	border: none;
 	padding-left: 50%;
     width: 50vw;
 }

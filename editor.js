@@ -47,7 +47,7 @@ let main = async (view) => {
 	//button template
 	let makeButton = (buttonName) => {
 		//button linking to PIC
-		const buttonMaterial = new THREE.MeshPhongMaterial({emissive: 0xFFFFFF, opacity: 0.4, transparent: true});
+		const buttonMaterial = new THREE.MeshPhongMaterial({emissive: 0xFFFFFF, opacity: 0.3, transparent: true});
 		const buttonGeometry = new THREE.SphereGeometry(2, 64, 16);
 		let buttonMesh = new THREE.Mesh(buttonGeometry, buttonMaterial);
 		buttonMesh.name = buttonName;
@@ -352,7 +352,7 @@ let main = async (view) => {
 		if (ready){
 			for (const d in pickableObjs.children){
 				let btnMesh = pickableObjs.children[d];
-				btnMesh.material.opacity = 0.4;
+				btnMesh.material.opacity = 0.3;
 			}
 			
 			//update the vr raycaster and calculate objects intersecting it

@@ -101,7 +101,7 @@ let main = async (view) => {
 	//button template
 	const makeButton = (buttonName) => {
 		//button linking to PIC
-		const buttonMaterial = new THREE.MeshPhongMaterial({emissive: 0xFFFFFF, opacity: 0.4, transparent: true});
+		const buttonMaterial = new THREE.MeshPhongMaterial({emissive: 0xFFFFFF, opacity: 0.3, transparent: true});
 		const buttonGeometry = new THREE.SphereGeometry(2, 64, 16);
 		const buttonMesh = new THREE.Mesh(buttonGeometry, buttonMaterial);
 		buttonMesh.name = buttonName;
@@ -359,7 +359,7 @@ let main = async (view) => {
 		if (ready){
 			for (const d in pickableObjs.children){
 				let btnMesh = pickableObjs.children[d];
-				btnMesh.material.opacity = 0.4;
+				btnMesh.material.opacity = 0.3;
 			}
 			
 			//update the vr raycaster and calculate objects intersecting it
@@ -376,8 +376,8 @@ let main = async (view) => {
 			}
 		} else {
 			if (window.innerHeight > window.innerWidth+(window.innerWidth/2)) {
-				if (camera.fov != 90){
-					camera.fov = 90;
+				if (camera.fov != 70){
+					camera.fov = 70;
 					camera.updateProjectionMatrix();
 				}
 			} else {
@@ -529,7 +529,7 @@ fetch('./${links.header.project}.hvrj').then(response => response.json()).then(h
 #loading_${links.header.project.replaceAll(" ","_")} .progress {
     margin: 1.5em;
     border: 1px solid white;
-	border-top: none;
+	border: none;
 	padding-left: 50%;
     width: 50vw;
 }
