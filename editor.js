@@ -26,7 +26,7 @@ let main = async (view) => {
 	
 	//orbital camera controls
 	const controls = new OrbitControls(camera, renderer.domElement);
-	controls.rotateSpeed *= -0.3;
+	controls.rotateSpeed *= -0.4;
 	controls.autoRotate = false;
 	controls.enableDamping = false;
 	controls.enableZoom = false;
@@ -177,6 +177,11 @@ let main = async (view) => {
 			this.pointer = new THREE.Vector2();
 			
 			const onPointerUp = (event) => {
+				
+				document.getElementById("c").style.cursor = "grab";
+			}
+			
+			const onPointerDown = (event) => {
 				console.log(this.selectedObject.name + " " + clinkplink + " " + event.target.id);
 				if ((this.selectedObject.name != "") && (clinkplink == false)) {
 					console.log("thisSelectedObject");
@@ -203,10 +208,6 @@ let main = async (view) => {
 					const sl = links.full[ldname][clinkplink]["s"];
 					pickableObjs.getObjectByName(clinkplink).scale.set(sl, sl/2, sl);
 				}
-				document.getElementById("c").style.cursor = "grab";
-			}
-			
-			const onPointerDown = (event) => {
 				document.getElementById("c").style.cursor = "grabbing";
 			}
 			
@@ -314,7 +315,7 @@ let main = async (view) => {
 	
 	//On Desktop click
 	const DesktopPicker = new MousePickHelper(scene);
-	DesktopPicker.addEventListener('pointerup', (event) => {
+	DesktopPicker.addEventListener('pointerdown', (event) => {
 		//switch to the view of the button selected
 		if (event.object.name && event.object.visible){
 			console.log("Desktop Click");

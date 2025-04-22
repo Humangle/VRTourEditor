@@ -24,7 +24,7 @@ let main = async (view) => {
 	
 	//orbital camera controls
 	const controls = new OrbitControls(camera, renderer.domElement);
-	controls.rotateSpeed *= -0.3;
+	controls.rotateSpeed *= -0.4;
 	controls.autoRotate = false;
 	controls.enableDamping = false;
 	controls.enableZoom = false;
@@ -161,13 +161,14 @@ let main = async (view) => {
 			this.pointer = new THREE.Vector2();
 			
 			const onPointerUp = (event) => {
-				if (this.selectedObject.name != "") { 
-					this.dispatchEvent({type: event.type, object: this.selectedObject});
-				}
+				
 				document.getElementById("c").style.cursor = "grab";
 			}
 			
 			const onPointerDown = (event) => {
+				if (this.selectedObject.name != "") { 
+					this.dispatchEvent({type: event.type, object: this.selectedObject});
+				}
 				document.getElementById("c").style.cursor = "grabbing";
 			}
 			
@@ -261,7 +262,7 @@ let main = async (view) => {
 	
 	//On Desktop click
 	const DesktopPicker = new MousePickHelper(scene);
-	DesktopPicker.addEventListener('pointerup', (event) => {
+	DesktopPicker.addEventListener('pointerdown', (event) => {
 		//switch to the view of the button selected
 		if (event.object.name && event.object.visible){
 			teleport(event.object.name);
@@ -319,8 +320,8 @@ let main = async (view) => {
 			}
 		} else {
 			if (window.innerHeight > window.innerWidth+(window.innerWidth/2)) {
-				if (camera.fov != 70){
-					camera.fov = 70;
+				if (camera.fov != 75){
+					camera.fov = 75;
 					camera.updateProjectionMatrix();
 				}
 			} else {
@@ -374,8 +375,9 @@ const createXR = (renderer, sessionInit = {}) => {
 	if ('xr' in navigator) {
 		navigator.xr.isSessionSupported('immersive-ar').then(function(supported) {
 			if (supported) {
-
+				
 				let currentSession = null;
+				document.getElementById('launchVR').style.display = "block";
 				async function onSessionStarted( session ) {
 					session.addEventListener( 'end', onSessionEnded );
 					renderer.xr.setReferenceSpaceType( 'local' );

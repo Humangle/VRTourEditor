@@ -42,13 +42,12 @@ const GenerateFiles = (links) => {
 		<canvas id="c_${links.header.project.replaceAll(" ","_")}">
 		</canvas>
 		<div id="launchVR_${links.header.project.replaceAll(" ","_")}">
-			<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-headset-vr" viewBox="0 0 16 16">
-				<path d="M8 1.248c1.857 0 3.526.641 4.65 1.794a5 5 0 0 1 2.518 1.09C13.907 1.482 11.295 0 8 0 4.75 0 2.12 1.48.844 4.122a5 5 0 0 1 2.289-1.047C4.236 1.872 5.974 1.248 8 1.248"/>
+			<svg xmlns="http://www.w3.org/2000/svg" width="5vh" height="5vh" fill="currentColor" class="bi bi-headset-vr" viewBox="0 0 16 16">
 				<path d="M12 12a4 4 0 0 1-2.786-1.13l-.002-.002a1.6 1.6 0 0 0-.276-.167A2.2 2.2 0 0 0 8 10.5c-.414 0-.729.103-.935.201a1.6 1.6 0 0 0-.277.167l-.002.002A4 4 0 1 1 4 4h8a4 4 0 0 1 0 8"/>
 			</svg>
 		</div>
 		<div id="launchFS_${links.header.project.replaceAll(" ","_")}">
-			<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-fullscreen" viewBox="0 0 16 16">
+			<svg xmlns="http://www.w3.org/2000/svg" width="5vh" height="5vh" fill="currentColor" class="bi bi-fullscreen" viewBox="0 0 16 16">
 				<path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5M.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5"/>
 			</svg>
 		</div>
@@ -81,7 +80,7 @@ let main = async (view) => {
 	
 	//orbital camera controls
 	const controls = new OrbitControls(camera, renderer.domElement);
-	controls.rotateSpeed *= -0.3;
+	controls.rotateSpeed *= -0.4;
 	controls.autoRotate = false;
 	controls.enableDamping = false;
 	controls.enableZoom = false;
@@ -218,13 +217,14 @@ let main = async (view) => {
 			this.pointer = new THREE.Vector2();
 			
 			const onPointerUp = (event) => {
-				if (this.selectedObject.name != "") { 
-					this.dispatchEvent({type: event.type, object: this.selectedObject});
-				}
+				
 				document.getElementById("c_${links.header.project.replaceAll(" ","_")}").style.cursor = "grab";
 			}
 			
 			const onPointerDown = (event) => {
+				if (this.selectedObject.name != "") { 
+					this.dispatchEvent({type: event.type, object: this.selectedObject});
+				}
 				document.getElementById("c_${links.header.project.replaceAll(" ","_")}").style.cursor = "grabbing";
 			}
 			
@@ -318,7 +318,7 @@ let main = async (view) => {
 	
 	//On Desktop click
 	const DesktopPicker = new MousePickHelper(scene);
-	DesktopPicker.addEventListener('pointerup', (event) => {
+	DesktopPicker.addEventListener('pointerdown', (event) => {
 		//switch to the view of the button selected
 		if (event.object.name && event.object.visible){
 			teleport(event.object.name);
@@ -376,8 +376,8 @@ let main = async (view) => {
 			}
 		} else {
 			if (window.innerHeight > window.innerWidth+(window.innerWidth/2)) {
-				if (camera.fov != 70){
-					camera.fov = 70;
+				if (camera.fov != 75){
+					camera.fov = 75;
 					camera.updateProjectionMatrix();
 				}
 			} else {
@@ -433,6 +433,7 @@ const createXR = (renderer, sessionInit = {}) => {
 			if (supported) {
 
 				let currentSession = null;
+				document.getElementById('launchVR_${links.header.project.replaceAll(" ","_")}').style.display = "block";
 				async function onSessionStarted( session ) {
 					session.addEventListener( 'end', onSessionEnded );
 					renderer.xr.setReferenceSpaceType( 'local' );
@@ -530,7 +531,7 @@ fetch('./${links.header.project}.hvrj').then(response => response.json()).then(h
     margin: 1.5em;
     border: 1px solid white;
 	border: none;
-	padding-left: 50%;
+	padding-left: 42%;
     width: 50vw;
 }
 #loading_${links.header.project.replaceAll(" ","_")} .progressbar {
