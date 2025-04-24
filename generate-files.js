@@ -42,12 +42,12 @@ const GenerateFiles = (links) => {
 		<canvas id="c_${links.header.project.replaceAll(" ","_")}">
 		</canvas>
 		<div id="launchVR_${links.header.project.replaceAll(" ","_")}">
-			<svg xmlns="http://www.w3.org/2000/svg" width="5vh" height="5vh" fill="currentColor" class="bi bi-headset-vr" viewBox="0 0 16 16">
+			<svg xmlns="http://www.w3.org/2000/svg" width="3vh" height="3vh" fill="currentColor" class="bi bi-headset-vr" viewBox="0 0 16 16">
 				<path d="M12 12a4 4 0 0 1-2.786-1.13l-.002-.002a1.6 1.6 0 0 0-.276-.167A2.2 2.2 0 0 0 8 10.5c-.414 0-.729.103-.935.201a1.6 1.6 0 0 0-.277.167l-.002.002A4 4 0 1 1 4 4h8a4 4 0 0 1 0 8"/>
 			</svg>
 		</div>
 		<div id="launchFS_${links.header.project.replaceAll(" ","_")}">
-			<svg xmlns="http://www.w3.org/2000/svg" width="5vh" height="5vh" fill="currentColor" class="bi bi-fullscreen" viewBox="0 0 16 16">
+			<svg xmlns="http://www.w3.org/2000/svg" width="3vh" height="3vh" fill="currentColor" class="bi bi-fullscreen" viewBox="0 0 16 16">
 				<path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5M.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5"/>
 			</svg>
 		</div>
@@ -549,7 +549,7 @@ fetch('./${links.header.project}.hvrj').then(response => response.json()).then(h
 	z-index: 999999999;
 	background: #00000044;
 	color: #FFFFFFBB;
-	padding: 10px;
+	padding: 1vh;
 	border-top-right-radius: 5px;
 	cursor: pointer;
 	display: none;
@@ -566,7 +566,7 @@ fetch('./${links.header.project}.hvrj').then(response => response.json()).then(h
 	z-index: 999999999;
 	background: #00000044;
 	color: #FFFFFFBB;
-	padding: 10px;
+	padding: 1vh;
 	border-top-left-radius: 5px;
 	cursor: pointer;
 }

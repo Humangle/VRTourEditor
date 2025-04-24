@@ -42,7 +42,7 @@ body {
 	z-index: 999999999;
 	background: #00000044;
 	color: #FFFFFFBB;
-	padding: 10px;
+	padding: 1vh;
 	border-top-right-radius: 5px;
 	cursor: pointer;
 	display: none;
@@ -59,7 +59,7 @@ body {
 	z-index: 999999999;
 	background: #00000044;
 	color: #FFFFFFBB;
-	padding: 10px;
+	padding: 1vh;
 	border-top-left-radius: 5px;
 	cursor: pointer;
 }

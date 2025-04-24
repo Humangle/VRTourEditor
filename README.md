@@ -1,5 +1,5 @@
 # HumAngle VR Tour Editor Documentation
-HumAngle VR Tour Editor is a vanilla javascript based tour generation engine. This is used to display equirectangular images, videos and tours on web pages. These are also full webXR experiences on headsets and smartphones with ARCore or ARKit.
+We’re building an open-source VR storytelling tool for media organisations. Naturally starting with 360 images, tours, and videos being made cross-platform across XR headsets, smartphones and computers. This will soon include 3D objects and animations in AR, audio and maybe even some voice AI integration (why not). Because of our limited resources and past experiences with services like this shutting down (Google Tour Creator) or going behind paywalls as SaaS products (Matterport) the architecture is designed to avoid making the existence of the tool expensive. Free open-sourced and focused on the logic generating WebXR pages/experiences. These generated web pages allow organisations like us to share immersive stories for XR without alienating people viewing from smartphones and computers.
 
 ##	Getting Started
 1. Go To [humangle.github.io/VRTourEditor](https://humangle.github.io/VRTourEditor) and select the "HumAngle Office Tour" Template. This is what [HumAngle VR Office Tour](https://humangle.github.io/VRTourEditor/sample) was created with.
@@ -23,3 +23,7 @@ HumAngle VR Tour Editor is a vanilla javascript based tour generation engine. Th
 
 ## 	HVRJ - HumAngle VR JSON Format
 This is a JSON file saved with an extension .hvrj that allows you to keep and send a copy of your project to only be edited with the HumAngle VR Tour Editor. This allows you to easily update your projects/tours in future.
+
+## Contribute
+[Donate](https://humanglemedia.com/donate/)
+or send a pull request.
