@@ -152,6 +152,51 @@ let main = async (view) => {
 		}
 	}
 	
+	//Touchscreen raycaster
+	class ThumbPickHelper extends THREE.EventDispatcher {
+		constructor(scene) {
+			super();
+			this.raycaster = new THREE.Raycaster();
+			this.selectedObject = new THREE.Object3D();
+			this.pointer = new THREE.Vector2();
+			
+			const onTouchStart = (event) => {
+				
+				//document.getElementById("c").style.cursor = "grab";
+			}
+			
+			const onTouchEnd = (event) => {
+				
+				//objects intersecting the Touchscreen Raycaster
+				const intersections = this.raycaster.intersectObjects(pickableObjs.children);
+				
+				for ( let i = 0; i < intersections.length; i++ ) {
+					console.log("touch intersection with: " + intersections[i].object.name);
+					if (intersections[i].object.name != "sphere"){
+						document.getElementById("c").style.cursor = "pointer";
+						this.selectedObject = intersections[i].object;
+						intersections[i].object.material.opacity = 1;
+						teleport(intersections[i].object.name);
+					}
+				}
+				if ((intersections.length == 0) && (document.getElementById("c").style.cursor == "pointer")){
+					document.getElementById("c").style.cursor = "grab";
+				}
+			}
+			
+			window.addEventListener('touchend', onTouchEnd);
+			//window.addEventListener('touchstart', onTouchStart);
+		}
+		reset(){
+			this.selectedObject = new THREE.Object3D;
+		}
+		update(pickablesParent, time){
+			this.reset();
+   
+			this.raycaster.setFromCamera(this.pointer, camera);
+		}
+	}
+	
 	//desktop raycaster
 	class MousePickHelper extends THREE.EventDispatcher {
 		constructor(scene) {
@@ -260,12 +305,23 @@ let main = async (view) => {
 		}
 	}
 	
+	//On Screen Tap
+	const ScreenPicker = new ThumbPickHelper(scene);
+	ScreenPicker.addEventListener('touchend'), (event) => {
+		//switch to the view of the button selected
+		if (event.object.name && event.object.visible){
+			teleport(event.object.name);
+			console.log(event.object.name + "tapped!");
+		}
+	}
+	
 	//On Desktop click
 	const DesktopPicker = new MousePickHelper(scene);
 	DesktopPicker.addEventListener('pointerdown', (event) => {
 		//switch to the view of the button selected
 		if (event.object.name && event.object.visible){
 			teleport(event.object.name);
+			console.log(event.object.name + " clicked!");
 		}
 	});
 	
@@ -283,6 +339,13 @@ let main = async (view) => {
 		//(-1 to +1) for both components
 		DesktopPicker.pointer.x = (event.clientX/canvas.clientWidth) * 2 - 1;
 		DesktopPicker.pointer.y = - (event.clientY/canvas.clientHeight) * 2 + 1;
+	}
+	
+	const onTouchMove = (event) => {
+		event = event.touches?.[0] || event; 
+		const rect = renderer.domElement.getBoundingClientRect();
+		ScreenPicker.pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+		ScreenPicker.pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 	}
 	
 	const onWindowResize = () => {
@@ -311,6 +374,9 @@ let main = async (view) => {
 			
 			//update the desktop raycaster and calculate the objects intersecting it
 			DesktopPicker.update(pickableObjs, time);
+			
+			//update the desktop raycaster and calculate the objects intersecting it
+			ScreenPicker.update(pickableObjs, time);
 		}
 		
 		if (renderer.xr.isPresenting){
@@ -320,8 +386,8 @@ let main = async (view) => {
 			}
 		} else {
 			if (window.innerHeight > window.innerWidth+(window.innerWidth/2)) {
-				if (camera.fov != 75){
-					camera.fov = 75;
+				if (camera.fov != 90){
+					camera.fov = 90;
 					camera.updateProjectionMatrix();
 				}
 			} else {
@@ -338,6 +404,7 @@ let main = async (view) => {
 	
 	renderer.setAnimationLoop(render);
 	window.addEventListener('pointermove', onPointerMove);
+	window.addEventListener('touchstart', onTouchMove);
 	window.addEventListener('resize', onWindowResize);
 	teleport(links.header.index); //teleport to the root
 }

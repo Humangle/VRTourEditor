@@ -5,8 +5,8 @@ const GenerateFiles = (links) => {
 		<script  type="importmap">
 			{
 				"imports": {
-					"three": "https://threejs.org/build/three.module.js",
-					"three/addons/" : "https://threejs.org/examples/jsm/"
+					"three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+					"three/addons/" : "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
 				}
 			}
 		</script>
@@ -376,8 +376,8 @@ let main = async (view) => {
 			}
 		} else {
 			if (window.innerHeight > window.innerWidth+(window.innerWidth/2)) {
-				if (camera.fov != 75){
-					camera.fov = 75;
+				if (camera.fov != 90){
+					camera.fov = 90;
 					camera.updateProjectionMatrix();
 				}
 			} else {
@@ -492,7 +492,7 @@ fetch('./${links.header.project}.hvrj').then(response => response.json()).then(h
 	let version = links.full;
 	navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
 		if (!supported){
-			version = links.lite;
+			version = links.full;
 		} else {
 			version = links.full;
 		}
