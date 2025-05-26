@@ -15,6 +15,7 @@ let main = async (view) => {
 	renderer.xr.enabled = true;
 	renderer.xr.setReferenceSpaceType('local');
 	renderer.xr.setFoveation(1.0);
+	console.log("WebGL2Renderer: " + renderer.capabilities.isWebGL2);
 	
 	//set the camera up
 	const fov = 60;
@@ -26,12 +27,13 @@ let main = async (view) => {
 	
 	//orbital camera controls
 	const controls = new OrbitControls(camera, renderer.domElement);
+	controls.target.set(0, 1.6, 0);
 	controls.rotateSpeed *= -0.4;
 	controls.autoRotate = false;
 	controls.enableDamping = false;
 	controls.enableZoom = false;
-	controls.maxPolarAngle = 2;
-	controls.minPolarAngle = 0.86;
+	controls.maxPolarAngle = Math.PI-1;
+	controls.minPolarAngle = 1;
 	controls.update();
 	
 	//here we go!
@@ -643,6 +645,7 @@ let main = async (view) => {
 	}
 	
 	document.getElementById("export").addEventListener('click', (event) => {
+		links.lite = links.full;
 		GenerateZip(GenerateFiles(links));
 	});
 
@@ -711,7 +714,7 @@ let main = async (view) => {
 		} else {
 			links = {
 				"header": {
-					"version": 1.0,
+					"version": 1.1,
 					"project": "untitled",
 					"icon": "https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png",
 					"image": "https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/title-image.png",
@@ -816,7 +819,7 @@ let main = async (view) => {
 //texture view/link properties
 let links = {
 	"header": {
-		"version": 1.0,
+		"version": 1.1,
 		"project": "untitled",
 		"icon": "https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png",
 		"image": "https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/title-image.png",

@@ -14,6 +14,7 @@ let main = async (view) => {
 	renderer.xr.enabled = true;
 	renderer.xr.setReferenceSpaceType('local');
 	renderer.xr.setFoveation(1.0);
+	console.log("WebGL2Renderer: " + renderer.capabilities.isWebGL2);
 	
 	//set the camera up
 	const fov = 45;

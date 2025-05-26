@@ -63,15 +63,16 @@ let main = async (view) => {
 	
 	//set up the canvas for THREE.js
 	const canvas = document.getElementById("c_${links.header.project.replaceAll(" ","_")}");
-	const renderer = new THREE.WebGLRenderer({canvas, alpha: true, premultipliedAlpha: false, powerPreference: 'high-performance'});
+	const renderer = new THREE.WebGLRenderer({canvas, alpha: true, premultipliedAlpha: false, precision: 'lowp', powerPreference: 'low-power'});
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(canvas.clientWidth, canvas.clientHeight);
 	renderer.xr.enabled = true;
 	renderer.xr.setReferenceSpaceType('local');
 	renderer.xr.setFoveation(1.0);
+	console.log("WebGL2Renderer: " + renderer.capabilities.isWebGL2);
 	
 	//set the camera up
-	const fov = 45;
+	const fov = 60;
 	const aspect = canvas.clientWidth/canvas.clientHeight;
 	const near = 0.1;
 	const far = 128;
@@ -80,12 +81,13 @@ let main = async (view) => {
 	
 	//orbital camera controls
 	const controls = new OrbitControls(camera, renderer.domElement);
+	controls.target.set(0, 1.6, 0);
 	controls.rotateSpeed *= -0.4;
 	controls.autoRotate = false;
 	controls.enableDamping = false;
 	controls.enableZoom = false;
-	controls.maxPolarAngle = 2;
-	controls.minPolarAngle = 0.86;
+	controls.maxPolarAngle = Math.PI-1;
+	controls.minPolarAngle = 1;
 	controls.update();
 	
 	//here we go!
@@ -381,8 +383,8 @@ let main = async (view) => {
 					camera.updateProjectionMatrix();
 				}
 			} else {
-				if (camera.fov != 45){
-					camera.fov = 45;
+				if (camera.fov != 60){
+					camera.fov = 60;
 					camera.updateProjectionMatrix();
 				}
 			}
@@ -419,9 +421,14 @@ document.getElementById('c_${links.header.project.replaceAll(" ","_")}').addEven
     // Exited fullscreen — reset canvas size
     const canvas = document.getElementById('c_${links.header.project.replaceAll(" ","_")}');
     if (canvas) {
-      // You can restore to original dimensions or make it responsive
-      canvas.style.width = '100vw';
-      canvas.style.height = '100vh';
+		// You can restore to original dimensions or make it responsive
+		canvas.style.width = '100vw';
+		canvas.style.height = '100vh';
+		renderer.setPixelRatio(window.devicePixelRatio);
+		renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+		camera.aspect = canvas.clientWidth / canvas.clientHeight;
+		camera.fov = 60;
+		camera.updateProjectionMatrix();
     }
   }
 });
