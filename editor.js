@@ -714,12 +714,13 @@ let main = async (view) => {
 		} else {
 			links = {
 				"header": {
-					"version": 1.1,
+					"version": 1.2,
 					"project": "untitled",
 					"icon": "https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png",
 					"image": "https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/title-image.png",
 					"stereo": false,
-					"index": ""
+					"index": "",
+					"pan": 0
 				},
 				"full": {},
 				"lite":{}
@@ -819,12 +820,13 @@ let main = async (view) => {
 //texture view/link properties
 let links = {
 	"header": {
-		"version": 1.1,
+		"version": 1.2,
 		"project": "untitled",
 		"icon": "https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png",
 		"image": "https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/title-image.png",
 		"stereo": false,
-		"index": ""
+		"index": "",
+		"pan": 0
 	},
 	"full": {
 		

@@ -5,8 +5,8 @@ const GenerateFiles = (links) => {
 		<script  type="importmap">
 			{
 				"imports": {
-					"three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
-					"three/addons/" : "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+					"three": "https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.js",
+					"three/addons/" : "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"
 				}
 			}
 		</script>
@@ -42,12 +42,12 @@ const GenerateFiles = (links) => {
 		<canvas id="c_${links.header.project.replaceAll(" ","_")}">
 		</canvas>
 		<div id="launchVR_${links.header.project.replaceAll(" ","_")}">
-			<svg xmlns="http://www.w3.org/2000/svg" width="3vh" height="3vh" fill="currentColor" class="bi bi-headset-vr" viewBox="0 0 16 16">
+			<svg xmlns="http://www.w3.org/2000/svg" style="width: 3vh; height: 3vh; min-width: 1em; min-height: 1em;" fill="currentColor" class="bi bi-headset-vr" viewBox="0 0 16 16">
 				<path d="M12 12a4 4 0 0 1-2.786-1.13l-.002-.002a1.6 1.6 0 0 0-.276-.167A2.2 2.2 0 0 0 8 10.5c-.414 0-.729.103-.935.201a1.6 1.6 0 0 0-.277.167l-.002.002A4 4 0 1 1 4 4h8a4 4 0 0 1 0 8"/>
 			</svg>
 		</div>
 		<div id="launchFS_${links.header.project.replaceAll(" ","_")}">
-			<svg xmlns="http://www.w3.org/2000/svg" width="3vh" height="3vh" fill="currentColor" class="bi bi-fullscreen" viewBox="0 0 16 16">
+			<svg xmlns="http://www.w3.org/2000/svg" style="width: 3vh; height: 3vh; min-width: 1em; min-height: 1em;" fill="currentColor" class="bi bi-fullscreen" viewBox="0 0 16 16">
 				<path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5M.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5"/>
 			</svg>
 		</div>
@@ -167,6 +167,10 @@ let main = async (view) => {
 	sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
 	sphereMesh.name = "sphere";
 	sphereMesh.position.set(0,1.6,0);
+	if (links.header?.pan > 0){
+		sphereMesh.rotation.y = (links.header.pan/180)*Math.PI;
+		pickableObjs.rotation.y = (links.header.pan/180)*Math.PI;
+	}
 	scene.add(sphereMesh);
 	ready = true;
 	
@@ -207,6 +211,51 @@ let main = async (view) => {
 					btnMesh.visible = false;
 				}
 			}
+		}
+	}
+	
+	//touchscreen raycaster
+	class ThumbPickHelper extends THREE.EventDispatcher {
+		constructor(scene) {
+			super();
+			this.raycaster = new THREE.Raycaster();
+			this.selectedObject = new THREE.Object3D();
+			this.pointer = new THREE.Vector2();
+			
+			const onTouchStart = (event) => {
+				
+				//document.getElementById("c").style.cursor = "grab";
+			}
+			
+			const onTouchEnd = (event) => {
+				
+				//objects intersecting the Touchscreen Raycaster
+				const intersections = this.raycaster.intersectObjects(pickableObjs.children);
+				
+				for ( let i = 0; i < intersections.length; i++ ) {
+					console.log("touch intersection with: " + intersections[i].object.name);
+					if (intersections[i].object.name != "sphere"){
+						document.getElementById("c").style.cursor = "pointer";
+						this.selectedObject = intersections[i].object;
+						intersections[i].object.material.opacity = 1;
+						teleport(intersections[i].object.name);
+					}
+				}
+				if ((intersections.length == 0) && (document.getElementById("c_${links.header.project.replaceAll(" ","_")}").style.cursor == "pointer")){
+					document.getElementById("c_${links.header.project.replaceAll(" ","_")}").style.cursor = "grab";
+				}
+			}
+			
+			window.addEventListener('touchend', onTouchEnd);
+			//window.addEventListener('touchstart', onTouchStart);
+		}
+		reset(){
+			this.selectedObject = new THREE.Object3D;
+		}
+		update(pickablesParent, time){
+			this.reset();
+   
+			this.raycaster.setFromCamera(this.pointer, camera);
 		}
 	}
 	
@@ -318,6 +367,15 @@ let main = async (view) => {
 		}
 	}
 	
+	//On Screen Tap
+	const ScreenPicker = new ThumbPickHelper(scene);
+	ScreenPicker.addEventListener('touchend'), (event) => {
+		//switch to the view of the button selected
+		if (event.object.name && event.object.visible){
+			teleport(event.object.name);
+		}
+	}
+	
 	//On Desktop click
 	const DesktopPicker = new MousePickHelper(scene);
 	DesktopPicker.addEventListener('pointerdown', (event) => {
@@ -369,6 +427,9 @@ let main = async (view) => {
 			
 			//update the desktop raycaster and calculate the objects intersecting it
 			DesktopPicker.update(pickableObjs, time);
+			
+			//update the desktop raycaster and calculate the objects intersecting it
+			ScreenPicker.update(pickableObjs, time);
 		}
 		
 		if (renderer.xr.isPresenting){
@@ -396,6 +457,7 @@ let main = async (view) => {
 	
 	renderer.setAnimationLoop(render);
 	window.addEventListener('pointermove', onPointerMove);
+	window.addEventListener('touchstart', onTouchMove);
 	window.addEventListener('resize', onWindowResize);
 	teleport(links.header.index); //teleport to the root
 }

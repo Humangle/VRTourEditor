@@ -2,10 +2,11 @@
 	"header":{
 		"version":1.0,
 		"project":"HumAngle VR Tour",
-		"icon": "https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png",
-		"image": "https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/title-image.png",
+		"icon":"https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png",
+		"image":"https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/title-image.png",
 		"stereo":false,
-		"index":"Stairs_HUFO_4"
+		"index":"Stairs_HUFO_4",
+		"pan":40
 	},
 	"full":{
 		"Stairs_HUFO_3":{

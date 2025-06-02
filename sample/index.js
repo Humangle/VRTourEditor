@@ -8,7 +8,7 @@ let main = async (view) => {
 	//set up the canvas for THREE.js
 	const canvas = document.getElementById("c");
 	const renderer = new THREE.WebGLRenderer({canvas, alpha: true, premultipliedAlpha: false, precision: 'lowp', powerPreference: 'low-power'});
-	renderer.setPixelRatio(window.devicePixelRatio);
+	renderer.setPixelRatio(1.0);
 	renderer.setSize(canvas.clientWidth, canvas.clientHeight);
 	renderer.xr.enabled = true;
 	renderer.xr.setReferenceSpaceType('local');
@@ -111,6 +111,10 @@ let main = async (view) => {
 	sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
 	sphereMesh.name = "sphere";
 	sphereMesh.position.set(0,1.6,0);
+	if (links.header?.pan > 0){
+		sphereMesh.rotation.y = (links.header.pan/180)*Math.PI;
+		pickableObjs.rotation.y = (links.header.pan/180)*Math.PI;
+	}
 	scene.add(sphereMesh);
 	ready = true;
 	
@@ -154,7 +158,7 @@ let main = async (view) => {
 		}
 	}
 	
-	//Touchscreen raycaster
+	//touchscreen raycaster
 	class ThumbPickHelper extends THREE.EventDispatcher {
 		constructor(scene) {
 			super();
@@ -313,7 +317,6 @@ let main = async (view) => {
 		//switch to the view of the button selected
 		if (event.object.name && event.object.visible){
 			teleport(event.object.name);
-			console.log(event.object.name + "tapped!");
 		}
 	}
 	
@@ -323,7 +326,6 @@ let main = async (view) => {
 		//switch to the view of the button selected
 		if (event.object.name && event.object.visible){
 			teleport(event.object.name);
-			console.log(event.object.name + " clicked!");
 		}
 	});
 	
@@ -331,7 +333,7 @@ let main = async (view) => {
 	const VRPicker = new ControllerPickHelper(scene);
 	VRPicker.addEventListener('select', (event) => {
 		//switch to the view of the button selected
-		if (event.object.name){
+		if (event.object.name && event.object.visible){
 			teleport(event.object.name);
 		}
 	});
@@ -492,13 +494,13 @@ const createXR = (renderer, sessionInit = {}) => {
 			}
 		}).catch((err) => {
 			document.getElementById('launchVR').style.display = "none";
-			console.log("XR NOT ALLOWED: " + err);
+			alert("XR NOT ALLOWED: " + err);
 		});
 	} else {
 		if ( window.isSecureContext === false ) {
-			console.log("WEBXR NEEDS HTTPS");
+			alert("WEBXR NEEDS HTTPS");
 		} else {
-			console.log("WEBXR NOT AVAILABLE");
+			alert("WEBXR NOT AVAILABLE");
 		}
 	}
 }
