@@ -73,13 +73,10 @@ let main = async (view) => {
 	const loadingElem = document.querySelector('#loading');
 	const progressBarElem = loadingElem.querySelector('.progressbar');
 	const loadManager = new THREE.LoadingManager();
-	const loader = new THREE.ImageBitmapLoader(loadManager);
-	loader.setOptions( { imageOrientation: 'flipY' } );
+	const loader = new THREE.TextureLoader(loadManager);
 	
-	const sT = await loader.loadAsync("./no-image.jpg");
-	const sphereTexture = new THREE.CanvasTexture(sT);
+	const sphereTexture = await loader.loadAsync("./no-image.jpg");
 	sphereTexture.colorSpace = THREE.SRGBColorSpace;
-	sphereTexture.flipY = false;
 	
 	const sphereMaterial = new THREE.MeshBasicMaterial({side: THREE.FrontSide, color: 0xFFFFFF, map: sphereTexture});
 	let sphereMesh;
@@ -94,10 +91,8 @@ let main = async (view) => {
 		}
 		for (const b in view[viewname]){
 			if (b!="img" && viewTextures[b] == undefined){
-				const sTX = await loader.loadAsync(view[b].img);
-				const sphereTextureX = new THREE.CanvasTexture(sTX);
+				const sphereTextureX = await loader.loadAsync(view[b].img);
 				sphereTextureX.colorSpace = THREE.SRGBColorSpace;
-				sphereTextureX.flipY = false;
 				viewTextures[b] = sphereTextureX;
 				renderer.initTexture(viewTextures[b]);
 				if (b == viewname && viewTextures[b] != undefined){
