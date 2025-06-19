@@ -4,22 +4,30 @@ body {
 	font-family: Arial, Helvetica, sans-serif;
 	background: #00000010;
 }
-#c {
-	display: block;
+#workspace {
 	height: 70%;
 	width: 70%;
+	margin: 0px;
+	padding: 0px;
+	background: none;
+	font-size: 11px;
+}
+#c {
+	display: block;
+	height: 100%;
+	width: 100%;
 	margin: 0px;
 	padding: 0px;
 	background: none;
 	cursor: grab;
 }
 #settings {
-	position: fixed;
-	bottom: calc(0.8em + 20px);
-	height: 20%;
-	margin: 0px;
-	margin-left: 20px;
+	position: block;
+	margin: 0;
+	padding: 20px;
 	opacity: 0.5;
+	height: 18vh;
+	background: #FFFFFF;
 }
 #tabs {
 	display: block;

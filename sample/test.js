@@ -4,7 +4,7 @@ import {XRButton} from 'three/addons/webxr/XRButton.js';
 
 let ready = false;
 
-let main = async (view) => {
+let main = (view) => {
 	
 	//set up the canvas for THREE.js
 	const canvas = document.getElementById("c");
@@ -74,7 +74,7 @@ let main = async (view) => {
 	const loader = new THREE.ImageBitmapLoader(loadManager);
 	loader.setOptions( { imageOrientation: 'flipY' } );
 	
-	const sT = await loader.loadAsync("./no-image.jpg");
+	const sT = loader.load("./no-image.jpg");
 	const sphereTexture = new THREE.CanvasTexture(sT);
 	sphereTexture.colorSpace = THREE.SRGBColorSpace;
 	sphereTexture.flipY = false;
@@ -92,7 +92,7 @@ let main = async (view) => {
 		}
 		for (const b in view[viewname]){
 			if (b!="img" && viewTextures[b] == undefined){
-				const sTX = await loader.loadAsync(view[b].img);
+				const sTX = loader.load(view[b].img);
 				const sphereTextureX = new THREE.CanvasTexture(sTX);
 				sphereTextureX.colorSpace = THREE.SRGBColorSpace;
 				sphereTextureX.flipY = false;
