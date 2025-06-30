@@ -73,7 +73,7 @@ let main = async (view) => {
 	
 	//set the camera up
 	const fov = 60;
-	const aspect = canvas.clientWidth/canvas.clientHeight;
+	const aspect = window.innerWidth / window.innerHeight;
 	const near = 0.1;
 	const far = 128;
 	const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
@@ -401,8 +401,15 @@ let main = async (view) => {
 		DesktopPicker.pointer.y = - (event.clientY/canvas.clientHeight) * 2 + 1;
 	}
 	
+	const onTouchMove = (event) => {
+		event = event.touches?.[0] || event; 
+		const rect = renderer.domElement.getBoundingClientRect();
+		ScreenPicker.pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+		ScreenPicker.pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+	}
+	
 	const onWindowResize = () => {
-		camera.aspect = canvas.clientWidth/canvas.clientHeight;
+		camera.aspect = window.innerWidth / window.innerHeight;
 		camera.updateProjectionMatrix();
 		
 		renderer.setSize(canvas.clientWidth, canvas.clientHeight);
@@ -486,11 +493,11 @@ document.getElementById('c_${links.header.project.replaceAll(" ","_")}').addEven
 		// You can restore to original dimensions or make it responsive
 		canvas.style.width = '100vw';
 		canvas.style.height = '100vh';
-		renderer.setPixelRatio(window.devicePixelRatio);
-		renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-		camera.aspect = canvas.clientWidth / canvas.clientHeight;
+		canvas.style.display = 'block';
+		camera.aspect = window.innerWidth / window.innerHeight;
 		camera.fov = 60;
 		camera.updateProjectionMatrix();
+		renderer.setSize(canvas.clientWidth, canvas.clientHeight);
     }
   }
 });

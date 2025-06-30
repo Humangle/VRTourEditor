@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
-import {XRButton} from 'three/addons/webxr/XRButton.js';
+import {VRButton} from 'three/addons/webxr/VRButton.js';
 
 let ready = false;
 
@@ -18,7 +18,7 @@ let main = (view) => {
 	
 	//set the camera up
 	const fov = 45;
-	const aspect = canvas.clientWidth/canvas.clientHeight;
+	const aspect = window.innerWidth/window.innerHeight;
 	const near = 0.1;
 	const far = 128;
 	const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
@@ -71,20 +71,20 @@ let main = (view) => {
 	const loadingElem = document.querySelector('#loading');
 	const progressBarElem = loadingElem.querySelector('.progressbar');
 	const loadManager = new THREE.LoadingManager();
-	const loader = new THREE.ImageBitmapLoader(loadManager);
-	loader.setOptions( { imageOrientation: 'flipY' } );
+	const loader = new THREE.TextureLoader(loadManager);
+	//loader.setOptions( { imageOrientation: 'flipY' } );
 	
-	const sT = loader.load("./no-image.jpg");
-	const sphereTexture = new THREE.CanvasTexture(sT);
+	const sphereTexture = loader.load("./no-image.jpg");
+	//const sphereTexture = new THREE.CanvasTexture(sT);
 	sphereTexture.colorSpace = THREE.SRGBColorSpace;
-	sphereTexture.flipY = false;
+	//sphereTexture.flipY = false;
 	
-	const sphereMaterial = new THREE.MeshBasicMaterial({side: THREE.FrontSide, color: 0xFFFFFF, map: sphereTexture});
+	const sphereMaterial = new THREE.MeshBasicMaterial({map: sphereTexture});
 	let sphereMesh;
 	renderer.initTexture(sphereTexture);
 	
 	//load textures for links in a view
-	const loadTextures = async (viewname) => {
+	const loadTextures = (viewname) => {
 		document.body.style.cursor = "wait";
 		if (viewTextures[viewname] != undefined){
 			sphereMaterial.map = viewTextures[viewname];
@@ -92,10 +92,10 @@ let main = (view) => {
 		}
 		for (const b in view[viewname]){
 			if (b!="img" && viewTextures[b] == undefined){
-				const sTX = loader.load(view[b].img);
-				const sphereTextureX = new THREE.CanvasTexture(sTX);
+				const sphereTextureX = loader.load(view[b].img);
+				//const sphereTextureX = new THREE.CanvasTexture(sTX);
 				sphereTextureX.colorSpace = THREE.SRGBColorSpace;
-				sphereTextureX.flipY = false;
+				//sphereTextureX.flipY = false;
 				viewTextures[b] = sphereTextureX;
 				renderer.initTexture(viewTextures[b]);
 				if (b == viewname && viewTextures[b] != undefined){
@@ -121,13 +121,13 @@ let main = (view) => {
 		document.body.style.cursor = "auto";
 	}
 	
-	document.body.appendChild(XRButton.createButton(renderer, {
+	document.body.appendChild(VRButton.createButton(renderer, {
 		requiredFeatures: ['local'],
 		optionalFeatures: ['light-estimation']
 	}));
 	
 	//switch to the view of the button selected
-	const teleport = async (viewname) => {
+	const teleport = (viewname) => {
 		if (view[viewname] != undefined){
 			loadTextures(viewname);
 			
@@ -387,7 +387,7 @@ const links = {
 };
 
 let version = links.full;
-navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
+navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
 	if (!supported){
 		version = links.lite;
 	} else {

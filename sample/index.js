@@ -17,7 +17,7 @@ let main = async (view) => {
 	
 	//set the camera up
 	const fov = 60;
-	const aspect = canvas.clientWidth/canvas.clientHeight;
+	const aspect = window.innerWidth / window.innerHeight;
 	const near = 0.1;
 	const far = 128;
 	const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
@@ -78,7 +78,7 @@ let main = async (view) => {
 	const sphereTexture = await loader.loadAsync("./no-image.jpg");
 	sphereTexture.colorSpace = THREE.SRGBColorSpace;
 	
-	const sphereMaterial = new THREE.MeshBasicMaterial({side: THREE.FrontSide, color: 0xFFFFFF, map: sphereTexture});
+	const sphereMaterial = new THREE.MeshBasicMaterial({map: sphereTexture});
 	let sphereMesh;
 	renderer.initTexture(sphereTexture);
 	
@@ -348,7 +348,7 @@ let main = async (view) => {
 	}
 	
 	const onWindowResize = () => {
-		camera.aspect = canvas.clientWidth/canvas.clientHeight;
+		camera.aspect = window.innerWidth / window.innerHeight;
 		camera.updateProjectionMatrix();
 		
 		renderer.setSize(canvas.clientWidth, canvas.clientHeight);
@@ -432,11 +432,11 @@ document.getElementById('c').addEventListener('fullscreenchange', () => {
 		// You can restore to original dimensions or make it responsive
 		canvas.style.width = '100vw';
 		canvas.style.height = '100vh';
-		renderer.setPixelRatio(window.devicePixelRatio);
-		renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-		camera.aspect = canvas.clientWidth / canvas.clientHeight;
+		canvas.style.display = 'block';
+		camera.aspect = window.innerWidth / window.innerHeight;
 		camera.fov = 60;
 		camera.updateProjectionMatrix();
+		renderer.setSize(canvas.clientWidth, canvas.clientHeight);
     }
   }
 });
@@ -444,7 +444,7 @@ document.getElementById('c').addEventListener('fullscreenchange', () => {
 const createXR = (renderer, sessionInit = {}) => {
 
 	if ('xr' in navigator) {
-		navigator.xr.isSessionSupported('immersive-ar').then(function(supported) {
+		navigator.xr.isSessionSupported('immersive-vr').then(function(supported) {
 			if (supported) {
 				
 				let currentSession = null;
@@ -465,12 +465,12 @@ const createXR = (renderer, sessionInit = {}) => {
 
 				document.getElementById('launchVR').addEventListener('click', (event) => {
 					if (currentSession === null) {
-						navigator.xr.requestSession('immersive-ar', sessionInit).then(onSessionStarted);
+						navigator.xr.requestSession('immersive-vr', sessionInit).then(onSessionStarted);
 					} else {
 						currentSession.end();
 						
 						if ( navigator.xr.offerSession !== undefined ) {
-							navigator.xr.offerSession('immersive-ar', sessionInit).then(onSessionStarted).catch((err) => {
+							navigator.xr.offerSession('immersive-vr', sessionInit).then(onSessionStarted).catch((err) => {
 								console.warn(err);
 							} );
 						}
@@ -478,7 +478,7 @@ const createXR = (renderer, sessionInit = {}) => {
 				});
 
 				if (navigator.xr.offerSession !== undefined) {
-					navigator.xr.offerSession('immersive-ar', sessionInit).then(onSessionStarted).catch((err) => {
+					navigator.xr.offerSession('immersive-vr', sessionInit).then(onSessionStarted).catch((err) => {
 						console.warn(err);
 					});
 				}
@@ -505,7 +505,7 @@ let links;
 fetch('./HumAngle VR Tour.hvrj').then(response => response.json()).then(hvrj => {
 	links = hvrj;
 	let version = links.full;
-	navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
+	navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
 		if (!supported){
 			version = links.lite;
 		} else {
