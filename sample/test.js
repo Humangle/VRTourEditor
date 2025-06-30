@@ -86,6 +86,7 @@ let main = (view) => {
 	applelog += "\n noimage loaded?";
 	
 	const sphereMaterial = new THREE.MeshBasicMaterial({map: sphereTexture});
+	sphereMaterial.needsUpdate = true;
 	let sphereMesh;
 	//renderer.initTexture(sphereTexture);
 	
@@ -95,6 +96,7 @@ let main = (view) => {
 		document.body.style.cursor = "wait";
 		if (viewTextures[viewname] != undefined){
 			sphereMaterial.map = viewTextures[viewname];
+			sphereMaterial.needsUpdate = true;
 			console.log("already in memory: using that to save resources");
 			applelog += "\n already in memory: using that to save resources";
 		}
@@ -109,6 +111,7 @@ let main = (view) => {
 				applelog += "\n texture loaded:" + b + ", link: " + viewTextures[b];
 				if (b == viewname && viewTextures[b] != undefined){
 					sphereMaterial.map = viewTextures[b];
+					sphereMaterial.needsUpdate = true;
 					applelog += "\n texture used as spherical map";
 				}
 			}
@@ -124,9 +127,6 @@ let main = (view) => {
 	const renderer = new THREE.WebGLRenderer();
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-	renderer.xr.enabled = true;
-	renderer.xr.setReferenceSpaceType('local');
-	renderer.xr.setFoveation(1.0);
 	canvas.appendChild(renderer.domElement);
 	console.log("WebGL2Renderer: " + renderer.capabilities.isWebGL2);
 	applelog += "\n renderer set";
@@ -374,7 +374,7 @@ const links = {
 	},
 	"lite": {
 		"PIC_1": {
-			"img": "../assets/legacy/PIC_1-ity.jpg",
+			"img": "https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/legacy/PIC_1-ity.jpg",
 			"PIC_1": {"s": 0, "x": 0, "y": -1.6, "z": 0},
 			"PIC_2": {"s": 4, "x": 16.55099055399931, "y": -74.61338152995376, "z": 47.527970799803576},
 			"PIC_3": {"s": 2, "x": -7.500365624785212, "y": -44.45476799258078, "z": 77.894275259613}
@@ -394,7 +394,7 @@ const links = {
 	},
 	"full": {
 		"PIC_1": {
-			"img": "../assets/legacy/PIC_1.jpg",
+			"img": "https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/legacy/PIC_1.jpg",
 			"PIC_1": {"s": 0, "x": 0, "y": -1.6, "z": 0},
 			"PIC_2": {"s": 4, "x": 16.55099055399931, "y": -74.61338152995376, "z": 47.527970799803576},
 			"PIC_3": {"s": 2, "x": -7.500365624785212, "y": -44.45476799258078, "z": 77.894275259613}
