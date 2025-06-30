@@ -10,14 +10,6 @@ let main = (view) => {
 	applelog += "\n inside main function";
 	//set up the canvas for THREE.js
 	const canvas = document.getElementById("c");
-	const renderer = new THREE.WebGLRenderer({canvas});
-	renderer.setPixelRatio(window.devicePixelRatio);
-	renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-	renderer.xr.enabled = true;
-	renderer.xr.setReferenceSpaceType('local');
-	renderer.xr.setFoveation(1.0);
-	console.log("WebGL2Renderer: " + renderer.capabilities.isWebGL2);
-	applelog += "\n renderer set";
 	
 	//set the camera up
 	const fov = 45;
@@ -28,7 +20,7 @@ let main = (view) => {
 	camera.position.set(0, 1.6, 0);
 	
 	//orbital camera controls
-	const controls = new OrbitControls(camera, renderer.domElement);
+	const controls = new OrbitControls(camera, canvas);
 	controls.rotateSpeed *= -0.2;
 	controls.autoRotate = false;
 	controls.enableDamping = false;
@@ -128,6 +120,17 @@ let main = (view) => {
 	sphereMesh.name = "sphere";
 	sphereMesh.position.set(0,1.6,0);
 	scene.add(sphereMesh);
+	
+	const renderer = new THREE.WebGLRenderer();
+	renderer.setPixelRatio(window.devicePixelRatio);
+	renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+	renderer.xr.enabled = true;
+	renderer.xr.setReferenceSpaceType('local');
+	renderer.xr.setFoveation(1.0);
+	canvas.appendChild(renderer.domElement);
+	console.log("WebGL2Renderer: " + renderer.capabilities.isWebGL2);
+	applelog += "\n renderer set";
+	
 	ready = true;
 	
 	applelog += "\n sphere added";
