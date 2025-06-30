@@ -3,18 +3,21 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {VRButton} from 'three/addons/webxr/VRButton.js';
 
 let ready = false;
+let applelog = "ready just set to false";
 
 let main = (view) => {
 	
+	applelog += "\n inside main function";
 	//set up the canvas for THREE.js
 	const canvas = document.getElementById("c");
-	const renderer = new THREE.WebGLRenderer({canvas, alpha: true, premultipliedAlpha: false});
+	const renderer = new THREE.WebGLRenderer({canvas});
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(canvas.clientWidth, canvas.clientHeight);
 	renderer.xr.enabled = true;
 	renderer.xr.setReferenceSpaceType('local');
 	renderer.xr.setFoveation(1.0);
 	console.log("WebGL2Renderer: " + renderer.capabilities.isWebGL2);
+	applelog += "\n renderer set";
 	
 	//set the camera up
 	const fov = 45;
@@ -34,6 +37,8 @@ let main = (view) => {
 	controls.minPolarAngle = 0.86;
 	controls.update();
 	
+	applelog += "\n camera controls done, scene next";
+	
 	//here we go!
 	const scene = new THREE.Scene();
 	
@@ -50,6 +55,7 @@ let main = (view) => {
 		const buttonGeometry = new THREE.SphereGeometry(2, 64, 16);
 		const buttonMesh = new THREE.Mesh(buttonGeometry, buttonMaterial);
 		buttonMesh.name = buttonName;
+		applelog += "\n made a button";
 		return buttonMesh;
 	}
 	
@@ -60,12 +66,16 @@ let main = (view) => {
 	
 	scene.add(pickableObjs);
 	
+	applelog += "\n pickableObjs added";
+	
 	//THE SPHERE
 	const radius = 100;
 	const widthSegments = 64;
 	const heightSegments = 32;
 	const sphereGeometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments);
 	sphereGeometry.scale(-1, 1, 1);
+	
+	applelog += "\n sphere settings";
 	
 	//loading textures
 	const loadingElem = document.querySelector('#loading');
@@ -74,21 +84,27 @@ let main = (view) => {
 	const loader = new THREE.TextureLoader(loadManager);
 	//loader.setOptions( { imageOrientation: 'flipY' } );
 	
+	applelog += "\n loadmanager loader";
+	
 	const sphereTexture = loader.load("./no-image.jpg");
 	//const sphereTexture = new THREE.CanvasTexture(sT);
 	sphereTexture.colorSpace = THREE.SRGBColorSpace;
 	//sphereTexture.flipY = false;
 	
+	applelog += "\n noimage loaded?";
+	
 	const sphereMaterial = new THREE.MeshBasicMaterial({map: sphereTexture});
 	let sphereMesh;
-	renderer.initTexture(sphereTexture);
+	//renderer.initTexture(sphereTexture);
 	
 	//load textures for links in a view
 	const loadTextures = (viewname) => {
+		applelog += "\n inside loadTextures";
 		document.body.style.cursor = "wait";
 		if (viewTextures[viewname] != undefined){
 			sphereMaterial.map = viewTextures[viewname];
 			console.log("already in memory: using that to save resources");
+			applelog += "\n already in memory: using that to save resources";
 		}
 		for (const b in view[viewname]){
 			if (b!="img" && viewTextures[b] == undefined){
@@ -97,9 +113,11 @@ let main = (view) => {
 				sphereTextureX.colorSpace = THREE.SRGBColorSpace;
 				//sphereTextureX.flipY = false;
 				viewTextures[b] = sphereTextureX;
-				renderer.initTexture(viewTextures[b]);
+				//renderer.initTexture(viewTextures[b]);
+				applelog += "\n texture loaded:" + b + ", link: " + viewTextures[b];
 				if (b == viewname && viewTextures[b] != undefined){
 					sphereMaterial.map = viewTextures[b];
+					applelog += "\n texture used as spherical map";
 				}
 			}
 		}
@@ -112,13 +130,17 @@ let main = (view) => {
 	scene.add(sphereMesh);
 	ready = true;
 	
+	applelog += "\n sphere added";
+	
 	loadManager.onProgress = (urlOfLastItemLoaded, itemsLoaded, itemsTotal) => {
 		const progress = itemsLoaded / itemsTotal;
+		applelog += "\n load progress: "+progress; 
 		progressBarElem.style.transform = `scaleX(${progress})`;
 	};
 	
 	loadManager.onLoad = () => {
 		document.body.style.cursor = "auto";
+		applelog += "\n loadmanager onload"; 
 	}
 	
 	document.body.appendChild(VRButton.createButton(renderer, {
@@ -126,6 +148,7 @@ let main = (view) => {
 		optionalFeatures: ['light-estimation']
 	}));
 	
+	applelog += "\n defining teleport";
 	//switch to the view of the button selected
 	const teleport = (viewname) => {
 		if (view[viewname] != undefined){
@@ -286,7 +309,7 @@ let main = (view) => {
 	}
 	
 	const onWindowResize = () => {
-		camera.aspect = canvas.clientWidth/canvas.clientHeight;
+		camera.aspect = window.innerWidth/window.innerHeight;
 		camera.updateProjectionMatrix();
 		
 		renderer.setSize(canvas.clientWidth, canvas.clientHeight);
@@ -337,6 +360,8 @@ let main = (view) => {
 	teleport(links.header.index); //teleport to the root
 }
 
+applelog+= "\n main has been defined";
+
 //texture view/link properties
 const links = {
 	"header": {
@@ -386,7 +411,12 @@ const links = {
 	}
 };
 
+applelog+= "\n links have been defined";
+
 let version = links.full;
+
+applelog += "\n version set to links.full" + links.full;
+
 navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
 	if (!supported){
 		version = links.lite;
@@ -399,3 +429,14 @@ navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
 	}
 	main(version);
 });
+
+applelog += "\n setTimeout is being set next";
+
+setTimeout(()=>{
+	const link = document.createElement("a");
+	const file = new Blob([applelog], { type: 'text/plain' });
+	link.href = URL.createObjectURL(file);
+	link.download = "hvrapplelog_"+Date.now()+".txt";
+	link.click();
+	URL.revokeObjectURL(link.href);
+}, "20000");

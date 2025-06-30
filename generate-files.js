@@ -14,10 +14,7 @@ const GenerateFiles = (links) => {
 		<link rel="stylesheet" href="./main.css" />
 		<meta charset="utf-8" />
 		<meta name="keywords" content="${links.header.project}, VR, Tour, 360, HumAngle VR Tour Editor" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1, shrink-to-fit=no"
-		/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
 		<meta property="og:title" content="${links.header.project}" />
 		<meta property="og:type" content="website" />
