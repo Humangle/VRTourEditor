@@ -127,6 +127,10 @@ let main = async (view) => {
 	sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
 	sphereMesh.name = "sphere";
 	sphereMesh.position.set(0,1.6,0);
+	if (links.header?.pan > 0){
+		sphereMesh.rotation.y = (links.header.pan/180)*Math.PI;
+		pickableObjs.rotation.y = (links.header.pan/180)*Math.PI;
+	}
 	scene.add(sphereMesh);
 	ready = true;
 	
@@ -483,7 +487,13 @@ let main = async (view) => {
 			viewlist.append(linkoptions);
 		}
 		document.getElementById("projectindex").value = links.header.index;
+		document.getElementById("pan").value = links.header.pan;
 		//document.getElementById("projectstereo").value = "unchecked"; comment since stereo isn't ready
+		
+		if (links.header?.pan > 0){
+			sphereMesh.rotation.y = (links.header.pan/180)*Math.PI;
+			pickableObjs.rotation.y = (links.header.pan/180)*Math.PI;
+		}
 		
 		//autosave
 		let recentlyedited = "recent::"+links.header.project.replaceAll(" ", "_");
@@ -590,11 +600,42 @@ let main = async (view) => {
 	//project settings input
 	document.getElementById("projectname").addEventListener('input', (event) => {
 		links.header.project = document.getElementById("projectname").value;
+		//autosave
+		let recentlyedited = "recent::"+links.header.project.replaceAll(" ", "_");
+		localStorage.setItem(recentlyedited, JSON.stringify(links));
 	});
 	document.getElementById("projectindex").addEventListener('input', (event) => {
 		if (links.full[document.getElementById("projectindex").value]){
 			links.header.index = document.getElementById("projectindex").value;
 		}
+		//autosave
+		let recentlyedited = "recent::"+links.header.project.replaceAll(" ", "_");
+		localStorage.setItem(recentlyedited, JSON.stringify(links));
+	});
+	document.getElementById("pan").addEventListener('input', (event) => {
+		if (document.getElementById("projectindex").value < 0){
+			links.header.pan = 360 + document.getElementById("pan").value;
+			sphereMesh.rotation.y = (links.header.pan/180)*Math.PI;
+			pickableObjs.rotation.y = (links.header.pan/180)*Math.PI;
+		} else {
+			links.header.pan = document.getElementById("pan").value;
+			sphereMesh.rotation.y = (links.header.pan/180)*Math.PI;
+			pickableObjs.rotation.y = (links.header.pan/180)*Math.PI;
+		}
+		//autosave
+		let recentlyedited = "recent::"+links.header.project.replaceAll(" ", "_");
+		localStorage.setItem(recentlyedited, JSON.stringify(links));
+	});
+	
+	document.getElementById("msbtn").addEventListener('click', (event) => {
+		document.getElementById("moresettings").style.display = "block";
+		document.getElementById("errora").innerText = "";
+	});
+	document.getElementById("closems").addEventListener('click', (event) => {
+		document.getElementById("moresettings").style.display = "none";
+		//autosave
+		let recentlyedited = "recent::"+links.header.project.replaceAll(" ", "_");
+		localStorage.setItem(recentlyedited, JSON.stringify(links));
 	});
 	
 	//export zip, save and load .hvrj (humangle vr json)
@@ -688,23 +729,26 @@ let main = async (view) => {
 		pickableObjs.clear();
 		
 		//make tabs and buttons to each 360 image
-			for (const a in links.full){
-				if (!pickableObjs.getObjectByName(a)) {
-					pickableObjs.add(makeButton(a));
-				}
-				
-				let tabhead = document.createElement("div");
-				tabhead.setAttribute("class", "tabhead");
-				tabhead.innerText = a;
-				tabhead.setAttribute("title", a);
-				const tabid = "tab_" + a;
-				tabhead.setAttribute("id", tabid);
-				document.getElementById("tabheader").append(tabhead);
-				document.getElementById(tabid).addEventListener("click", function(e) {
-					console.log("tabid");
-					switchTabs(e.target.innerText);
-				});
+		for (const a in links.full){
+			if (!pickableObjs.getObjectByName(a)) {
+				pickableObjs.add(makeButton(a));
 			}
+			
+			let tabhead = document.createElement("div");
+			tabhead.setAttribute("class", "tabhead");
+			tabhead.innerText = a;
+			tabhead.setAttribute("title", a);
+			const tabid = "tab_" + a;
+			tabhead.setAttribute("id", tabid);
+			document.getElementById("tabheader").append(tabhead);
+			document.getElementById(tabid).addEventListener("click", function(e) {
+				console.log("tabid");
+				switchTabs(e.target.innerText);
+			});
+		}
+		//settings
+		document.getElementById("version").innerText = "v" + links.header.version;
+			
 		switchTabs(links.header.index);
 	}
 	
@@ -714,7 +758,7 @@ let main = async (view) => {
 		} else {
 			links = {
 				"header": {
-					"version": 1.2,
+					"version": 1.2001,
 					"project": "untitled",
 					"icon": "https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png",
 					"image": "https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/title-image.png",
@@ -737,6 +781,7 @@ let main = async (view) => {
 			sphereMaterial.map = sphereTexture;
 			pickableObjs.clear();
 			document.getElementById("projectindex").innerHTML = "";
+			document.getElementById("pan").value = 0;
 		}
 	});
 	
@@ -820,7 +865,7 @@ let main = async (view) => {
 //texture view/link properties
 let links = {
 	"header": {
-		"version": 1.2,
+		"version": 1.2001,
 		"project": "untitled",
 		"icon": "https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png",
 		"image": "https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/title-image.png",

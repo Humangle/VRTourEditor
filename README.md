@@ -17,11 +17,11 @@ This is an open-source VR storytelling tool for media organisations. This is use
 
 ### 	Create Connections
 
-### 	Play Audio
+### 	Background Audio
 
-###		Insert Models glTF Models and Animations
+###		Insert Models (glTF)
 
-###		AR Mode
+###		Animator
 
 ## 	HVRJ - HumAngle VR JSON Format
 This is a JSON file saved with an extension .hvrj that allows you to externally store or share a copy of your project (only be edited with the HumAngle VR Tour Editor). This allows you to easily update your projects/tours in future.

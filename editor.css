@@ -201,6 +201,7 @@ button {
 	border: solid #00000044 1px;
 	width: 30vw;
 	height: 25px;
+	cursor: pointer;
 }
 
 #picklink {
@@ -420,4 +421,81 @@ details[open] summary {
 .dbtn:hover {
 	background: #00000044;
 	color: white;
+}
+
+#pan {
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 0px;
+  margin-top: 0px;
+  width: 10vw;
+  height: 0px;
+  background: none;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+#pan:hover {
+  opacity: 1;
+}
+
+#pan::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #00000088;
+  cursor: pointer;
+}
+
+#pan::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #00000088;
+  cursor: pointer;
+}
+
+#msbtn {
+	border: 1px solid #00000088;
+	border-radius: 5px;
+	padding: 5px;
+	width: 10px;
+	float: right;
+	width: max-content;
+	cursor: pointer;
+	color: #00000088;
+}
+
+#msbtn:hover {
+	color: #000000FF;
+}
+
+#moresettings {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	margin: 0px;
+	padding: 3vw;
+	width: 100vw;
+	height: 100vh;
+	display: none;
+	background: #FFFFFF;
+}
+
+#mssettings {
+	overflow: auto;
+}
+
+.slabel {
+	margin-left: 2vw;
+	display: inline-block;
+	font-size: 20px;
+	font-weight: lighter;
+	width: 20vw;
+	opacity: 0.5;
 }

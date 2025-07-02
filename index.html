@@ -46,7 +46,9 @@
 			</canvas>
 			<div id="settings">
 				<input id="projectname" type="text" value="Untitled Project" title="Project Name"/><br>
-				<select id="projectindex" name="projectindex" title="Project Index"></select><br>
+				<select id="projectindex" name="projectindex" title="Project Index"></select>
+				<input id="pan" type="range"name="pan" min="-180" max="180" value="0" title="Camera Direction"><br><br><br>
+				<span id="msbtn">...more settings</span>
 			</div>
 		</div>
 		<div id="tabs">
@@ -111,6 +113,20 @@
 						<input id="contentfile" type="file" accept="application/hvrj" />
 					</form>
 				</div>
+			</div>
+		</div>
+		<div id="moresettings">
+			<h1 style="color:#22b2d7;">Settings<h1>
+			<div id="closems"><span class="close"><div id="create"><i class="fa fa-times" aria-hidden="true"></i></div></span></div>
+			<div id="mssettings">
+				<label class="slabel">Project Icon</label><input id="projecticon" type="text" value="https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png" title="Icon"/><br>
+				<label class="slabel">Preview Image</label><input id="projectimage" type="text" value="https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/title-image.png" title="Preview Image"/><br>
+				<label class="slabel">Background Audio</label><input id="projectsound" type="text" value="https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/title-image.png" title="Preview Image"/><br>
+				<label class="slabel">Show Preview</label><input id="projectpreview" type="checkbox" title="Show Preview"/><br>
+				<label class="slabel">Auto Rotate</label><input id="projectrotate" type="checkbox" title="Auto Rotate"/><br>
+				<label class="slabel">Stereoscopic</label><input id="projectstereo" type="checkbox" title="Stereoscopic"/><br>
+				
+				<br><div id="version" style="float:right; font-style:italic; font-weight:normal; font-size: 12px; padding-right: 30vw;">v 0.0000</div>
 			</div>
 		</div>
 		<div id="menu">
