@@ -408,6 +408,13 @@ let main = async (view) => {
 	teleport(links.header.index); //teleport to the root
 }
 
+window.addEventListener("pointerup", () => {
+	if (document.getElementById("baudio").paused == true) {
+		document.getElementById("baudio").volume = 0.08;
+        document.getElementById("baudio").play();
+    }
+});
+
 document.getElementById('launchFS').addEventListener('click', (event) => {
     var cel = document.getElementById('c');
 
