@@ -1,7 +1,7 @@
 # HumAngle VR Tour Editor Documentation
 This is an open-source VR storytelling tool for media organisations. This is used to display 360 images, tours, and videos across XR headsets, smartphones and computers. It allows you to design and generate XR experiences that can be embedded in web pages and launched to full VR for headsets and devices with ARCore/ARKit.
 
-![HumAngle VR Office Tour](https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/HumAngleVRTour.gif){.image25percent}
+![HumAngle VR Office Tour](https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/HumAngleVRTour.gif){ .image25percent }
 
 ##	Getting Started
 1. Go To [humangle.github.io/VRTourEditor](https://humangle.github.io/VRTourEditor) and select the "HumAngle Office Tour" Template. This is what [HumAngle VR Office Tour](https://humangle.github.io/VRTourEditor/sample) was created with.
