@@ -409,8 +409,8 @@ let main = async (view) => {
 }
 
 window.addEventListener("pointerup", () => {
-	if (document.getElementById("baudio").paused == true) {
-		document.getElementById("baudio").volume = 0.08;
+	if (links.header.audio!="" && document.getElementById("baudio").paused == true) {
+		document.getElementById("baudio").volume = 0.1;
         document.getElementById("baudio").play();
     }
 });

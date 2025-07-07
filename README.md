@@ -1,7 +1,9 @@
-# HumAngle VR Tour Editor Documentation
+<h1 align="center"> HumAngle VR Tour Editor Documentation</h1>
 This is an open-source VR storytelling tool for media organisations. This is used to display 360 images, tours, and videos across XR headsets, smartphones and computers. It allows you to design and generate XR experiences that can be embedded in web pages and launched to full VR for headsets and devices with ARCore/ARKit.
 
+<p align="center">
 ![HumAngle VR Office Tour](https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/HumAngleVRTour.gif)
+</p>
 
 ##	Getting Started
 1. Go To [humangle.github.io/VRTourEditor](https://humangle.github.io/VRTourEditor) and select the "HumAngle Office Tour" Template. This is what [HumAngle VR Office Tour](https://humangle.github.io/VRTourEditor/sample) was created with.
@@ -19,15 +21,70 @@ This is an open-source VR storytelling tool for media organisations. This is use
 
 ### 	Create Connections
 
-### 	Background Audio
-
-###		Insert Models (glTF)
+###		Insert Objects
 
 ###		Animator
 
 ## 	HVRJ - HumAngle VR JSON Format
-This is a JSON file saved with an extension .hvrj that allows you to externally store or share a copy of your project (only be edited with the HumAngle VR Tour Editor). This allows you to easily update your projects/tours in future.
+This is a JSON file saved with a .hvrj extension that lets you to externally store or share a copy of your project (only be edited with the HumAngle VR Tour Editor). This allows you to easily update your projects/tours in future.
 
+	<blockquote>
+		<b> File Structure </b>
+		<table>
+			<th> 
+				<tr> Header </tr>
+				<tr>
+					```
+					{
+						"version" : 1.2002,
+						"project" : "Project Name",
+						"icon" : "https://raw-link.to/the-actual/project-icon-image.png",
+						"image" : "https://raw-link.to/the-actual/project-preview-and-title-image.png",
+						"audio" : "https://raw-link.to/the-actual/background-audio.mp3",
+						"showpreview" : false,
+						"autorotate" : false,
+						"stereo" : false,
+						"index" : "Name_Of_First_360_Image_OR_Video",
+						"pan" : 0
+					}
+					```
+				</tr>
+				<tr> Full </tr>
+				<tr>
+					```
+					{
+						"version" : 1.2002,
+						"project" : "Project Name",
+						"icon" : "https://raw-link.to/the-actual/project-icon-image.png",
+						"image" : "https://raw-link.to/the-actual/project-preview-and-title-image.png",
+						"audio" : "https://raw-link.to/the-actual/background-audio.mp3",
+						"showpreview" : false,
+						"autorotate" : false,
+						"stereo" : false,
+						"index" : "Name_Of_First_360_Image/Video",
+						"pan" : initial camera direction
+					}
+					```
+				</tr>
+				<tr> Objects </tr>
+				<tr>
+					```
+					{
+						
+					}
+					```
+				</tr>
+				<tr> Animate </tr>
+				<tr>
+					```
+					{
+						
+					}
+					```
+				</tr>
+			</th>
+		</table>
+	</blockquote>
 
 
 ### How to Contribute

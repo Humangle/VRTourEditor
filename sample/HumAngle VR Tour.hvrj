@@ -1,9 +1,12 @@
 {
 	"header":{
-		"version":1.2001,
+		"version":1.2002,
 		"project":"HumAngle VR Tour",
 		"icon":"https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png",
 		"image":"https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/title-image.png",
+		"audio":"https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/counting-sheep.mp3",
+		"showpreview":false,
+		"autorotate":false,
 		"stereo":false,
 		"index":"Stairs_HUFO_4",
 		"pan":40

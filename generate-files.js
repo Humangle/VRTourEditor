@@ -5,8 +5,8 @@ const GenerateFiles = (links) => {
 		<script  type="importmap">
 			{
 				"imports": {
-					"three": "https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.js",
-					"three/addons/" : "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"
+					"three": "https://cdn.jsdelivr.net/npm/three@0.172.0/build/three.module.js",
+					"three/addons/" : "https://cdn.jsdelivr.net/npm/three@0.172.0/examples/jsm/"
 				}
 			}
 		</script>
@@ -48,6 +48,10 @@ const GenerateFiles = (links) => {
 				<path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5M.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5"/>
 			</svg>
 		</div>
+		<audio id="baudio" autoplay loop>
+			<source src="${links.header.audio}" type="audio/mpeg">
+			<embed src="${links.header.audio}" autostart="true" loop="true" hidden="true"> 
+		</audio>
 	</body>
 </html>`;
 	
@@ -465,6 +469,13 @@ let main = async (view) => {
 	window.addEventListener('resize', onWindowResize);
 	teleport(links.header.index); //teleport to the root
 }
+
+window.addEventListener("pointerup", () => {
+	if (links.header.audio!="" && document.getElementById("baudio").paused == true) {
+		document.getElementById("baudio").volume = 0.1;
+        document.getElementById("baudio").play();
+    }
+});
 
 document.getElementById('launchFS_${links.header.project.replaceAll(" ","_")}').addEventListener('click', (event) => {
     var cel = document.getElementById('c_${links.header.project.replaceAll(" ","_")}');

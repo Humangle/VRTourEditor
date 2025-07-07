@@ -487,6 +487,9 @@ let main = async (view) => {
 			viewlist.append(linkoptions);
 		}
 		document.getElementById("projectindex").value = links.header.index;
+		document.getElementById("projecticon").value = links.header.icon;
+		document.getElementById("projectimage").value = links.header.image;
+		document.getElementById("projectsound").value = links.header.audio;
 		document.getElementById("pan").value = links.header.pan;
 		//document.getElementById("projectstereo").value = "unchecked"; comment since stereo isn't ready
 		
@@ -607,6 +610,30 @@ let main = async (view) => {
 	document.getElementById("projectindex").addEventListener('input', (event) => {
 		if (links.full[document.getElementById("projectindex").value]){
 			links.header.index = document.getElementById("projectindex").value;
+		}
+		//autosave
+		let recentlyedited = "recent::"+links.header.project.replaceAll(" ", "_");
+		localStorage.setItem(recentlyedited, JSON.stringify(links));
+	});
+	document.getElementById("projecticon").addEventListener('input', (event) => {
+		if (links.full[document.getElementById("projecticon").value]){
+			links.header.icon = document.getElementById("projecticon").value;
+		}
+		//autosave
+		let recentlyedited = "recent::"+links.header.project.replaceAll(" ", "_");
+		localStorage.setItem(recentlyedited, JSON.stringify(links));
+	});
+	document.getElementById("projectimage").addEventListener('input', (event) => {
+		if (links.full[document.getElementById("projectimage").value]){
+			links.header.image = document.getElementById("projectimage").value;
+		}
+		//autosave
+		let recentlyedited = "recent::"+links.header.project.replaceAll(" ", "_");
+		localStorage.setItem(recentlyedited, JSON.stringify(links));
+	});
+	document.getElementById("projectsound").addEventListener('input', (event) => {
+		if (links.full[document.getElementById("projectsound").value]){
+			links.header.audio = document.getElementById("projectsound").value;
 		}
 		//autosave
 		let recentlyedited = "recent::"+links.header.project.replaceAll(" ", "_");
@@ -758,16 +785,19 @@ let main = async (view) => {
 		} else {
 			links = {
 				"header": {
-					"version": 1.2001,
+					"version": 1.2002,
 					"project": "untitled",
 					"icon": "https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png",
 					"image": "https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/title-image.png",
+					"audio":"",
+					"showpreview": false,
+					"autorotate": false,
 					"stereo": false,
 					"index": "",
 					"pan": 0
 				},
 				"full": {},
-				"lite":{}
+				"lite": {}
 			};
 			document.getElementById("projectname").value = document.getElementById("newproname").value;
 			links.header.project = document.getElementById("newproname").value;
@@ -865,10 +895,13 @@ let main = async (view) => {
 //texture view/link properties
 let links = {
 	"header": {
-		"version": 1.2001,
+		"version": 1.2002,
 		"project": "untitled",
 		"icon": "https://humanglemedia.com/wp-content/uploads/2020/03/cropped-android-chrome-512x512-1-32x32.png",
 		"image": "https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/title-image.png",
+		"audio":"https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/counting-sheep.mp3",
+		"showpreview": false,
+		"autorotate": false,
 		"stereo": false,
 		"index": "",
 		"pan": 0
@@ -876,7 +909,7 @@ let links = {
 	"full": {
 		
 	},
-	"lite":{
+	"lite": {
 		
 	}
 };
