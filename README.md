@@ -2,7 +2,7 @@
 This is an open-source VR storytelling tool for media organisations. This is used to display 360 images, tours, and videos across XR headsets, smartphones and computers. It allows you to design and generate XR experiences that can be embedded in web pages and launched to full VR for headsets and devices with ARCore/ARKit.
 
 
-			![HumAngle VR Office Tour](https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/HumAngleVRTour.gif)
+	![HumAngle VR Office Tour](https://raw.githubusercontent.com/Humangle/VRTourEditor/refs/heads/main/assets/HumAngleVRTour.gif)
 
 ##	Getting Started
 1. Go To [humangle.github.io/VRTourEditor](https://humangle.github.io/VRTourEditor) and select the "HumAngle Office Tour" Template. This is what [HumAngle VR Office Tour](https://humangle.github.io/VRTourEditor/sample) was created with.
@@ -27,9 +27,9 @@ This is an open-source VR storytelling tool for media organisations. This is use
 ## 	HVRJ - HumAngle VR JSON Format
 This is a JSON file saved with a .hvrj extension that lets you to externally store or share a copy of your project (only be edited with the HumAngle VR Tour Editor). This allows you to easily update your projects/tours in future.
 
-	Structure
-		Header 
-		{
+	/* File Structure */
+	{
+		"header" : {
 			"version" : 1.2002,
 			"project" : "Project Name",
 			"icon" : "https://raw-link.to/the-actual/project-icon-image.png",
@@ -40,14 +40,19 @@ This is a JSON file saved with a .hvrj extension that lets you to externally sto
 			"stereo" : false,
 			"index" : "Name_Of_First_360_Image_OR_Video",
 			"pan" : 0
+		},
+		"full" : {
+			
+		},
+		"lite" : {
+		
+		},
+		"objects" : {
+		
+		},
+		"animate" : {
+		
 		}
-	
-	Full
-	Lite
-	
-	Objects
-	
-	Animate
 	
 
 ### How to Contribute
